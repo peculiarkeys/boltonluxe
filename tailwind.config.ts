@@ -20,7 +20,8 @@ export default {
 		},
 		extend: {
 			fontFamily: {
-				sans: ['Geist', 'sans-serif'],
+				sans: ['"Open Sans"', 'sans-serif'],
+				heading: ['"Rethink Sans"', 'sans-serif'],
 			},
 			colors: {
 				border: 'hsl(var(--border))',
