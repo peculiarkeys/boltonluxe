@@ -20,7 +20,7 @@ export default {
 		},
 		extend: {
 			fontFamily: {
-				sans: ['"Open Sans"', 'sans-serif'],
+				sans: ['"Google Sans"', 'sans-serif'],
 				heading: ['"Rethink Sans"', 'sans-serif'],
 			},
 			colors: {
