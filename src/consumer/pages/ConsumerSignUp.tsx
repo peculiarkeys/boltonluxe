@@ -77,6 +77,7 @@ const ConsumerSignUp = () => {
         {/* Right Side (Now Left): Form */}
         <div className="w-full lg:w-1/2 flex flex-col justify-center px-8 sm:px-16 lg:px-24 overflow-y-auto">
           <div className="w-full max-w-md mx-auto">
+            <img src="/logo.png" alt="Bolton Luxe" className="h-8 mb-8 object-contain" />
             <h1 className="text-4xl font-medium text-gray-800 mb-2 tracking-tight">Create Account</h1>
             <p className="text-gray-500 font-normal mb-8 text-sm">Join the Bolton Luxe loyalty program today.</p>
             
@@ -158,8 +159,8 @@ const ConsumerSignUp = () => {
         {/* Left Side (Now Right): Image & Glassmorphic Card */}
         <div className="hidden lg:block lg:w-1/2 relative bg-gray-100">
           <img 
-            src="https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=2070&auto=format&fit=crop" 
-            alt="Luxury Hotel" 
+            src="/hotels/johnwood_hotel/7K4A0310-Edit_compressed.webp" 
+            alt="Johnwood Hotel by Bolton" 
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-black/10"></div>
