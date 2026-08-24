@@ -53,7 +53,7 @@ const ConsumerLayout = () => {
             {initials}
           </div>
           <div className="truncate">
-            <p className="text-sm font-semibold text-gray-900 truncate">{displayName}</p>
+            <p className="text-sm font-semibold text-zinc-800 truncate">{displayName}</p>
             <p className="text-sm text-gray-600 font-normal truncate">{displayTier} Tier</p>
           </div>
         </div>
@@ -72,8 +72,8 @@ const ConsumerLayout = () => {
                 to={item.path}
                 className={`flex items-center space-x-3 px-4 py-3 rounded-[1rem] transition-all duration-300 ${
                   isActive 
-                    ? 'bg-gray-100 text-gray-900 font-medium' 
-                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 font-normal'
+                    ? 'bg-gray-100 text-zinc-800 font-medium' 
+                    : 'text-gray-600 hover:bg-gray-50 hover:text-zinc-800 font-normal'
                 }`}
               >
                 <Icon size={18} strokeWidth={isActive ? 2 : 1.5} />

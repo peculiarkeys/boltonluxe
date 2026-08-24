@@ -25,7 +25,7 @@ const OpportunitiesPage = () => {
         <CardContent>
           <div className="text-center py-10">
             <BookOpenText className="mx-auto h-12 w-12 text-gray-400" />
-            <h3 className="mt-2 text-sm font-semibold text-gray-900">Coming soon</h3>
+            <h3 className="mt-2 text-sm font-semibold text-zinc-800">Coming soon</h3>
             <p className="mt-1 text-sm text-gray-500">Opportunities functionality will be implemented in a future update.</p>
           </div>
         </CardContent>

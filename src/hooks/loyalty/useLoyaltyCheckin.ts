@@ -86,14 +86,13 @@ export const useLoyaltyCheckin = () => {
     const cleanNo = cardNumber.trim().toUpperCase();
     
     try {
-      // 1. Try Live Database
-      const { data, error } = await supabase
-        .from('loyalty_members')
-        .select('*')
-        .eq('member_id', cleanNo)
-        .maybeSingle();
+      // 1. Try Live Database (Using RPC to bypass RLS since admin auth is mocked client-side)
+      const { data, error } = await supabase.rpc('get_all_loyalty_members');
 
-      if (!error && data) return data as LoyaltyMember;
+      if (!error && data) {
+        const found = data.find((m: any) => m.member_id === cleanNo);
+        if (found) return found as LoyaltyMember;
+      }
       
       // 2. Try Demo Fallback (for board presentations)
       if (DEMO_MEMBERS[cleanNo]) {

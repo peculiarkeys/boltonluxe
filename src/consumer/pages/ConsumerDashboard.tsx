@@ -113,7 +113,7 @@ const ConsumerDashboard = () => {
               {profile.name ? profile.name.substring(0, 2).toUpperCase() : 'BL'}
             </div>
             <div>
-              <div className="text-4xl md:text-[40px] font-medium text-gray-900 flex items-baseline gap-1 tracking-tight">
+              <div className="text-4xl md:text-[40px] font-medium text-zinc-800 flex items-baseline gap-1 tracking-tight">
                 {Math.round(progress)}<span className="text-xl md:text-xl text-gray-600 font-medium">%</span>
               </div>
               <p className="text-sm text-gray-600 mt-1 font-normal">Improving this unlocks exclusive rewards</p>
@@ -329,7 +329,7 @@ const ConsumerDashboard = () => {
                  <Link to="/stays" className="w-full sm:flex-1 bg-gray-900 text-white px-5 py-2.5 rounded-full text-sm font-medium hover:bg-gray-800 transition-colors shadow-sm text-center">
                    View My Stays
                  </Link>
-                 <Link to="/rewards" className="w-full sm:flex-1 bg-white text-gray-900 px-5 py-2.5 rounded-full text-sm font-medium border border-gray-200 hover:bg-gray-50 transition-colors text-center">
+                 <Link to="/rewards" className="w-full sm:flex-1 bg-white text-zinc-800 px-5 py-2.5 rounded-full text-sm font-medium border border-gray-200 hover:bg-gray-50 transition-colors text-center">
                    Explore Rewards
                  </Link>
                </div>

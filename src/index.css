@@ -1,5 +1,5 @@
 
-@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -8,13 +8,13 @@
 @layer base {
   :root {
     --background: 210 33% 98%;
-    --foreground: 222 13% 16%;
+    --foreground: 240 4% 20%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222 13% 16%;
+    --card-foreground: 240 4% 20%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222 13% 16%;
+    --popover-foreground: 240 4% 20%;
 
     --primary: 216 83% 47%;
     --primary-foreground: 210 40% 98%;
@@ -38,7 +38,7 @@
     --radius: 0.75rem;
 
     --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 222 13% 16%;
+    --sidebar-foreground: 240 4% 20%;
     --sidebar-primary: 216 83% 47%;
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 216 83% 95%;
@@ -94,6 +94,10 @@
 
   body {
     @apply bg-background text-foreground font-sans;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold text-foreground;
   }
 }
 

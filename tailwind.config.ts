@@ -21,8 +21,8 @@ export default {
 		},
 		extend: {
 			fontFamily: {
-				sans: ['"Google Sans"', 'sans-serif'],
-				heading: ['"Rethink Sans"', 'sans-serif'],
+				sans: ['"Google Sans"', '"Inter"', 'sans-serif'],
+				heading: ['"Google Sans"', '"Inter"', 'sans-serif'],
 			},
 			colors: {
 				border: 'hsl(var(--border))',

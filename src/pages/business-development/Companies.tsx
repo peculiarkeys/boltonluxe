@@ -227,7 +227,7 @@ const CompaniesPage = () => {
           {companies.length === 0 ? (
             <div className="text-center py-10">
               <Building2 className="mx-auto h-12 w-12 text-gray-400" />
-              <h3 className="mt-2 text-sm font-semibold text-gray-900">No companies</h3>
+              <h3 className="mt-2 text-sm font-semibold text-zinc-800">No companies</h3>
               <p className="mt-1 text-sm text-gray-500">Get started by creating a new company.</p>
               <div className="mt-6">
                 <Button onClick={openAddDialog}>

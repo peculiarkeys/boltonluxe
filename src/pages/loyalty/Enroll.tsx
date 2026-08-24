@@ -346,7 +346,7 @@ const Enroll = () => {
   return (
     <div className="max-w-3xl mx-auto space-y-6 pb-12">
       <div>
-        <h1 className="text-3xl font-medium tracking-tight flex items-center gap-3 text-gray-900">
+        <h1 className="text-3xl font-medium tracking-tight flex items-center gap-3 text-zinc-800">
           <UserPlus className="w-8 h-8 text-primary" />
           Enrol New Member
         </h1>
@@ -517,7 +517,7 @@ const Enroll = () => {
                 <CheckCircle className="w-10 h-10 text-green-600" />
               </div>
               <div className="space-y-2">
-                <h2 className="text-3xl font-medium text-gray-900">Member Enrolled</h2>
+                <h2 className="text-3xl font-medium text-zinc-800">Member Enrolled</h2>
                 <p className="text-muted-foreground max-w-sm mx-auto">
                   {finalMember.name} is now officially a Luxe Royalty member.
                   The welcome pack and digital card have been issued.

@@ -164,7 +164,7 @@ const LogStayModal = ({
             <div className="p-4 rounded-xl bg-primary/5 border border-primary/10 space-y-3">
               <div className="flex justify-between items-center text-sm">
                 <span className="text-muted-foreground">Daily Rate:</span>
-                <span className="font-medium text-gray-900">₦{roomPrice.toLocaleString()}</span>
+                <span className="font-medium text-zinc-800">₦{roomPrice.toLocaleString()}</span>
               </div>
               <div className="flex justify-between items-center text-sm">
                 <span className="text-muted-foreground">{member.tier} Discount ({cfg.discount}%):</span>
@@ -172,11 +172,11 @@ const LogStayModal = ({
               </div>
               <div className="flex justify-between items-center text-sm">
                 <span className="text-muted-foreground">Duration:</span>
-                <span className="font-medium text-gray-900">{nights} {nights === 1 ? 'Night' : 'Nights'}</span>
+                <span className="font-medium text-zinc-800">{nights} {nights === 1 ? 'Night' : 'Nights'}</span>
               </div>
               <Separator />
               <div className="flex justify-between items-center pt-1">
-                <span className="font-medium text-gray-900">Total Billable:</span>
+                <span className="font-medium text-zinc-800">Total Billable:</span>
                 <span className="text-xl font-medium text-primary">₦{totalAmount.toLocaleString()}</span>
               </div>
               <div className="flex items-center gap-2 pt-2 border-t border-primary/5">
@@ -298,7 +298,7 @@ const CheckIn = () => {
       {/* Header */}
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-3xl font-medium tracking-tight flex items-center gap-2 text-gray-900">
+          <h1 className="text-3xl font-medium tracking-tight flex items-center gap-2 text-zinc-800">
             <CreditCard className="w-8 h-8 text-primary" />
             Luxe Royalty Check-In
           </h1>
@@ -350,7 +350,7 @@ const CheckIn = () => {
                 <CardContent className="pt-5 pb-4 text-center">
                   <div className="flex flex-col items-center gap-2">
                     <TierBadge tier={tier} />
-                    <span className="text-2xl font-medium text-gray-900">{t.discount}% OFF</span>
+                    <span className="text-2xl font-medium text-zinc-800">{t.discount}% OFF</span>
                     <p className="text-xs text-muted-foreground">{t.multiplier}x points per ₦1k spent</p>
                   </div>
                 </CardContent>
@@ -368,7 +368,7 @@ const CheckIn = () => {
               <AlertCircle className="w-10 h-10 text-amber-500" />
             </div>
             <div className="space-y-2">
-              <h3 className="text-xl font-medium text-gray-900">Member Not Found</h3>
+              <h3 className="text-xl font-medium text-zinc-800">Member Not Found</h3>
               <p className="text-muted-foreground max-w-xs mx-auto">
                 No profile is associated with <span className="font-mono text-gray-700 font-medium">{cardInput}</span>. Would you like to register this guest?
               </p>
@@ -399,7 +399,7 @@ const CheckIn = () => {
                   </div>
                   <div className="space-y-2">
                     <div className="flex items-center gap-3">
-                      <h2 className="text-3xl font-medium text-gray-900 tracking-tight">{foundMember.name}</h2>
+                      <h2 className="text-3xl font-medium text-zinc-800 tracking-tight">{foundMember.name}</h2>
                       <TierBadge tier={foundMember.tier} />
                     </div>
                     <p className="text-lg text-gray-500 font-mono tracking-widest">{foundMember.member_id}</p>
@@ -410,7 +410,7 @@ const CheckIn = () => {
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-x-12 gap-y-6 bg-gray-50 p-6 rounded-2xl border border-gray-100 min-w-[280px]">
-                  <div><p className="text-xs text-gray-500 uppercase tracking-wider font-medium mb-1">Lifetime Stays</p><p className="text-3xl font-medium text-gray-900">{foundMember.stays}</p></div>
+                  <div><p className="text-xs text-gray-500 uppercase tracking-wider font-medium mb-1">Lifetime Stays</p><p className="text-3xl font-medium text-zinc-800">{foundMember.stays}</p></div>
                   <div><p className="text-xs text-gray-500 uppercase tracking-wider font-medium mb-1">Points Balance</p><p className={`text-3xl font-medium ${cfg.color}`}>{foundMember.points.toLocaleString()}</p></div>
                 </div>
               </div>
