@@ -33,6 +33,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Label } from '@/components/ui/label';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { 
   Award, 
   Search, 
@@ -104,7 +106,7 @@ const MemberForm = ({
             value={formData.member_id || ''} 
             onChange={handleChange}
             required
-            readOnly={!!member} // Only editable for new members
+            readOnly={!!member}
             className={member ? "bg-gray-100" : ""}
           />
         </div>
@@ -305,6 +307,10 @@ const Members = () => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [deletingMember, setDeletingMember] = useState<LoyaltyMember | undefined>(undefined);
   
+  // Sheet state
+  const [selectedMember, setSelectedMember] = useState<LoyaltyMember | undefined>(undefined);
+  const [sheetOpen, setSheetOpen] = useState(false);
+
   const { 
     isLoading, 
     fetchMembers, 
@@ -350,6 +356,9 @@ const Members = () => {
     if (result) {
       setEditDialogOpen(false);
       setEditingMember(undefined);
+      if (selectedMember && selectedMember.id === editingMember.id) {
+        setSelectedMember(result);
+      }
       loadMembers();
     }
   };
@@ -360,6 +369,9 @@ const Members = () => {
     const result = await deleteMember(deletingMember.id);
     if (result) {
       setDeleteDialogOpen(false);
+      if (selectedMember && selectedMember.id === deletingMember.id) {
+        setSheetOpen(false);
+      }
       setDeletingMember(undefined);
       loadMembers();
     }
@@ -372,6 +384,9 @@ const Members = () => {
     if (result) {
       setPointsDialogOpen(false);
       setAdjustPointsMember(undefined);
+      if (selectedMember && selectedMember.id === adjustPointsMember.id) {
+        setSelectedMember(result);
+      }
       loadMembers();
     }
   };
@@ -381,25 +396,25 @@ const Members = () => {
   };
 
   const getTierColor = (tier: string) => {
-    switch (tier) {
-      case 'Platinum':
-        return 'bg-indigo-100 text-indigo-800';
-      case 'Gold':
-        return 'bg-amber-100 text-amber-800';
-      case 'Silver':
-        return 'bg-gray-200 text-gray-800';
+    switch (tier.toLowerCase()) {
+      case 'platinum':
+        return 'bg-zinc-800 text-white';
+      case 'gold':
+        return 'bg-amber-100 text-amber-800 border-amber-200';
+      case 'silver':
+        return 'bg-zinc-200 text-zinc-700 border-zinc-300';
       default:
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-zinc-100 text-zinc-600 border-zinc-200';
     }
   };
 
   const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'Active':
-        return 'text-green-500';
-      case 'Inactive':
-        return 'text-gray-500';
-      case 'Pending':
+    switch (status.toLowerCase()) {
+      case 'active':
+        return 'text-emerald-600';
+      case 'inactive':
+        return 'text-zinc-500';
+      case 'pending':
         return 'text-amber-500';
       default:
         return 'text-blue-500';
@@ -407,12 +422,12 @@ const Members = () => {
   };
 
   const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'Active':
-        return <CheckCircle className="h-4 w-4 text-green-500" />;
-      case 'Inactive':
-        return <AlertCircle className="h-4 w-4 text-gray-500" />;
-      case 'Pending':
+    switch (status.toLowerCase()) {
+      case 'active':
+        return <CheckCircle className="h-4 w-4 text-emerald-500" />;
+      case 'inactive':
+        return <AlertCircle className="h-4 w-4 text-zinc-400" />;
+      case 'pending':
         return <Clock className="h-4 w-4 text-amber-500" />;
       default:
         return null;
@@ -420,17 +435,17 @@ const Members = () => {
   };
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="space-y-6 animate-fade-in font-sans">
       <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
         <div>
-          <h1 className="text-3xl font-semibold tracking-tight">Loyalty Members</h1>
-          <p className="text-muted-foreground mt-2">
+          <h1 className="text-3xl font-semibold text-zinc-800 tracking-tight">Loyalty Members</h1>
+          <p className="text-zinc-500 font-medium mt-1">
             Manage members of the Bolton Loyalty Program
           </p>
         </div>
         <Dialog open={addDialogOpen} onOpenChange={setAddDialogOpen}>
           <DialogTrigger asChild>
-            <Button className="sm:self-end flex gap-2">
+            <Button className="sm:self-end flex gap-2 font-medium">
               <UserPlus className="w-4 h-4" />
               <span>Add Member</span>
             </Button>
@@ -449,10 +464,10 @@ const Members = () => {
 
       <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4 mb-4">
         <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" />
           <Input
             placeholder="Search members..."
-            className="pl-9"
+            className="pl-9 bg-white border-zinc-200"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
@@ -462,8 +477,8 @@ const Members = () => {
           onValueChange={setTierFilter}
           value={tierFilter}
         >
-          <SelectTrigger className="w-full sm:w-[180px]">
-            <Filter className="h-4 w-4 mr-2" />
+          <SelectTrigger className="w-full sm:w-[180px] bg-white border-zinc-200">
+            <Filter className="h-4 w-4 mr-2 text-zinc-500" />
             <SelectValue placeholder="Filter by Tier" />
           </SelectTrigger>
           <SelectContent>
@@ -474,127 +489,229 @@ const Members = () => {
             <SelectItem value="Standard">Standard</SelectItem>
           </SelectContent>
         </Select>
-        <Button variant="outline" size="icon" onClick={handleExportMembers} disabled={isLoading}>
-          <DownloadCloud className="h-4 w-4" />
+        <Button variant="outline" size="icon" className="border-zinc-200 bg-white" onClick={handleExportMembers} disabled={isLoading}>
+          <DownloadCloud className="h-4 w-4 text-zinc-600" />
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-        {filteredMembers.map((member) => (
-          <Card key={member.id} className="card-hover">
-            <CardHeader className="pb-2">
-              <div className="flex justify-between items-start">
-                <span className={`px-2 py-1 rounded-full text-xs font-medium ${getTierColor(member.tier)}`}>
-                  {member.tier}
-                </span>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon" className="h-8 w-8">
-                      <MoreHorizontal className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem 
-                      className="flex gap-2 cursor-pointer"
-                      onClick={() => {
-                        setEditingMember(member);
-                        setEditDialogOpen(true);
-                      }}
-                    >
-                      <Edit2 className="h-4 w-4" />
-                      <span>Edit</span>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem 
-                      className="flex gap-2 cursor-pointer"
-                      onClick={() => {
-                        setAdjustPointsMember(member);
-                        setPointsDialogOpen(true);
-                      }}
-                    >
-                      <Award className="h-4 w-4" />
-                      <span>Adjust Points</span>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem 
-                      className="flex gap-2 cursor-pointer text-destructive"
-                      onClick={() => {
-                        setDeletingMember(member);
-                        setDeleteDialogOpen(true);
-                      }}
-                    >
-                      <Trash className="h-4 w-4" />
-                      <span>Delete</span>
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
-              <div className="flex items-center gap-3 mt-2">
-                <div className="h-12 w-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 text-lg font-medium">
-                  {member.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}
-                </div>
-                <div>
-                  <CardTitle className="text-lg">{member.name}</CardTitle>
-                  <CardDescription className="flex items-center gap-1 text-xs">
-                    <User className="h-3 w-3" />
-                    <span>{member.member_id}</span>
-                  </CardDescription>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent className="pb-2">
-              <div className="space-y-1 text-sm">
-                {member.email && (
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <Mail className="h-3.5 w-3.5" />
-                    <span className="truncate">{member.email}</span>
-                  </div>
-                )}
-                {member.phone && (
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <Phone className="h-3.5 w-3.5" />
-                    <span>{member.phone}</span>
-                  </div>
-                )}
-                {member.address && (
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <MapPin className="h-3.5 w-3.5" />
-                    <span className="truncate">{member.address}</span>
-                  </div>
-                )}
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <CalendarDays className="h-3.5 w-3.5" />
-                  <span>Joined: {new Date(member.join_date).toLocaleDateString()}</span>
-                </div>
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <BadgeCheck className="h-3.5 w-3.5" />
-                  <span className="flex items-center gap-1">
-                    Status: 
-                    <span className={`flex items-center gap-0.5 ${getStatusColor(member.status)}`}>
+      <div className="rounded-xl border border-zinc-200 bg-white overflow-hidden shadow-sm">
+        <Table>
+          <TableHeader className="bg-zinc-50/80">
+            <TableRow className="border-zinc-200 hover:bg-transparent">
+              <TableHead className="w-[120px] text-zinc-500 font-medium h-12">Member ID</TableHead>
+              <TableHead className="text-zinc-500 font-medium h-12">Name</TableHead>
+              <TableHead className="text-zinc-500 font-medium h-12">Tier</TableHead>
+              <TableHead className="text-zinc-500 font-medium h-12">Status</TableHead>
+              <TableHead className="text-right text-zinc-500 font-medium h-12">Points</TableHead>
+              <TableHead className="w-[50px]"></TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {filteredMembers.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={6} className="text-center py-12 text-zinc-500 font-medium">
+                  {isLoading ? 'Loading members...' : 'No members found.'}
+                </TableCell>
+              </TableRow>
+            ) : (
+              filteredMembers.map((member) => (
+                <TableRow 
+                  key={member.id} 
+                  className="cursor-pointer hover:bg-zinc-50/60 transition-colors border-zinc-100 group"
+                  onClick={() => {
+                    setSelectedMember(member);
+                    setSheetOpen(true);
+                  }}
+                >
+                  <TableCell className="font-medium text-zinc-500 text-sm">{member.member_id}</TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-3">
+                      <div className="h-9 w-9 rounded-full bg-zinc-100 flex items-center justify-center text-zinc-700 text-xs font-semibold ring-1 ring-zinc-200/50">
+                        {member.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="font-semibold text-zinc-800">{member.name}</span>
+                        {member.email && <span className="text-xs text-zinc-500 font-medium">{member.email}</span>}
+                      </div>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <span className={`px-2.5 py-1 rounded-full text-[11px] font-semibold tracking-wide border ${getTierColor(member.tier)}`}>
+                      {member.tier}
+                    </span>
+                  </TableCell>
+                  <TableCell>
+                    <span className={`flex items-center gap-1.5 font-medium text-sm ${getStatusColor(member.status)}`}>
                       {getStatusIcon(member.status)}
                       {member.status}
                     </span>
-                  </span>
+                  </TableCell>
+                  <TableCell className="text-right font-semibold text-zinc-800">
+                    {member.points.toLocaleString()}
+                  </TableCell>
+                  <TableCell onClick={(e) => e.stopPropagation()}>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon" className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity focus:opacity-100 data-[state=open]:opacity-100">
+                          <MoreHorizontal className="h-4 w-4 text-zinc-500" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="w-48 rounded-xl border-zinc-200">
+                        <DropdownMenuItem className="flex gap-2 cursor-pointer font-medium text-zinc-700 focus:bg-zinc-50 focus:text-zinc-900" onClick={() => { setEditingMember(member); setEditDialogOpen(true); }}>
+                          <Edit2 className="h-4 w-4" /> <span>Edit Profile</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="flex gap-2 cursor-pointer font-medium text-zinc-700 focus:bg-zinc-50 focus:text-zinc-900" onClick={() => { setAdjustPointsMember(member); setPointsDialogOpen(true); }}>
+                          <Award className="h-4 w-4" /> <span>Adjust Points</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="flex gap-2 cursor-pointer text-red-600 font-medium focus:bg-red-50 focus:text-red-700" onClick={() => { setDeletingMember(member); setDeleteDialogOpen(true); }}>
+                          <Trash className="h-4 w-4" /> <span>Delete Member</span>
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
+      </div>
+
+      {/* Member Details Side Panel */}
+      <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
+        <SheetContent className="sm:max-w-md overflow-y-auto border-l-zinc-200 p-0">
+          <div className="p-6">
+            <SheetHeader className="pb-6 border-b border-zinc-100 text-left">
+              <SheetTitle className="text-2xl font-semibold text-zinc-800">Member Details</SheetTitle>
+              <SheetDescription className="text-zinc-500 font-medium">View full profile and activities.</SheetDescription>
+            </SheetHeader>
+            
+            {selectedMember && (
+              <div className="py-6 space-y-8">
+                <div className="flex items-center gap-4">
+                  <div className="h-16 w-16 rounded-full bg-zinc-100 flex items-center justify-center text-zinc-700 text-xl font-semibold shadow-sm ring-1 ring-zinc-200/50">
+                    {selectedMember.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-semibold text-zinc-800">{selectedMember.name}</h3>
+                    <p className="text-sm font-medium text-zinc-500 flex items-center gap-1.5 mt-1">
+                      <User className="h-3.5 w-3.5" />
+                      {selectedMember.member_id}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="bg-white p-4 rounded-xl border border-zinc-200 shadow-sm">
+                    <p className="text-[10px] font-semibold text-zinc-500 uppercase tracking-wider mb-1">Status</p>
+                    <p className={`font-semibold text-sm flex items-center gap-1.5 ${getStatusColor(selectedMember.status)}`}>
+                      {getStatusIcon(selectedMember.status)}
+                      {selectedMember.status}
+                    </p>
+                  </div>
+                  <div className="bg-white p-4 rounded-xl border border-zinc-200 shadow-sm">
+                    <p className="text-[10px] font-semibold text-zinc-500 uppercase tracking-wider mb-1">Tier</p>
+                    <span className={`px-2 py-0.5 mt-0.5 rounded-full text-[10px] font-semibold tracking-wide border inline-block ${getTierColor(selectedMember.tier)}`}>
+                      {selectedMember.tier}
+                    </span>
+                  </div>
+                  <div className="bg-white p-4 rounded-xl border border-zinc-200 shadow-sm">
+                    <p className="text-[10px] font-semibold text-zinc-500 uppercase tracking-wider mb-1">Points</p>
+                    <p className="text-lg font-semibold text-zinc-800 flex items-center gap-1.5">
+                      <Award className="h-4 w-4 text-primary" />
+                      {selectedMember.points.toLocaleString()}
+                    </p>
+                  </div>
+                  <div className="bg-white p-4 rounded-xl border border-zinc-200 shadow-sm">
+                    <p className="text-[10px] font-semibold text-zinc-500 uppercase tracking-wider mb-1">Total Stays</p>
+                    <p className="text-lg font-semibold text-zinc-800">{selectedMember.stays}</p>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <h4 className="text-xs font-semibold text-zinc-800 uppercase tracking-wider border-b border-zinc-100 pb-2">Contact Information</h4>
+                  <div className="space-y-3">
+                    {selectedMember.email && (
+                      <div className="flex items-start gap-3 text-zinc-600 font-medium text-sm">
+                        <Mail className="h-4 w-4 mt-0.5 text-zinc-400" />
+                        <span>{selectedMember.email}</span>
+                      </div>
+                    )}
+                    {selectedMember.phone && (
+                      <div className="flex items-start gap-3 text-zinc-600 font-medium text-sm">
+                        <Phone className="h-4 w-4 mt-0.5 text-zinc-400" />
+                        <span>{selectedMember.phone}</span>
+                      </div>
+                    )}
+                    {selectedMember.address && (
+                      <div className="flex items-start gap-3 text-zinc-600 font-medium text-sm">
+                        <MapPin className="h-4 w-4 mt-0.5 text-zinc-400" />
+                        <span>{selectedMember.address}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <h4 className="text-xs font-semibold text-zinc-800 uppercase tracking-wider border-b border-zinc-100 pb-2">Additional Details</h4>
+                  <div className="space-y-3 text-sm">
+                    <div className="flex items-start gap-3 text-zinc-600 font-medium">
+                      <CalendarDays className="h-4 w-4 mt-0.5 text-zinc-400" />
+                      <div>
+                        <p className="text-[10px] text-zinc-400 mb-0.5 uppercase tracking-wider">Member Since</p>
+                        <p>{new Date(selectedMember.join_date).toLocaleDateString()}</p>
+                      </div>
+                    </div>
+                    {selectedMember.birthdate && (
+                      <div className="flex items-start gap-3 text-zinc-600 font-medium">
+                        <User className="h-4 w-4 mt-0.5 text-zinc-400" />
+                        <div>
+                          <p className="text-[10px] text-zinc-400 mb-0.5 uppercase tracking-wider">Birth Date</p>
+                          <p>{new Date(selectedMember.birthdate).toLocaleDateString()}</p>
+                        </div>
+                      </div>
+                    )}
+                    {selectedMember.preferences && (
+                      <div className="flex items-start gap-3 text-zinc-600 font-medium">
+                        <BadgeCheck className="h-4 w-4 mt-0.5 text-zinc-400" />
+                        <div>
+                          <p className="text-[10px] text-zinc-400 mb-0.5 uppercase tracking-wider">Preferences</p>
+                          <p>{selectedMember.preferences}</p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+                
+                <div className="flex gap-3 pt-6 border-t border-zinc-100">
+                  <Button className="flex-1 font-semibold rounded-xl bg-zinc-800 hover:bg-zinc-700 text-white" onClick={() => {
+                    setEditingMember(selectedMember);
+                    setEditDialogOpen(true);
+                    setSheetOpen(false);
+                  }}>
+                    <Edit2 className="w-4 h-4 mr-2" />
+                    Edit Profile
+                  </Button>
+                  <Button variant="outline" className="flex-1 font-semibold rounded-xl border-zinc-200 hover:bg-zinc-50 text-zinc-700" onClick={() => {
+                    setAdjustPointsMember(selectedMember);
+                    setPointsDialogOpen(true);
+                    setSheetOpen(false);
+                  }}>
+                    <Award className="w-4 h-4 mr-2 text-zinc-500" />
+                    Adjust Points
+                  </Button>
                 </div>
               </div>
-            </CardContent>
-            <CardFooter className="flex justify-between pt-2">
-              <div className="flex items-center gap-1">
-                <Award className="h-4 w-4 text-primary" />
-                <span className="font-semibold">{member.points.toLocaleString()} points</span>
-              </div>
-              <div className="text-sm text-muted-foreground">
-                {member.stays} {member.stays === 1 ? 'stay' : 'stays'}
-              </div>
-            </CardFooter>
-          </Card>
-        ))}
-      </div>
+            )}
+          </div>
+        </SheetContent>
+      </Sheet>
 
       {/* Edit Member Dialog */}
       <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
-        <DialogContent className="max-w-3xl">
+        <DialogContent className="max-w-3xl border-zinc-200">
           <DialogHeader>
-            <DialogTitle>Edit Member</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-zinc-800 font-semibold">Edit Member</DialogTitle>
+            <DialogDescription className="text-zinc-500 font-medium">
               Update information for this loyalty program member.
             </DialogDescription>
           </DialogHeader>
@@ -610,12 +727,12 @@ const Members = () => {
 
       {/* Adjust Points Dialog */}
       <Dialog open={pointsDialogOpen} onOpenChange={setPointsDialogOpen}>
-        <DialogContent>
+        <DialogContent className="border-zinc-200">
           <DialogHeader>
-            <DialogTitle>Adjust Member Points</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-zinc-800 font-semibold">Adjust Member Points</DialogTitle>
+            <DialogDescription className="text-zinc-500 font-medium">
               {adjustPointsMember && (
-                <>Add or deduct points for {adjustPointsMember.name} (Current: {adjustPointsMember.points.toLocaleString()} points).</>
+                <>Add or deduct points for <span className="font-semibold">{adjustPointsMember.name}</span> (Current: {adjustPointsMember.points.toLocaleString()} points).</>
               )}
             </DialogDescription>
           </DialogHeader>
@@ -631,18 +748,18 @@ const Members = () => {
 
       {/* Delete Confirmation Dialog */}
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <DialogContent>
+        <DialogContent className="border-zinc-200">
           <DialogHeader>
-            <DialogTitle>Confirm Deletion</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-zinc-800 font-semibold">Confirm Deletion</DialogTitle>
+            <DialogDescription className="text-zinc-500 font-medium">
               {deletingMember && (
-                <>Are you sure you want to delete {deletingMember.name}? This action cannot be undone.</>
+                <>Are you sure you want to delete <span className="font-semibold text-zinc-800">{deletingMember.name}</span>? This action cannot be undone.</>
               )}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>Cancel</Button>
-            <Button variant="destructive" onClick={handleDeleteMember} disabled={isLoading}>
+            <Button variant="outline" className="font-semibold border-zinc-200" onClick={() => setDeleteDialogOpen(false)}>Cancel</Button>
+            <Button variant="destructive" className="font-semibold" onClick={handleDeleteMember} disabled={isLoading}>
               {isLoading ? 'Deleting...' : 'Delete Member'}
             </Button>
           </DialogFooter>
