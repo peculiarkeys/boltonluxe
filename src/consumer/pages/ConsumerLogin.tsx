@@ -1,7 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Eye, EyeOff, Star, ChevronLeft, ChevronRight } from 'lucide-react';
+
+const bgImages = [
+  '/hotels/bolton_white_hotel/BC3I7813.webp',
+  '/hotels/bolton_white_hotel/BC3I7828.webp',
+  '/hotels/bolton_white_hotel/IMG-20260617-WA0013.webp',
+  '/hotels/bolton_white_residence/hero-bg.jpg',
+  '/hotels/johnwood_hotel/7K4A0310-Edit_compressed.webp',
+  '/hotels/johnwood_hotel/7K4A0327-Edit_compressed.webp',
+  '/hotels/johnwood_hotel/7K4A8108-Edit_compressed.webp'
+];
 
 const ConsumerLogin = () => {
   const navigate = useNavigate();
@@ -10,6 +20,14 @@ const ConsumerLogin = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prev) => (prev + 1) % bgImages.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -114,16 +132,19 @@ const ConsumerLogin = () => {
         </div>
 
         {/* Right Side: Image & Glassmorphic Card */}
-        <div className="hidden lg:block lg:w-1/2 relative bg-gray-100">
-          <img 
-            src="/hotels/bolton_white_hotel/BC3I7813.webp" 
-            alt="Bolton White Hotel" 
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-black/10"></div>
+        <div className="hidden lg:block lg:w-1/2 relative bg-gray-100 overflow-hidden">
+          {bgImages.map((src, index) => (
+            <img 
+              key={src}
+              src={src} 
+              alt="Bolton Luxe Properties" 
+              className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out ${index === currentImageIndex ? 'opacity-100' : 'opacity-0'}`}
+            />
+          ))}
+          <div className="absolute inset-0 bg-black/10 z-10"></div>
           
           {/* Glassmorphic Testimonial Card */}
-          <div className="absolute bottom-12 left-12 right-12 bg-white/20 backdrop-blur-xl border border-white/30 rounded-[2rem] p-8 text-white shadow-2xl">
+          <div className="absolute bottom-12 left-12 right-12 bg-white/20 backdrop-blur-xl border border-white/30 rounded-[2rem] p-8 text-white shadow-2xl z-20">
             <p className="text-2xl font-medium leading-relaxed mb-8 drop-shadow-sm">
               "To provide our guests the best experiences, we are constantly perfecting every detail of your stay."
             </p>
