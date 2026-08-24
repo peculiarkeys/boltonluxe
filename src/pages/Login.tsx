@@ -5,26 +5,36 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
+
+const loginSchema = z.object({
+  email: z.string().email('Please enter a valid email address'),
+  password: z.string().min(1, 'Password is required'),
+});
+
+type LoginFormValues = z.infer<typeof loginSchema>;
 
 const Login: React.FC = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { user, login } = useAuth();
   const navigate = useNavigate();
 
-  // If user is already logged in, redirect to dashboard
+  const { register, handleSubmit, setValue, formState: { errors } } = useForm<LoginFormValues>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: { email: '', password: '' }
+  });
+
   if (user) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/boltonadmin" replace />;
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmit = async (data: LoginFormValues) => {
     setIsLoading(true);
-    
     try {
-      await login(email, password);
-      navigate('/');
+      await login(data.email, data.password);
+      navigate('/boltonadmin');
     } catch (error) {
       console.error('Login failed:', error);
     } finally {
@@ -93,7 +103,7 @@ const Login: React.FC = () => {
           </div>
 
           <div className="space-y-8">
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               <div className="space-y-3">
                 <Label htmlFor="email" className="text-[12px] font-medium text-zinc-600 dark:text-zinc-400 ml-1">
                   Email Address
@@ -102,11 +112,10 @@ const Login: React.FC = () => {
                   id="email"
                   type="email"
                   placeholder="name@example.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  className="h-14 rounded-2xl bg-white dark:bg-zinc-900/40 border-zinc-200/80 dark:border-zinc-800/80 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] transition-all focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:border-primary placeholder:text-zinc-400 text-[15px]"
+                  {...register('email')}
+                  className={`h-14 rounded-2xl bg-white dark:bg-zinc-900/40 border-zinc-200/80 dark:border-zinc-800/80 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] transition-all focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:border-primary placeholder:text-zinc-400 text-[15px] ${errors.email ? 'border-red-500' : ''}`}
                 />
+                {errors.email && <p className="text-red-500 text-xs mt-1 ml-1">{errors.email.message}</p>}
               </div>
               <div className="space-y-3">
                 <div className="flex items-center justify-between ml-1">
@@ -120,11 +129,10 @@ const Login: React.FC = () => {
                 <Input
                   id="password"
                   type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  className="h-14 rounded-2xl bg-white dark:bg-zinc-900/40 border-zinc-200/80 dark:border-zinc-800/80 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] transition-all focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:border-primary text-[15px]"
+                  {...register('password')}
+                  className={`h-14 rounded-2xl bg-white dark:bg-zinc-900/40 border-zinc-200/80 dark:border-zinc-800/80 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] transition-all focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:border-primary text-[15px] ${errors.password ? 'border-red-500' : ''}`}
                 />
+                {errors.password && <p className="text-red-500 text-xs mt-1 ml-1">{errors.password.message}</p>}
               </div>
               
               <Button 
@@ -155,8 +163,8 @@ const Login: React.FC = () => {
                   type="button"
                   className="h-12 rounded-2xl text-[13px] font-medium border-zinc-200/60 dark:border-zinc-800/60 hover:bg-white dark:hover:bg-zinc-900 shadow-sm transition-all"
                   onClick={() => {
-                    setEmail(user.email);
-                    setPassword(user.password);
+                    setValue('email', user.email);
+                    setValue('password', user.password);
                   }}
                 >
                   {user.role}

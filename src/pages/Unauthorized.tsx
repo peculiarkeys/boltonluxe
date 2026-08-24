@@ -22,7 +22,7 @@ const Unauthorized: React.FC = () => {
           Go Back
         </Button>
         <Button asChild>
-          <Link to="/">Go to Dashboard</Link>
+          <Link to="/boltonadmin">Go to Dashboard</Link>
         </Button>
       </div>
     </div>

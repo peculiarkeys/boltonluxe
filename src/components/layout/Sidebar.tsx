@@ -39,39 +39,39 @@ const Sidebar = () => {
   const location = useLocation();
   
   const navigationItems: SidebarItemProps[] = [
-    { name: 'Dashboard', icon: <Home className="w-5 h-5" />, path: '/', requiredRole: 'staff' },
+    { name: 'Dashboard', icon: <Home className="w-5 h-5" />, path: '/boltonadmin', requiredRole: 'staff' },
     { 
       name: 'Loyalty Program', 
       icon: <Award className="w-5 h-5" />, 
-      path: '/loyalty',
+      path: '/boltonadmin/loyalty',
       requiredRole: 'staff',
       subItems: [
-        { name: 'Member Check-In',  path: '/loyalty/checkin' },
-        { name: 'Enrol New Member', path: '/loyalty/enroll' },
-        { name: 'Members',          path: '/loyalty/members' },
-        { name: 'Points Management',path: '/loyalty/points' },
-        { name: 'Rewards',          path: '/loyalty/rewards' },
-        { name: 'Notifications',    path: '/loyalty/notifications' },
-        { name: 'Activities',       path: '/loyalty/activities' },
-        { name: 'Reports',          path: '/loyalty/reports' },
+        { name: 'Member Check-In',  path: '/boltonadmin/loyalty/checkin' },
+        { name: 'Enrol New Member', path: '/boltonadmin/loyalty/enroll' },
+        { name: 'Members',          path: '/boltonadmin/loyalty/members' },
+        { name: 'Points Management',path: '/boltonadmin/loyalty/points' },
+        { name: 'Rewards',          path: '/boltonadmin/loyalty/rewards' },
+        { name: 'Notifications',    path: '/boltonadmin/loyalty/notifications' },
+        { name: 'Activities',       path: '/boltonadmin/loyalty/activities' },
+        { name: 'Reports',          path: '/boltonadmin/loyalty/reports' },
       ]
     },
     { 
       name: 'Business Development', 
       icon: <Sparkles className="w-5 h-5" />, 
-      path: '/business-development',
+      path: '/boltonadmin/business-development',
       requiredRole: 'manager',
       subItems: [
-        { name: 'Leads', path: '/business-development/leads' },
-        { name: 'Companies', path: '/business-development/companies' },
-        { name: 'Contacts', path: '/business-development/contacts' },
-        { name: 'Opportunities', path: '/business-development/opportunities' },
-        { name: 'Debt Recovery', path: '/business-development/debt-recovery' },
-        { name: 'Relationship Managers', path: '/business-development/relationship-managers' }
+        { name: 'Leads', path: '/boltonadmin/business-development/leads' },
+        { name: 'Companies', path: '/boltonadmin/business-development/companies' },
+        { name: 'Contacts', path: '/boltonadmin/business-development/contacts' },
+        { name: 'Opportunities', path: '/boltonadmin/business-development/opportunities' },
+        { name: 'Debt Recovery', path: '/boltonadmin/business-development/debt-recovery' },
+        { name: 'Relationship Managers', path: '/boltonadmin/business-development/relationship-managers' }
       ]
     },
-    { name: 'Calendar', icon: <Calendar className="w-5 h-5" />, path: '/bookings/calendar', requiredRole: 'staff' },
-    { name: 'Settings', icon: <Settings className="w-5 h-5" />, path: '/settings', requiredRole: 'staff' },
+    { name: 'Calendar', icon: <Calendar className="w-5 h-5" />, path: '/boltonadmin/bookings/calendar', requiredRole: 'staff' },
+    { name: 'Settings', icon: <Settings className="w-5 h-5" />, path: '/boltonadmin/settings', requiredRole: 'staff' },
   ];
 
   const [openMenus, setOpenMenus] = React.useState<Record<string, boolean>>({});
@@ -97,19 +97,19 @@ const Sidebar = () => {
   };
 
   return (
-    <div className="hidden md:flex w-64 flex-col bg-white shadow-xl h-screen">
-      <div className="px-6 py-6 flex items-center justify-center border-b border-gray-200">
-        <Link to="/" className="flex items-center justify-center">
+    <div className="hidden md:flex w-64 flex-col bg-white border-r border-zinc-100 h-screen">
+      <div className="px-6 py-6 flex items-center justify-center bg-slate-950">
+        <Link to="/boltonadmin" className="flex items-center justify-center">
           <img 
             src="/app_logo.png" 
             alt="Bolton HQ" 
-            className="h-10 w-auto object-contain" 
+            className="h-10 w-auto object-contain brightness-0 invert" 
           />
         </Link>
       </div>
 
       <div className="flex-1 overflow-y-auto py-4">
-        <ul className="space-y-1 px-3">
+        <ul className="flex flex-col">
           {navigationItems.map((item, index) => {
             if (!hasPermission(item.requiredRole)) return null;
             
@@ -119,14 +119,14 @@ const Sidebar = () => {
             return (
               <li key={index}>
                 {item.subItems ? (
-                  <div className="space-y-1">
+                  <div className="flex flex-col">
                     <button
                       onClick={() => toggleMenu(item.name)}
                       className={cn(
-                        "flex items-center justify-between w-full px-3 py-2 text-sm rounded-md transition-colors text-left",
+                        "flex items-center justify-between w-full pl-6 pr-4 py-3 text-sm transition-colors text-left border-l-2",
                         isActive || openMenus[item.name]
-                          ? "bg-blue-50 text-primary" 
-                          : "text-gray-700 hover:bg-gray-100 hover:text-primary"
+                          ? "bg-zinc-50 text-slate-900 font-medium border-slate-900" 
+                          : "text-zinc-500 hover:bg-zinc-50 hover:text-zinc-800 font-medium border-transparent"
                       )}
                     >
                       <div className="flex items-center">
@@ -145,7 +145,7 @@ const Sidebar = () => {
                     </button>
                     
                     {openMenus[item.name] && (
-                      <ul className="pl-6 space-y-1">
+                      <ul className="flex flex-col pb-1">
                         {item.subItems.map((subItem, subIndex) => {
                           const isSubActive = location.pathname === subItem.path;
                           
@@ -154,13 +154,12 @@ const Sidebar = () => {
                               <Link
                                 to={subItem.path}
                                 className={cn(
-                                  "flex items-center px-3 py-2 text-sm rounded-md text-left",
+                                  "flex items-center pl-[52px] pr-4 py-2.5 text-sm text-left border-l-2 transition-colors",
                                   isSubActive
-                                    ? "bg-blue-50 text-primary"
-                                    : "text-gray-700 hover:bg-gray-100 hover:text-primary"
+                                    ? "bg-zinc-50 text-slate-900 font-medium border-slate-900"
+                                    : "text-zinc-500 hover:bg-zinc-50 hover:text-zinc-800 font-medium border-transparent"
                                 )}
                               >
-                                <div className="w-1.5 h-1.5 rounded-full bg-gray-400 mr-3"></div>
                                 <span className="truncate">{subItem.name}</span>
                               </Link>
                             </li>
@@ -173,10 +172,10 @@ const Sidebar = () => {
                   <Link
                     to={item.path}
                     className={cn(
-                      "flex items-center px-3 py-2 text-sm rounded-md text-left",
+                      "flex items-center pl-6 pr-4 py-3 text-sm text-left border-l-2 transition-colors",
                       isActive
-                        ? "bg-blue-50 text-primary"
-                        : "text-gray-700 hover:bg-gray-100 hover:text-primary"
+                        ? "bg-zinc-50 text-slate-900 font-medium border-slate-900"
+                        : "text-zinc-500 hover:bg-zinc-50 hover:text-zinc-800 font-medium border-transparent"
                     )}
                   >
                     {item.icon}
@@ -190,20 +189,20 @@ const Sidebar = () => {
       </div>
 
       {user && (
-        <div className="p-4 border-t border-gray-200">
-          <div className="flex items-center gap-3 p-3 rounded-lg bg-gray-50">
-            <div className="flex-shrink-0 h-10 w-10 rounded-full bg-primary flex items-center justify-center text-white">
+        <div className="p-4 border-t border-zinc-100">
+          <div className="flex items-center gap-3 p-3 rounded-xl bg-zinc-50">
+            <div className="flex-shrink-0 h-10 w-10 rounded-full bg-slate-900 flex items-center justify-center text-white font-medium text-sm">
               {user.avatar || user.name.substring(0, 2)}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-gray-900 truncate">{user.name}</p>
-              <p className="text-xs text-gray-500 truncate capitalize">{user.role.replace('_', ' ')}</p>
+              <p className="text-sm font-medium text-zinc-800 truncate">{user.name}</p>
+              <p className="text-xs text-zinc-500 truncate capitalize">{user.role.replace('_', ' ')}</p>
             </div>
             <button 
-              className="p-1 rounded-md hover:bg-gray-200"
+              className="p-1.5 rounded-full hover:bg-zinc-200 transition-colors text-zinc-400 hover:text-zinc-600"
               onClick={logout}
             >
-              <LogOut className="h-5 w-5 text-gray-500" />
+              <LogOut className="h-4 w-4" />
             </button>
           </div>
         </div>

@@ -12,7 +12,6 @@ import { useAuth } from "@/contexts/AuthContext";
 import NotFound from '@/pages/NotFound';
 import BookingsCalendar from '@/pages/bookings/BookingsCalendar';
 
-
 // Business Development imports
 import BusinessDevelopmentIndex from '@/pages/business-development/Index';
 import DebtRecoveryPage from '@/pages/business-development/DebtRecovery';
@@ -33,136 +32,163 @@ import Rewards from '@/pages/loyalty/Rewards';
 import MemberActivities from '@/pages/loyalty/Activities';
 import Reports from '@/pages/loyalty/Reports';
 
-const AppRoutes = () => {
+// Consumer App imports
+import { ConsumerAuthProvider, useConsumerAuth } from '@/consumer/contexts/ConsumerAuthContext';
+import ConsumerLayout from '@/consumer/layouts/ConsumerLayout';
+import ConsumerLogin from '@/consumer/pages/ConsumerLogin';
+import ConsumerSignUp from '@/consumer/pages/ConsumerSignUp';
+import ConsumerDashboard from '@/consumer/pages/ConsumerDashboard';
+import ConsumerStays from '@/consumer/pages/ConsumerStays';
+import ConsumerAccount from '@/consumer/pages/ConsumerAccount';
+import ConsumerRewards from '@/consumer/pages/ConsumerRewards';
+import React from 'react';
+
+// ─── Consumer Protected Route (Supabase auth) ────────────────────────
+const ConsumerProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+  const { user, isLoading } = useConsumerAuth();
+  
+  if (isLoading) {
+    return <div className="min-h-screen flex items-center justify-center bg-gray-50 text-gray-500 font-normal">Loading...</div>;
+  }
+  
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return <>{children}</>;
+};
+
+// ─── Admin Routes (under /boltonadmin) ────────────────────────────────
+const AdminRoutes = () => {
   const { user } = useAuth();
 
   return (
     <Routes>
-      <Route path="/login" element={<Login />} />
-      <Route path="/unauthorized" element={<Unauthorized />} />
+      <Route path="login" element={<Login />} />
+      <Route path="unauthorized" element={<Unauthorized />} />
       
-      <Route path="/" element={
+      <Route index element={
         <ProtectedRoute>
           <Layout><Dashboard /></Layout>
         </ProtectedRoute>
       } />
       
-      <Route path="/properties" element={
+      <Route path="properties" element={
         <ProtectedRoute>
           <Layout><Properties /></Layout>
         </ProtectedRoute>
       } />
       
       {/* Bookings Routes */}
-      <Route path="/bookings/calendar" element={
+      <Route path="bookings/calendar" element={
         <ProtectedRoute>
           <Layout><BookingsCalendar /></Layout>
         </ProtectedRoute>
       } />
       
       {/* Loyalty Program Routes */}
-      <Route path="/loyalty" element={
+      <Route path="loyalty" element={
         <ProtectedRoute>
           <Layout><LoyaltyIndex /></Layout>
         </ProtectedRoute>
       } />
 
-      <Route path="/loyalty/checkin" element={
+      <Route path="loyalty/checkin" element={
         <ProtectedRoute>
           <Layout><CheckIn /></Layout>
         </ProtectedRoute>
       } />
 
-      <Route path="/loyalty/enroll" element={
+      <Route path="loyalty/enroll" element={
         <ProtectedRoute>
           <Layout><Enroll /></Layout>
         </ProtectedRoute>
       } />
 
-      <Route path="/loyalty/notifications" element={
+      <Route path="loyalty/notifications" element={
         <ProtectedRoute>
           <Layout><Notifications /></Layout>
         </ProtectedRoute>
       } />
       
-      <Route path="/loyalty/members" element={
+      <Route path="loyalty/members" element={
         <ProtectedRoute>
           <Layout><Members /></Layout>
         </ProtectedRoute>
       } />
       
-      <Route path="/loyalty/points" element={
+      <Route path="loyalty/points" element={
         <ProtectedRoute>
           <Layout><PointsManagement /></Layout>
         </ProtectedRoute>
       } />
       
-      <Route path="/loyalty/rewards" element={
+      <Route path="loyalty/rewards" element={
         <ProtectedRoute>
           <Layout><Rewards /></Layout>
         </ProtectedRoute>
       } />
       
-      <Route path="/loyalty/activities" element={
+      <Route path="loyalty/activities" element={
         <ProtectedRoute>
           <Layout><MemberActivities /></Layout>
         </ProtectedRoute>
       } />
       
-      <Route path="/loyalty/reports" element={
+      <Route path="loyalty/reports" element={
         <ProtectedRoute>
           <Layout><Reports /></Layout>
         </ProtectedRoute>
       } />
       
       {/* Business Development Routes */}
-      <Route path="/business-development" element={
+      <Route path="business-development" element={
         <ProtectedRoute>
           <Layout><BusinessDevelopmentIndex /></Layout>
         </ProtectedRoute>
       } />
 
-      <Route path="/business-development/companies" element={
+      <Route path="business-development/companies" element={
         <ProtectedRoute>
           <Layout><CompaniesPage /></Layout>
         </ProtectedRoute>
       } />
 
-      <Route path="/business-development/leads" element={
+      <Route path="business-development/leads" element={
         <ProtectedRoute>
           <Layout><LeadsPage /></Layout>
         </ProtectedRoute>
       } />
 
-      <Route path="/business-development/contacts" element={
+      <Route path="business-development/contacts" element={
         <ProtectedRoute>
           <Layout><ContactsPage /></Layout>
         </ProtectedRoute>
       } />
 
-      <Route path="/business-development/opportunities" element={
+      <Route path="business-development/opportunities" element={
         <ProtectedRoute>
           <Layout><OpportunitiesPage /></Layout>
         </ProtectedRoute>
       } />
 
-      <Route path="/business-development/debt-recovery" element={
+      <Route path="business-development/debt-recovery" element={
         <ProtectedRoute>
           <Layout><DebtRecoveryPage /></Layout>
         </ProtectedRoute>
       } />
 
-      <Route path="/business-development/relationship-managers" element={
+      <Route path="business-development/relationship-managers" element={
         <ProtectedRoute>
           <Layout><RelationshipManagersPage /></Layout>
         </ProtectedRoute>
       } />
       
-      <Route path="/settings" element={
+      <Route path="settings" element={
         <ProtectedRoute>
           <Layout>
             <div className="p-8 text-center space-y-4">
-              <h1 className="text-2xl font-bold">Settings</h1>
+              <h1 className="text-2xl font-semibold">Settings</h1>
               <p>System configuration and user preferences.</p>
             </div>
           </Layout>
@@ -174,15 +200,42 @@ const AppRoutes = () => {
   );
 };
 
+// ─── Main App ─────────────────────────────────────────────────────────
 function App() {
   return (
     <AuthProvider>
-      <Router>
-        <div className="min-h-screen">
-          <AppRoutes />
-          <Toaster position="top-right" />
-        </div>
-      </Router>
+      <ConsumerAuthProvider>
+        <Router>
+          <div className="min-h-screen">
+            <Routes>
+              {/* ── Consumer Routes (root level) ── */}
+              <Route path="/login" element={<ConsumerLogin />} />
+              <Route path="/signup" element={<ConsumerSignUp />} />
+              
+              <Route element={
+                <ConsumerProtectedRoute>
+                  <ConsumerLayout />
+                </ConsumerProtectedRoute>
+              }>
+                <Route path="/dashboard" element={<ConsumerDashboard />} />
+                <Route path="/stays" element={<ConsumerStays />} />
+                <Route path="/account" element={<ConsumerAccount />} />
+                <Route path="/rewards" element={<ConsumerRewards />} />
+              </Route>
+              
+              {/* Root redirect to consumer dashboard */}
+              <Route path="/" element={<Navigate to="/dashboard" replace />} />
+              
+              {/* ── Admin Routes (under /boltonadmin) ── */}
+              <Route path="/boltonadmin/*" element={<AdminRoutes />} />
+              
+              {/* ── Catch-all ── */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+            <Toaster position="top-right" />
+          </div>
+        </Router>
+      </ConsumerAuthProvider>
     </AuthProvider>
   );
 }

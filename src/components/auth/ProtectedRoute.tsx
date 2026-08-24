@@ -15,11 +15,11 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   const { user, hasPermission } = useAuth();
 
   if (!user) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/boltonadmin/login" replace />;
   }
 
   if (requiredRole && !hasPermission(requiredRole)) {
-    return <Navigate to="/unauthorized" replace />;
+    return <Navigate to="/boltonadmin/unauthorized" replace />;
   }
 
   return <>{children}</>;

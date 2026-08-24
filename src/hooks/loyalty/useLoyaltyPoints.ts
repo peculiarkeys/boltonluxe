@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
@@ -23,19 +23,44 @@ export interface PointsSummary {
 }
 
 export const useLoyaltyPoints = () => {
-  const [transactions, setTransactions] = useState<PointTransaction[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [summary, setSummary] = useState<PointsSummary>({
-    totalIssued: 0,
-    totalRedeemed: 0,
-    currentOutstanding: 0,
-    monthlyGrowth: 0,
-    redemptionRate: 25 // Default value: 25 points = $1
-  });
+  const queryClient = useQueryClient();
 
-  const fetchTransactions = async () => {
-    setIsLoading(true);
-    try {
+  const fetchPointsSummary = async (): Promise<PointsSummary> => {
+    const { data: transactionsData, error: transactionsError } = await supabase
+      .from('loyalty_point_transactions')
+      .select('*');
+
+    if (transactionsError) throw transactionsError;
+
+    const totalIssued = transactionsData
+      .filter(t => t.type === 'earned')
+      .reduce((sum, t) => sum + t.amount, 0);
+    
+    const totalRedeemed = transactionsData
+      .filter(t => t.type === 'redeemed')
+      .reduce((sum, t) => sum + t.amount, 0);
+    
+    const currentOutstanding = totalIssued - totalRedeemed;
+    
+    const now = new Date();
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    
+    const monthlyGrowth = transactionsData
+      .filter(t => t.type === 'earned' && new Date(t.date) >= startOfMonth)
+      .reduce((sum, t) => sum + t.amount, 0);
+
+    return {
+      totalIssued,
+      totalRedeemed,
+      currentOutstanding,
+      monthlyGrowth,
+      redemptionRate: 25
+    };
+  };
+
+  const { data: transactions = [], isLoading: isLoadingTransactions } = useQuery({
+    queryKey: ['loyalty_point_transactions'],
+    queryFn: async () => {
       const { data: transactionsData, error: transactionsError } = await supabase
         .from('loyalty_point_transactions')
         .select('*')
@@ -43,99 +68,42 @@ export const useLoyaltyPoints = () => {
 
       if (transactionsError) throw transactionsError;
 
-      // Fetch member data
       const { data: membersData, error: membersError } = await supabase
         .from('loyalty_members')
         .select('id, name');
 
       if (membersError) throw membersError;
 
-      // Create a map of member IDs to names
       const memberMap = new Map();
       membersData.forEach(member => {
         memberMap.set(member.id, member.name);
       });
 
-      // Combine the data
-      const transactionsWithNames = transactionsData.map(transaction => ({
+      return transactionsData.map(transaction => ({
         ...transaction,
         memberName: memberMap.get(transaction.member_id) || 'Unknown Member'
-      }));
-
-      setTransactions(transactionsWithNames);
-      
-      // Calculate summary data
-      await fetchPointsSummary();
-    } catch (error) {
-      console.error('Error fetching loyalty points transactions:', error);
-      toast.error('Failed to load loyalty points data');
-    } finally {
-      setIsLoading(false);
+      })) as PointTransaction[];
     }
-  };
+  });
 
-  const fetchPointsSummary = async () => {
-    try {
-      const { data: transactionsData, error: transactionsError } = await supabase
-        .from('loyalty_point_transactions')
-        .select('*');
+  const { data: summary = {
+    totalIssued: 0,
+    totalRedeemed: 0,
+    currentOutstanding: 0,
+    monthlyGrowth: 0,
+    redemptionRate: 25
+  }, isLoading: isLoadingSummary } = useQuery({
+    queryKey: ['loyalty_points_summary'],
+    queryFn: fetchPointsSummary
+  });
 
-      if (transactionsError) throw transactionsError;
-
-      // Calculate totals
-      const totalIssued = transactionsData
-        .filter(t => t.type === 'earned')
-        .reduce((sum, t) => sum + t.amount, 0);
-      
-      const totalRedeemed = transactionsData
-        .filter(t => t.type === 'redeemed')
-        .reduce((sum, t) => sum + t.amount, 0);
-      
-      const currentOutstanding = totalIssued - totalRedeemed;
-      
-      // Calculate monthly growth
-      const now = new Date();
-      const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-      
-      const monthlyGrowth = transactionsData
-        .filter(t => t.type === 'earned' && new Date(t.date) >= startOfMonth)
-        .reduce((sum, t) => sum + t.amount, 0);
-
-      setSummary({
-        totalIssued,
-        totalRedeemed,
-        currentOutstanding,
-        monthlyGrowth,
-        redemptionRate: 25 // Default value: 25 points = $1
-      });
-
-      return {
-        totalIssued,
-        totalRedeemed,
-        currentOutstanding,
-        monthlyGrowth,
-        redemptionRate: 25
-      };
-    } catch (error) {
-      console.error('Error calculating loyalty points summary:', error);
-      return {
-        totalIssued: 0,
-        totalRedeemed: 0,
-        currentOutstanding: 0,
-        monthlyGrowth: 0,
-        redemptionRate: 25
-      };
-    }
-  };
-
-  const addTransaction = async (transactionData: {
-    member_id: string;
-    amount: number;
-    type: 'earned' | 'redeemed';
-    description: string;
-  }) => {
-    try {
-      // Insert transaction
+  const addTransactionMutation = useMutation({
+    mutationFn: async (transactionData: {
+      member_id: string;
+      amount: number;
+      type: 'earned' | 'redeemed';
+      description: string;
+    }) => {
       const { data, error } = await supabase
         .from('loyalty_point_transactions')
         .insert([{
@@ -146,7 +114,6 @@ export const useLoyaltyPoints = () => {
 
       if (error) throw error;
 
-      // Update member points
       const pointsChange = transactionData.type === 'earned' 
         ? transactionData.amount 
         : -transactionData.amount;
@@ -159,7 +126,6 @@ export const useLoyaltyPoints = () => {
 
       if (updateError) throw updateError;
 
-      // Fetch the member name
       const { data: memberData, error: memberError } = await supabase
         .from('loyalty_members')
         .select('name')
@@ -168,46 +134,34 @@ export const useLoyaltyPoints = () => {
 
       if (memberError) throw memberError;
 
-      // Add to local state
-      setTransactions(prev => [
-        {
-          ...data[0],
-          memberName: memberData.name
-        } as PointTransaction,
-        ...prev
-      ]);
-
-      // Update summary
-      fetchPointsSummary();
-
+      return {
+        ...data[0],
+        memberName: memberData.name
+      } as PointTransaction;
+    },
+    onSuccess: (data, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['loyalty_point_transactions'] });
+      queryClient.invalidateQueries({ queryKey: ['loyalty_points_summary'] });
       toast.success(
-        transactionData.type === 'earned'
+        variables.type === 'earned'
           ? 'Points awarded successfully'
           : 'Points redeemed successfully'
       );
-
-      return data[0];
-    } catch (error) {
-      console.error('Error processing points transaction:', error);
-      toast.error(`Failed to ${transactionData.type === 'earned' ? 'award' : 'redeem'} points`);
-      throw error;
+    },
+    onError: (error, variables) => {
+      console.error(error);
+      toast.error(`Failed to ${variables.type === 'earned' ? 'award' : 'redeem'} points`);
     }
-  };
-
-  const refreshTransactions = () => {
-    fetchTransactions();
-  };
-
-  // Load data on mount
-  useEffect(() => {
-    fetchTransactions();
-  }, []);
+  });
 
   return {
     transactions,
-    isLoading,
+    isLoading: isLoadingTransactions || isLoadingSummary,
     summary,
-    addTransaction,
-    refreshTransactions
+    addTransaction: addTransactionMutation.mutateAsync,
+    refreshTransactions: () => {
+      queryClient.invalidateQueries({ queryKey: ['loyalty_point_transactions'] });
+      queryClient.invalidateQueries({ queryKey: ['loyalty_points_summary'] });
+    }
   };
 };

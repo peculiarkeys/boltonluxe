@@ -21,76 +21,81 @@ const Dashboard = () => {
   const navigate = useNavigate();
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row items-start justify-between gap-4 md:gap-8">
-        <div>
-          <h1 className="text-3xl font-medium tracking-tight text-gray-900">Dashboard</h1>
-          <p className="text-muted-foreground">Overview of your hospitality operations.</p>
+      {/* Header section matching the style exactly */}
+      <div className="flex flex-col gap-6 mb-6">
+        <div className="flex items-center text-sm text-zinc-500">
+          <span className="text-zinc-400">Home</span>
+          <span className="mx-2">/</span>
+          <span className="text-zinc-800 font-medium">Overview</span>
         </div>
-        <div className="flex items-center gap-2">
-          <Button variant="outline" className="gap-2" onClick={() => navigate('/loyalty/checkin')}>
-            <CreditCard className="w-4 h-4" />
-            Member Check-In
-          </Button>
-          <Button className="gap-2" onClick={() => navigate('/loyalty/enroll')}>
-            <UserPlus className="w-4 h-4" />
-            Add Member
-          </Button>
+        
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <button className="flex items-center gap-2 bg-slate-950 hover:bg-slate-900 text-white px-4 py-2 rounded-full text-sm font-medium transition-colors" onClick={() => navigate('/loyalty/enroll')}>
+              <UserPlus className="w-4 h-4" />
+              Add Member
+            </button>
+            <button className="flex items-center gap-2 bg-white border border-zinc-200 hover:bg-zinc-50 text-zinc-700 px-4 py-2 rounded-full text-sm font-medium transition-colors shadow-sm" onClick={() => navigate('/loyalty/checkin')}>
+              <CreditCard className="w-4 h-4 text-zinc-500" />
+              Member Check-In
+            </button>
+          </div>
         </div>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <Card className="shadow-none border border-zinc-200 bg-white rounded-xl">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 p-4 border-b border-zinc-100">
+            <CardTitle className="text-sm font-medium text-zinc-600">
               Total Loyalty Members
             </CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
+            <Users className="h-4 w-4 text-zinc-400" />
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-medium text-gray-900">1,284</div>
-            <p className="text-xs text-muted-foreground">
+          <CardContent className="p-4">
+            <div className="text-2xl font-medium text-zinc-800">1,284</div>
+            <p className="text-xs font-medium text-emerald-500 mt-1">
               +124 from last month
             </p>
           </CardContent>
         </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
+        <Card className="shadow-none border border-zinc-200 bg-white rounded-xl">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 p-4 border-b border-zinc-100">
+            <CardTitle className="text-sm font-medium text-zinc-600">
               Points Issued (MTD)
             </CardTitle>
-            <Award className="h-4 w-4 text-muted-foreground" />
+            <Award className="h-4 w-4 text-zinc-400" />
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-medium text-gray-900">45,230</div>
-            <p className="text-xs text-muted-foreground">
+          <CardContent className="p-4">
+            <div className="text-2xl font-medium text-zinc-800">45,230</div>
+            <p className="text-xs font-medium text-emerald-500 mt-1">
               +8.2% from last month
             </p>
           </CardContent>
         </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
+        <Card className="shadow-none border border-zinc-200 bg-white rounded-xl">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 p-4 border-b border-zinc-100">
+            <CardTitle className="text-sm font-medium text-zinc-600">
               Active Leads
             </CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
+            <TrendingUp className="h-4 w-4 text-zinc-400" />
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-medium text-gray-900">42</div>
-            <p className="text-xs text-muted-foreground">
+          <CardContent className="p-4">
+            <div className="text-2xl font-medium text-zinc-800">42</div>
+            <p className="text-xs font-medium text-emerald-500 mt-1">
               12 new this week
             </p>
           </CardContent>
         </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
+        <Card className="shadow-none border border-zinc-200 bg-white rounded-xl">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 p-4 border-b border-zinc-100">
+            <CardTitle className="text-sm font-medium text-zinc-600">
               Conversion Rate
             </CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
+            <DollarSign className="h-4 w-4 text-zinc-400" />
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-medium text-gray-900">24.5%</div>
-            <p className="text-xs text-muted-foreground">
+          <CardContent className="p-4">
+            <div className="text-2xl font-medium text-zinc-800">24.5%</div>
+            <p className="text-xs font-medium text-emerald-500 mt-1">
               +2.1% from last month
             </p>
           </CardContent>
@@ -104,19 +109,19 @@ const Dashboard = () => {
           <TabsTrigger value="bizdev">Business Development</TabsTrigger>
         </TabsList>
         <TabsContent value="overview" className="space-y-4">
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-            <Card className="col-span-4">
-              <CardHeader>
-                <CardTitle>Recent Loyalty Activities</CardTitle>
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7">
+            <Card className="col-span-4 shadow-none border border-zinc-200 bg-white rounded-xl overflow-hidden">
+              <CardHeader className="p-4 border-b border-zinc-100 bg-zinc-50/30">
+                <CardTitle className="text-sm font-medium text-zinc-800">Recent Loyalty Activities</CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-0">
                 <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Member</TableHead>
-                      <TableHead>Activity</TableHead>
-                      <TableHead>Points</TableHead>
-                      <TableHead>Date</TableHead>
+                  <TableHeader className="bg-zinc-50/50">
+                    <TableRow className="border-zinc-100">
+                      <TableHead className="text-xs font-medium text-zinc-500 uppercase tracking-wider h-10">Member</TableHead>
+                      <TableHead className="text-xs font-medium text-zinc-500 uppercase tracking-wider h-10">Activity</TableHead>
+                      <TableHead className="text-xs font-medium text-zinc-500 uppercase tracking-wider h-10">Points</TableHead>
+                      <TableHead className="text-xs font-medium text-zinc-500 uppercase tracking-wider h-10">Date</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -127,40 +132,40 @@ const Dashboard = () => {
                       { member: 'James Martin', activity: 'Dining', points: '+85', date: '2 days ago' },
                       { member: 'Olivia Thompson', activity: 'Room Booking', points: '+600', date: '3 days ago' },
                     ].map((activity, index) => (
-                      <TableRow key={index}>
-                        <TableCell className="font-medium">{activity.member}</TableCell>
-                        <TableCell>{activity.activity}</TableCell>
-                        <TableCell className={activity.points.startsWith('+') ? 'text-green-600' : 'text-red-600'}>
+                      <TableRow key={index} className="border-zinc-100 hover:bg-zinc-50/50">
+                        <TableCell className="font-medium text-zinc-700 text-sm py-3">{activity.member}</TableCell>
+                        <TableCell className="text-zinc-600 text-sm py-3">{activity.activity}</TableCell>
+                        <TableCell className={`text-sm font-medium py-3 ${activity.points.startsWith('+') ? 'text-emerald-500' : 'text-zinc-500'}`}>
                           {activity.points}
                         </TableCell>
-                        <TableCell>{activity.date}</TableCell>
+                        <TableCell className="text-zinc-500 text-sm py-3">{activity.date}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
                 </Table>
               </CardContent>
             </Card>
-            <Card className="col-span-3">
-              <CardHeader>
-                <CardTitle>Upcoming BizDev Meetings</CardTitle>
+            <Card className="col-span-3 shadow-none border border-zinc-200 bg-white rounded-xl overflow-hidden">
+              <CardHeader className="p-4 border-b border-zinc-100 bg-zinc-50/30">
+                <CardTitle className="text-sm font-medium text-zinc-800">Upcoming BizDev Meetings</CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
+              <CardContent className="p-4">
+                <div className="space-y-1">
                   {[
                     { company: 'Apex Inc.', topic: 'Corporate Contract Renewal', time: '10:00 AM', date: 'Tomorrow' },
                     { company: 'Globex Corp', topic: 'Annual Conference Pitch', time: '2:30 PM', date: 'Jun 15' },
                     { company: 'Tech Solutions', topic: 'Partnership Discussion', time: '11:00 AM', date: 'Jun 16' },
                   ].map((meeting, index) => (
-                    <div key={index} className="flex items-start space-x-4 p-3 rounded-lg hover:bg-muted/50">
-                      <div className="bg-primary/10 rounded-md p-2">
-                        <CalendarCheck className="h-5 w-5 text-primary" />
+                    <div key={index} className="flex items-start space-x-4 p-3 rounded-lg hover:bg-zinc-50 transition-colors border border-transparent hover:border-zinc-100">
+                      <div className="bg-slate-100 rounded-full p-2.5 mt-0.5">
+                        <CalendarCheck className="h-4 w-4 text-slate-700" />
                       </div>
                       <div className="space-y-1">
-                        <h4 className="text-sm font-medium leading-none">
+                        <h4 className="text-sm font-medium leading-none text-zinc-800">
                           {meeting.company}
                         </h4>
-                        <p className="text-xs text-muted-foreground">{meeting.topic}</p>
-                        <div className="flex items-center text-xs text-muted-foreground">
+                        <p className="text-xs font-medium text-zinc-500">{meeting.topic}</p>
+                        <div className="flex items-center text-[11px] font-medium text-zinc-400 mt-1">
                           <Clock className="mr-1 h-3 w-3" />
                           {meeting.date} at {meeting.time}
                         </div>

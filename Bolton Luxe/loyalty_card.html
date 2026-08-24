@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bolton Luxe - Loyalty Card</title>
+  
+  <!-- Premium Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --card-width: 540px;
+      --card-height: 340px;
+      --gold-primary: #b86a20;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #0d0c0b;
+      color: #ffffff;
+      font-family: 'Montserrat', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      overflow-x: hidden;
+    }
+
+    /* Container for the 3D Perspective */
+    .card-container {
+      perspective: 1200px;
+      width: var(--card-width);
+      height: var(--card-height);
+      cursor: pointer;
+    }
+
+    /* Card Wrapper containing Front and Back */
+    .card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transform-style: preserve-3d;
+      transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Click or Hover action triggering flip */
+    .card-container.flipped .card-inner {
+      transform: rotateY(180deg);
+    }
+
+    /* Shared Card Face Styling */
+    .card-face {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 20px;
+      overflow: hidden;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      font-family: 'Marcellus', serif;
+    }
+
+    /* FRONT FACE (Dark Rooftop) */
+    .card-front {
+      background-color: #111;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+    }
+
+    .card-front-bg {
+      position: absolute;
+      inset: 0;
+      background-image: url('loyalty/card_bg_front.png');
+      background-size: cover;
+      background-position: center;
+      z-index: 1;
+    }
+
+    .card-front-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(160deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.3) 100%);
+      z-index: 2;
+    }
+
+    .card-front-content {
+      position: relative;
+      z-index: 3;
+      padding: 30px 32px;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .logo-img {
+      height: 50px;
+      width: auto;
+      object-fit: contain;
+    }
+
+    .bwg-mark {
+      height: 40px;
+      width: auto;
+      object-fit: contain;
+    }
+
+    .card-number {
+      color: #ffffff;
+      font-size: 28px;
+      letter-spacing: 3px;
+      font-weight: 400;
+      margin-top: 20px;
+    }
+
+    .card-footer {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+    }
+
+    .card-meta-group {
+      display: flex;
+      gap: 48px;
+    }
+
+    .meta-label {
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 10px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    .meta-value {
+      color: #ffffff;
+      font-size: 18px;
+    }
+
+    .qr-container {
+      width: 75px;
+      height: 75px;
+    }
+
+    .qr-img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    /* BACK FACE (Cream/Light Layout) */
+    .card-back {
+      background: #FAF8F5;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.15);
+      transform: rotateY(180deg);
+    }
+
+    .card-back-svg {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      z-index: 1;
+      opacity: 0.1;
+    }
+
+    .card-back-content {
+      position: relative;
+      z-index: 2;
+      padding: 30px 32px;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .card-back-logo-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .card-number-back {
+      color: #1a110a;
+      font-size: 22px;
+      letter-spacing: 2px;
+      font-weight: 400;
+    }
+
+    .card-description {
+      color: #3a2e24;
+      font-size: 13px;
+      line-height: 1.6;
+      max-width: 380px;
+      margin-top: 10px;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 400;
+    }
+
+    .card-benefits-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .benefit-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #2a1f16;
+      font-size: 12px;
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    .benefit-check {
+      color: var(--gold-primary);
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    /* Interaction Hint */
+    .hint {
+      margin-top: 24px;
+      font-size: 13px;
+      color: #888888;
+      user-select: none;
+      letter-spacing: 1px;
+    }
+
+    /* Responsiveness for mobile screens */
+    @media (max-width: 600px) {
+      :root {
+        --card-width: 340px;
+        --card-height: 214px;
+      }
+      .card-front-content, .card-back-content {
+        padding: 16px 18px;
+      }
+      .logo-img {
+        height: 32px;
+      }
+      .bwg-mark {
+        height: 26px;
+      }
+      .card-number {
+        font-size: 18px;
+        margin-top: 10px;
+        letter-spacing: 2px;
+      }
+      .card-number-back {
+        font-size: 14px;
+      }
+      .card-meta-group {
+        gap: 20px;
+      }
+      .meta-label {
+        font-size: 7px;
+      }
+      .meta-value {
+        font-size: 12px;
+      }
+      .qr-container {
+        width: 48px;
+        height: 48px;
+      }
+      .card-description {
+        font-size: 9px;
+        max-width: 240px;
+        line-height: 1.4;
+      }
+      .benefit-item {
+        font-size: 8px;
+        gap: 6px;
+      }
+      .benefit-check {
+        font-size: 11px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Interactive Card -->
+  <div class="card-container" id="loyaltyCard" onclick="this.classList.toggle('flipped')">
+    <div class="card-inner">
+      
+      <!-- FRONT OF CARD -->
+      <div class="card-face card-front">
+        <div class="card-front-bg"></div>
+        <div class="card-front-overlay"></div>
+        <div class="card-front-content">
+          <div class="card-header">
+            <!-- Replace src with your absolute/relative URL if needed -->
+            <img src="loyalty/logo_white.png" alt="Bolton Luxe Logo" class="logo-img">
+            <img src="loyalty/bwg_mark.png" alt="BWG Mark" class="bwg-mark">
+          </div>
+          
+          <div class="card-number">MEM260619142727</div>
+          
+          <div class="card-footer">
+            <div class="card-meta-group">
+              <div>
+                <div class="meta-label">Holder Name</div>
+                <div class="meta-value">Guest User</div>
+              </div>
+              <div>
+                <div class="meta-label">Expiry Date</div>
+                <div class="meta-value">06/31</div>
+              </div>
+            </div>
+            <div class="qr-container">
+              <img src="loyalty/qr_white.png" alt="Loyalty QR Code" class="qr-img">
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- BACK OF CARD -->
+      <div class="card-face card-back">
+        <svg class="card-back-svg" width="320" height="240" viewBox="0 0 320 240">
+          <path d="M320 240 Q200 100 60 180 Q-20 220 0 140 Q40 40 200 80 Q340 120 320 240Z" fill="#b86a20" />
+        </svg>
+        <div class="card-back-content">
+          <div class="card-back-logo-row">
+            <img src="loyalty/logo_gold.png" alt="Bolton Luxe Logo Gold" class="logo-img">
+            <div class="card-number-back">MEM260619142727</div>
+          </div>
+          
+          <div class="card-description">
+            Luxe Royalty is Bolton White Group's exclusive loyalty program, designed to reward our most valued guests with exceptional privileges.
+          </div>
+          
+          <div class="card-footer">
+            <div class="card-benefits-list">
+              <div class="benefit-item">
+                <span class="benefit-check">✓</span>
+                <span>Exclusive discounts on rooms, dining, spa & events</span>
+              </div>
+              <div class="benefit-item">
+                <span class="benefit-check">✓</span>
+                <span>Priority service & special member-only offers</span>
+              </div>
+              <div class="benefit-item">
+                <span class="benefit-check">✓</span>
+                <span>Points that unlock luxury experiences</span>
+              </div>
+            </div>
+            <div class="qr-container">
+              <img src="loyalty/qr_black.png" alt="Loyalty QR Code Black" class="qr-img">
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="hint">Click the card to flip it</div>
+
+</body>
+</html>

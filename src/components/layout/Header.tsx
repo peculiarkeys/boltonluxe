@@ -4,7 +4,6 @@ import {
   Bell, 
   Search, 
   Menu,
-  Building2,
   LogOut,
   User
 } from 'lucide-react';
@@ -21,18 +20,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import Sidebar from './Sidebar';
 import { useAuth } from '@/contexts/AuthContext';
-import { toast } from 'sonner';
 
 const Header = () => {
-  const [selectedProperty, setSelectedProperty] = React.useState('Grand Bolton Hotel');
   const { user, logout } = useAuth();
-  
-  const properties = [
-    'Grand Bolton Hotel',
-    'Bolton Resort & Spa',
-    'Bolton Executive Suites',
-    'Bolton Boutique Hotel'
-  ];
 
   const handleLogout = () => {
     logout();
@@ -52,28 +42,6 @@ const Header = () => {
               <Sidebar />
             </SheetContent>
           </Sheet>
-          
-          <div className="relative ml-3 md:ml-0">
-            <Building2 className="absolute left-3 top-1/2 transform -translate-y-1/2 text-primary h-4 w-4" />
-            <select 
-              className="pl-10 pr-4 py-2 rounded-full bg-secondary/50 text-sm border-none focus:ring-2 focus:ring-primary focus:border-primary"
-              value={selectedProperty}
-              onChange={(e) => {
-                setSelectedProperty(e.target.value);
-                if (e.target.value === 'add-new') {
-                  toast.info('Redirecting to Properties page');
-                  window.location.href = '/properties';
-                }
-              }}
-            >
-              {properties.map((property, index) => (
-                <option key={index} value={property}>
-                  {property}
-                </option>
-              ))}
-              <option value="add-new">+ Add New Property</option>
-            </select>
-          </div>
         </div>
 
         <div className="hidden md:flex flex-1 max-w-md mx-6">

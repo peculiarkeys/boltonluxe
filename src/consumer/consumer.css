@@ -1,0 +1,42 @@
+/* ===================================================================
+   Bolton Luxe Consumer App — Scoped Design Tokens
+   These CSS custom properties are scoped under .consumer-app so they
+   do NOT collide with the admin app's HSL-based design tokens.
+   =================================================================== */
+
+.consumer-app {
+  /* Color Tokens */
+  --consumer-background: #f7f7f9;
+  --consumer-foreground: #374151;
+  --consumer-card: #ffffff;
+  --consumer-card-foreground: #374151;
+  --consumer-primary: #1f2937;
+  --consumer-primary-foreground: #ffffff;
+  --consumer-secondary: #f3f4f6;
+  --consumer-secondary-foreground: #1f2937;
+  --consumer-muted: #f9fafb;
+  --consumer-muted-foreground: #6b7280;
+  --consumer-accent: #f3f4f6;
+  --consumer-accent-foreground: #1f2937;
+  --consumer-border: #f3f4f6;
+  --consumer-input: #f3f4f6;
+  --consumer-ring: #e5e7eb;
+
+  /* Typography */
+  font-family: "Geist Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  letter-spacing: -0.01em;
+
+  /* Apply background */
+  background-color: var(--consumer-background);
+  color: var(--consumer-foreground);
+}
+
+.consumer-app h1,
+.consumer-app h2,
+.consumer-app h3,
+.consumer-app h4,
+.consumer-app h5,
+.consumer-app h6 {
+  color: #1f2937;
+}
