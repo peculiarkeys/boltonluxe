@@ -61,7 +61,7 @@ const BusinessDevelopmentIndex = () => {
     <div className="p-6 space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Business Development</h1>
+          <h1 className="text-3xl font-semibold tracking-tight">Business Development</h1>
           <p className="text-muted-foreground">
             Manage leads, companies, contacts, and sales opportunities
           </p>

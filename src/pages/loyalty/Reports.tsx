@@ -125,7 +125,7 @@ Member Growth,${summary.memberGrowth}%`;
     <div className="space-y-6 animate-fade-in">
       <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Loyalty Program Reports</h1>
+          <h1 className="text-3xl font-semibold tracking-tight">Loyalty Program Reports</h1>
           <p className="text-muted-foreground mt-2">
             Analytics and insights for the Bolton Loyalty Program
           </p>
@@ -148,7 +148,7 @@ Member Growth,${summary.memberGrowth}%`;
             <CardTitle className="text-sm font-medium">Total Members</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{summary.totalMembers}</div>
+            <div className="text-2xl font-semibold">{summary.totalMembers}</div>
             <p className="text-xs text-muted-foreground">
               {summary.memberGrowth > 0 ? `+${summary.memberGrowth}%` : `${summary.memberGrowth}%`} from last quarter
             </p>
@@ -159,7 +159,7 @@ Member Growth,${summary.memberGrowth}%`;
             <CardTitle className="text-sm font-medium">Points Issued (YTD)</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{summary.pointsIssued.toLocaleString()}</div>
+            <div className="text-2xl font-semibold">{summary.pointsIssued.toLocaleString()}</div>
             <p className="text-xs text-muted-foreground">Across all member accounts</p>
           </CardContent>
         </Card>
@@ -168,7 +168,7 @@ Member Growth,${summary.memberGrowth}%`;
             <CardTitle className="text-sm font-medium">Points Redeemed (YTD)</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{summary.pointsRedeemed.toLocaleString()}</div>
+            <div className="text-2xl font-semibold">{summary.pointsRedeemed.toLocaleString()}</div>
             <p className="text-xs text-muted-foreground">Total points redeemed for rewards</p>
           </CardContent>
         </Card>
@@ -177,7 +177,7 @@ Member Growth,${summary.memberGrowth}%`;
             <CardTitle className="text-sm font-medium">Redemption Rate</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{summary.redemptionRate}%</div>
+            <div className="text-2xl font-semibold">{summary.redemptionRate}%</div>
             <p className="text-xs text-muted-foreground">Of total issued points</p>
           </CardContent>
         </Card>

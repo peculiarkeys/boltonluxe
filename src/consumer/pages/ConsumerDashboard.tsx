@@ -376,7 +376,7 @@ const ConsumerDashboard = () => {
                 </span>
               </div>
               <div className="col-span-1 md:col-span-3 text-left md:text-right mt-2 md:mt-0">
-                <button className="text-sm font-medium text-gray-600 hover:text-black border border-gray-200 bg-white rounded-full px-4 py-1.5 shadow-sm transition-colors">
+                <button className="text-sm font-medium text-gray-600 hover:text-zinc-800 border border-gray-200 bg-white rounded-full px-4 py-1.5 shadow-sm transition-colors">
                   Manage
                 </button>
               </div>

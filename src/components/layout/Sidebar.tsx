@@ -98,12 +98,12 @@ const Sidebar = () => {
 
   return (
     <div className="hidden md:flex w-64 flex-col bg-white border-r border-zinc-100 h-screen">
-      <div className="px-6 py-6 flex items-center justify-center bg-slate-950">
+      <div className="px-6 py-6 flex items-center justify-center">
         <Link to="/boltonadmin" className="flex items-center justify-center">
           <img 
             src="/app_logo.png" 
             alt="Bolton HQ" 
-            className="h-10 w-auto object-contain brightness-0 invert" 
+            className="h-10 w-auto object-contain" 
           />
         </Link>
       </div>
@@ -125,7 +125,7 @@ const Sidebar = () => {
                       className={cn(
                         "flex items-center justify-between w-full pl-6 pr-4 py-3 text-sm transition-colors text-left border-l-2",
                         isActive || openMenus[item.name]
-                          ? "bg-zinc-50 text-slate-900 font-medium border-slate-900" 
+                          ? "bg-zinc-50 text-zinc-800 font-medium border-slate-900" 
                           : "text-zinc-500 hover:bg-zinc-50 hover:text-zinc-800 font-medium border-transparent"
                       )}
                     >
@@ -156,7 +156,7 @@ const Sidebar = () => {
                                 className={cn(
                                   "flex items-center pl-[52px] pr-4 py-2.5 text-sm text-left border-l-2 transition-colors",
                                   isSubActive
-                                    ? "bg-zinc-50 text-slate-900 font-medium border-slate-900"
+                                    ? "bg-zinc-50 text-zinc-800 font-medium border-slate-900"
                                     : "text-zinc-500 hover:bg-zinc-50 hover:text-zinc-800 font-medium border-transparent"
                                 )}
                               >
@@ -174,7 +174,7 @@ const Sidebar = () => {
                     className={cn(
                       "flex items-center pl-6 pr-4 py-3 text-sm text-left border-l-2 transition-colors",
                       isActive
-                        ? "bg-zinc-50 text-slate-900 font-medium border-slate-900"
+                        ? "bg-zinc-50 text-zinc-800 font-medium border-slate-900"
                         : "text-zinc-500 hover:bg-zinc-50 hover:text-zinc-800 font-medium border-transparent"
                     )}
                   >

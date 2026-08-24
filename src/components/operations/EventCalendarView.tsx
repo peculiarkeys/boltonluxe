@@ -115,7 +115,7 @@ const EventCalendarView: React.FC<EventCalendarViewProps> = ({ events, onEditEve
           today: (date) => isToday(date),
         }}
         modifiersClassNames={{
-          hasEvents: 'font-bold bg-primary/10',
+          hasEvents: 'font-semibold bg-primary/10',
           today: 'ring-2 ring-primary',
         }}
       />
@@ -133,7 +133,7 @@ const EventCalendarView: React.FC<EventCalendarViewProps> = ({ events, onEditEve
               <Card key={event.id} className="mb-4">
                 <CardHeader className="p-4 pb-2 flex-row items-start justify-between">
                   <div>
-                    <CardTitle className="text-lg font-bold">{event.name}</CardTitle>
+                    <CardTitle className="text-lg font-semibold">{event.name}</CardTitle>
                     <div className="text-sm text-muted-foreground mt-1">
                       {format(new Date(event.startDate), 'h:mm a')} - {format(new Date(event.endDate), 'h:mm a')}
                     </div>

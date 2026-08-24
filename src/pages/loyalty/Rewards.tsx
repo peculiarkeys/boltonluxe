@@ -262,7 +262,7 @@ const Rewards = () => {
     <div className="space-y-6 animate-fade-in">
       <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Loyalty Rewards</h1>
+          <h1 className="text-3xl font-semibold tracking-tight">Loyalty Rewards</h1>
           <p className="text-muted-foreground mt-2">
             Manage rewards and benefits available to loyalty program members
           </p>
@@ -341,7 +341,7 @@ const Rewards = () => {
             <CardFooter className="pt-2 pb-4 flex justify-between items-center">
               <div className="flex items-center">
                 <Gift className="h-5 w-5 mr-2 text-primary" />
-                <span className="font-bold text-lg">{reward.points_cost.toLocaleString()} points</span>
+                <span className="font-semibold text-lg">{reward.points_cost.toLocaleString()} points</span>
               </div>
               <Badge variant="outline" className={getStatusColor(reward.status)}>
                 {reward.status}

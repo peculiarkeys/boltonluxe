@@ -70,7 +70,7 @@ const RoomDetailsDialog: React.FC<RoomDetailsDialogProps> = ({
               </div>
             </div>
             <div className="text-right">
-              <div className="text-xl font-bold">${room.rate}</div>
+              <div className="text-xl font-semibold">${room.rate}</div>
               <div className="text-sm text-muted-foreground">per night</div>
             </div>
           </div>

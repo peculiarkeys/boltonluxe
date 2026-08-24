@@ -94,7 +94,7 @@ const Login: React.FC = () => {
           </div>
 
           <div className="space-y-4 text-center lg:text-left">
-            <h2 className="text-3xl font-heading font-medium tracking-tight text-zinc-900 dark:text-zinc-50">
+            <h2 className="text-3xl font-heading font-medium tracking-tight text-zinc-800 dark:text-zinc-50">
               Welcome back
             </h2>
             <p className="text-[15px] text-zinc-500 dark:text-zinc-400">

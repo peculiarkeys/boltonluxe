@@ -133,7 +133,7 @@ const BookingsCalendar = () => {
         
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-3">
-            <button className="flex items-center gap-2 bg-slate-950 hover:bg-slate-900 text-white px-4 py-2 rounded-full text-sm font-medium transition-colors">
+            <button className="flex items-center gap-2 bg-zinc-800 hover:bg-slate-900 text-white px-4 py-2 rounded-full text-sm font-medium transition-colors">
               <Plus className="w-4 h-4" />
               New Booking
             </button>

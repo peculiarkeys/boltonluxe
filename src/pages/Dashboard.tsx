@@ -31,11 +31,11 @@ const Dashboard = () => {
         
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div className="flex items-center gap-3">
-            <button className="flex items-center gap-2 bg-slate-950 hover:bg-slate-900 text-white px-4 py-2 rounded-full text-sm font-medium transition-colors" onClick={() => navigate('/loyalty/enroll')}>
+            <button className="flex items-center gap-2 bg-zinc-800 hover:bg-slate-900 text-white px-4 py-2 rounded-full text-sm font-medium transition-colors" onClick={() => navigate('/boltonadmin/loyalty/enroll')}>
               <UserPlus className="w-4 h-4" />
               Add Member
             </button>
-            <button className="flex items-center gap-2 bg-white border border-zinc-200 hover:bg-zinc-50 text-zinc-700 px-4 py-2 rounded-full text-sm font-medium transition-colors shadow-sm" onClick={() => navigate('/loyalty/checkin')}>
+            <button className="flex items-center gap-2 bg-white border border-zinc-200 hover:bg-zinc-50 text-zinc-700 px-4 py-2 rounded-full text-sm font-medium transition-colors shadow-sm" onClick={() => navigate('/boltonadmin/loyalty/checkin')}>
               <CreditCard className="w-4 h-4 text-zinc-500" />
               Member Check-In
             </button>

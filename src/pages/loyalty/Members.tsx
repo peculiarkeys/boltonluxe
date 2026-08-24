@@ -423,7 +423,7 @@ const Members = () => {
     <div className="space-y-6 animate-fade-in">
       <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Loyalty Members</h1>
+          <h1 className="text-3xl font-semibold tracking-tight">Loyalty Members</h1>
           <p className="text-muted-foreground mt-2">
             Manage members of the Bolton Loyalty Program
           </p>
@@ -579,7 +579,7 @@ const Members = () => {
             <CardFooter className="flex justify-between pt-2">
               <div className="flex items-center gap-1">
                 <Award className="h-4 w-4 text-primary" />
-                <span className="font-bold">{member.points.toLocaleString()} points</span>
+                <span className="font-semibold">{member.points.toLocaleString()} points</span>
               </div>
               <div className="text-sm text-muted-foreground">
                 {member.stays} {member.stays === 1 ? 'stay' : 'stays'}

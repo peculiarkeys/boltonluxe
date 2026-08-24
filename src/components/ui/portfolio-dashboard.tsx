@@ -109,12 +109,12 @@ export const PortfolioDashboard: React.FC<PortfolioComponentProps> = ({ data }) 
                 <div className="flex justify-between items-center px-5 bg-[#0f0f0f] py-4">
                     <div className="flex items-center gap-2">
                         <span className="text-white font-medium text-base">Portfolio</span>
-                        <span className="text-[#666666] text-[10px] font-bold tracking-widest uppercase">/ RISK: {data.riskLevel}</span>
+                        <span className="text-[#666666] text-[10px] font-semibold tracking-widest uppercase">/ RISK: {data.riskLevel}</span>
                     </div>
                     <motion.button
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
-                        className="bg-[#FF6B2B] hover:bg-[#ff7b42] text-black px-3.5 py-1.5 rounded-full flex items-center gap-1.5 text-xs font-bold transition-colors shadow-lg shadow-orange-950/20"
+                        className="bg-[#FF6B2B] hover:bg-[#ff7b42] text-zinc-800 px-3.5 py-1.5 rounded-full flex items-center gap-1.5 text-xs font-semibold transition-colors shadow-lg shadow-orange-950/20"
                     >
                         <Plus size={16} />
                         Fund
@@ -128,15 +128,15 @@ export const PortfolioDashboard: React.FC<PortfolioComponentProps> = ({ data }) 
                             <motion.h1
                                 initial={{ opacity: 0, x: -20 }}
                                 animate={{ opacity: 1, x: 0 }}
-                                className="text-white text-3xl font-bold tracking-tight mb-1"
+                                className="text-white text-3xl font-semibold tracking-tight mb-1"
                             >
                                 ${data.totalBalance.toLocaleString(undefined, { minimumFractionDigits: 2 })}
                             </motion.h1>
                             <div className="flex items-center gap-2">
-                                <span className="text-[#14E62B] text-xs font-bold">
+                                <span className="text-[#14E62B] text-xs font-semibold">
                                     +${data.totalPlValue.toLocaleString(undefined, { minimumFractionDigits: 2 })}
                                 </span>
-                                <span className="bg-[#172C19] text-[#14E62B] text-[10px] px-1.5 py-0.5 rounded-full font-bold">
+                                <span className="bg-[#172C19] text-[#14E62B] text-[10px] px-1.5 py-0.5 rounded-full font-semibold">
                                     +{data.totalPlPercentage}%
                                 </span>
                             </div>
@@ -147,7 +147,7 @@ export const PortfolioDashboard: React.FC<PortfolioComponentProps> = ({ data }) 
                                 <button
                                     key={tf}
                                     onClick={() => setSelectedTimeframe(tf)}
-                                    className={`relative px-2.5 py-1 text-[10px] font-bold rounded-full transition-colors duration-200 ${selectedTimeframe === tf ? 'text-[#BF5527]' : 'text-[#555] hover:text-[#888]'
+                                    className={`relative px-2.5 py-1 text-[10px] font-semibold rounded-full transition-colors duration-200 ${selectedTimeframe === tf ? 'text-[#BF5527]' : 'text-[#555] hover:text-[#888]'
                                         }`}
                                 >
                                     {selectedTimeframe === tf && (
@@ -204,7 +204,7 @@ export const PortfolioDashboard: React.FC<PortfolioComponentProps> = ({ data }) 
                     {/* Assets Section Header */}
                     <div className="flex justify-between items-center mb-3">
                         <h2 className="text-white text-base font-semibold">{data.assets.length} Assets</h2>
-                        <button className="text-[#666] text-[10px] font-bold bg-[#1a1a1a] px-2.5 py-1 rounded-full border border-[#2a2a2a] hover:text-white transition-colors">
+                        <button className="text-[#666] text-[10px] font-semibold bg-[#1a1a1a] px-2.5 py-1 rounded-full border border-[#2a2a2a] hover:text-white transition-colors">
                             View all
                         </button>
                     </div>
@@ -225,7 +225,7 @@ export const PortfolioDashboard: React.FC<PortfolioComponentProps> = ({ data }) 
 
                     {/* Assets Table */}
                     <div className="space-y-3">
-                        <div className="grid grid-cols-5 text-[#444] text-[9px] font-bold uppercase tracking-widest px-2 ">
+                        <div className="grid grid-cols-5 text-[#444] text-[9px] font-semibold uppercase tracking-widest px-2 ">
                             <span className="col-span-1">Name</span>
                             <span className="text-right">Price</span>
                             <span className="text-right">Holdings</span>
@@ -246,7 +246,7 @@ export const PortfolioDashboard: React.FC<PortfolioComponentProps> = ({ data }) 
                                         <div className="w-7 h-7 rounded-full bg-[#1a1a1a] flex items-center justify-center overflow-hidden border border-[#2a2a2a]">
                                             <img src={asset.icon} alt={asset.name} className="w-4 h-4 object-contain" />
                                         </div>
-                                        <span className="text-white font-bold text-xs">{asset.name}</span>
+                                        <span className="text-white font-semibold text-xs">{asset.name}</span>
                                     </div>
 
                                     <span className="text-right text-[#777] text-[11px] font-medium">
@@ -254,7 +254,7 @@ export const PortfolioDashboard: React.FC<PortfolioComponentProps> = ({ data }) 
                                     </span>
 
                                     <div className="text-right flex flex-col">
-                                        <span className="text-white text-[11px] font-bold">${asset.holdingsValue.toLocaleString()}</span>
+                                        <span className="text-white text-[11px] font-semibold">${asset.holdingsValue.toLocaleString()}</span>
                                         <span className="text-[#555] text-[9px] font-medium">{asset.holdingsAmount} {asset.symbol}</span>
                                     </div>
 
@@ -263,10 +263,10 @@ export const PortfolioDashboard: React.FC<PortfolioComponentProps> = ({ data }) 
                                     </span>
 
                                     <div className="text-right flex flex-col">
-                                        <span className={`text-[11px] font-bold ${asset.plValue >= 0 ? 'text-[#14E62B]' : 'text-[#A5343E]'}`}>
+                                        <span className={`text-[11px] font-semibold ${asset.plValue >= 0 ? 'text-[#14E62B]' : 'text-[#A5343E]'}`}>
                                             {asset.plValue >= 0 ? '+' : ''}${Math.abs(asset.plValue).toLocaleString()}
                                         </span>
-                                        <span className={`text-[9px] font-bold ${asset.plPercentage >= 0 ? 'text-[#14E62B]' : 'text-[#A5343E]'}`}>
+                                        <span className={`text-[9px] font-semibold ${asset.plPercentage >= 0 ? 'text-[#14E62B]' : 'text-[#A5343E]'}`}>
                                             {asset.plPercentage >= 0 ? '+' : ''}{asset.plPercentage}%
                                         </span>
                                     </div>
@@ -290,13 +290,13 @@ export const PortfolioDashboard: React.FC<PortfolioComponentProps> = ({ data }) 
                             <img src={data.assets[0].icon} className="w-3.5 h-3.5 rounded-full border border-black" alt="btc" />
                             <img src={data.assets[1].icon} className="w-3.5 h-3.5 rounded-full border border-black" alt="eth" />
                         </div>
-                        <span className="text-[8px] font-bold text-[#666] tracking-tighter uppercase whitespace-nowrap">BTC & ETH DRIVE 71% OF GAINS</span>
+                        <span className="text-[8px] font-semibold text-[#666] tracking-tighter uppercase whitespace-nowrap">BTC & ETH DRIVE 71% OF GAINS</span>
                     </div>
 
                     <motion.button
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
-                        className="bg-transparent border border-[#2a2a2a] text-white px-3 py-1 rounded-full flex items-center gap-1.5 text-[10px] font-bold hover:bg-[#1a1a1a] transition-all"
+                        className="bg-transparent border border-[#2a2a2a] text-white px-3 py-1 rounded-full flex items-center gap-1.5 text-[10px] font-semibold hover:bg-[#1a1a1a] transition-all"
                     >
                         <Sparkles size={12} className="text-[#A17DFF]" />
                         Rebalance

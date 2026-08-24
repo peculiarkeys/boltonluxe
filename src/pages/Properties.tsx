@@ -95,7 +95,7 @@ const Properties: React.FC = () => {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row items-start justify-between gap-4 md:gap-8">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Properties</h1>
+          <h1 className="text-3xl font-semibold tracking-tight">Properties</h1>
           <p className="text-muted-foreground">Manage your hospitality properties.</p>
         </div>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>

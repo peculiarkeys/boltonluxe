@@ -195,7 +195,7 @@ const RelationshipManagersPage = () => {
     <div className="p-6 space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Relationship Managers</h1>
+          <h1 className="text-3xl font-semibold tracking-tight">Relationship Managers</h1>
           <p className="text-muted-foreground">
             Manage team members responsible for business relationships
           </p>

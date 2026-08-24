@@ -163,7 +163,7 @@ const StatsBar = ({ notifications }: { notifications: LoyaltyNotification[] }) =
               <p className="text-xs text-muted-foreground">{label}</p>
               <Icon className={`w-4 h-4 ${color}`} />
             </div>
-            <p className={`text-2xl font-bold mt-1 ${color}`}>{value}</p>
+            <p className={`text-2xl font-semibold mt-1 ${color}`}>{value}</p>
           </CardContent>
         </Card>
       ))}
@@ -217,7 +217,7 @@ const Notifications = () => {
       {/* Header */}
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight flex items-center gap-3">
+          <h1 className="text-3xl font-semibold tracking-tight flex items-center gap-3">
             <Bell className="w-7 h-7 text-primary" />
             Communications Centre
           </h1>

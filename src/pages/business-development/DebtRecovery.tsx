@@ -114,7 +114,7 @@ const DebtRecoveryPage = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Debt Recovery</h1>
+          <h1 className="text-3xl font-semibold tracking-tight">Debt Recovery</h1>
           <p className="text-muted-foreground">Manage outstanding debts and payments</p>
         </div>
         <Button onClick={handleCreateDebt}>

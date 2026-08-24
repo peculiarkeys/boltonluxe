@@ -79,7 +79,7 @@ const LoyaltyActivities: React.FC = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Member Activities</h1>
+          <h1 className="text-3xl font-semibold tracking-tight">Member Activities</h1>
           <p className="text-muted-foreground">
             Track member activities and services that earn loyalty points.
           </p>
@@ -104,7 +104,7 @@ const LoyaltyActivities: React.FC = () => {
             <CreditCard className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
+            <div className="text-2xl font-semibold">
               {services.filter(s => s.service_type === 'Restaurant').length}
             </div>
             <div className="text-xs text-muted-foreground mt-1">
@@ -125,7 +125,7 @@ const LoyaltyActivities: React.FC = () => {
             <Heart className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
+            <div className="text-2xl font-semibold">
               {services.filter(s => s.service_type === 'Spa').length}
             </div>
             <div className="text-xs text-muted-foreground mt-1">
@@ -146,7 +146,7 @@ const LoyaltyActivities: React.FC = () => {
             <PlusCircle className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
+            <div className="text-2xl font-semibold">
               {services.filter(s => !['Restaurant', 'Spa'].includes(s.service_type)).length}
             </div>
             <div className="text-xs text-muted-foreground mt-1">

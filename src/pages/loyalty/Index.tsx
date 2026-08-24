@@ -72,7 +72,7 @@ const LoyaltyIndex = () => {
   return (
     <div className="space-y-8 animate-fade-in">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Luxe Royalty Program</h1>
+        <h1 className="text-3xl font-semibold tracking-tight">Luxe Royalty Program</h1>
         <p className="text-muted-foreground mt-2">
           Bolton White Group's guest loyalty platform — rewarding our most valued guests.
         </p>
@@ -88,7 +88,7 @@ const LoyaltyIndex = () => {
               </div>
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-1">
-                  <h2 className="text-xl font-bold">Member Check-In</h2>
+                  <h2 className="text-xl font-semibold">Member Check-In</h2>
                   <span className="inline-flex items-center gap-1 text-xs font-medium bg-primary text-primary-foreground px-2 py-0.5 rounded-full">
                     <Zap className="w-3 h-3" /> Primary Action
                   </span>

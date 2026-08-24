@@ -40,7 +40,7 @@ const TierBadge = ({ tier }: { tier: LoyaltyMember['tier'] }) => {
    Points Progress Bar
 ───────────────────────────────────────────── */
 const PointsProgress = ({ member }: { member: LoyaltyMember }) => {
-  const cfg = TIER_CONFIG[member.tier];
+  const cfg = TIER_CONFIG[member.tier as keyof typeof TIER_CONFIG] || TIER_CONFIG.Standard;
   const pct = Math.min(100, (member.points / cfg.freeNightAt) * 100);
   const remaining = Math.max(0, cfg.freeNightAt - member.points);
   return (
@@ -80,7 +80,7 @@ const LogStayModal = ({
   onSuccess: () => void;
 }) => {
   const { logStay, isLoggingStay } = useLoyaltyCheckin();
-  const cfg = TIER_CONFIG[member.tier];
+  const cfg = TIER_CONFIG[member.tier as keyof typeof TIER_CONFIG] || TIER_CONFIG.Standard;
 
   const [form, setForm] = useState({
     check_in_date: new Date().toISOString().split('T')[0],
@@ -290,7 +290,7 @@ const CheckIn = () => {
     }
   };
 
-  const cfg = foundMember ? TIER_CONFIG[foundMember.tier] : null;
+  const cfg = foundMember ? (TIER_CONFIG[foundMember.tier as keyof typeof TIER_CONFIG] || TIER_CONFIG.Standard) : null;
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto pb-12">
@@ -306,7 +306,7 @@ const CheckIn = () => {
             Enter a member's card number to retrieve their profile and points balance.
           </p>
         </div>
-        <Button variant="outline" className="gap-2 flex-shrink-0 font-medium" onClick={() => navigate('/loyalty/enroll')}>
+        <Button variant="outline" className="gap-2 flex-shrink-0 font-medium" onClick={() => navigate('/boltonadmin/loyalty/enroll')}>
           <UserPlus className="w-4 h-4" />
           Enrol New Member
         </Button>
@@ -375,7 +375,7 @@ const CheckIn = () => {
             </div>
             <div className="flex items-center gap-4 justify-center">
               <Button variant="ghost" className="font-medium" onClick={handleReset}>Try Another</Button>
-              <Button className="gap-2 px-8 font-medium" onClick={() => navigate('/loyalty/enroll')}>
+              <Button className="gap-2 px-8 font-medium" onClick={() => navigate('/boltonadmin/loyalty/enroll')}>
                 <UserPlus className="w-4 h-4" />
                 Enrol New Guest
               </Button>

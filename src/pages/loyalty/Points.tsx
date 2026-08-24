@@ -80,7 +80,7 @@ const LoyaltyPoints: React.FC = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Loyalty Points</h1>
+          <h1 className="text-3xl font-semibold tracking-tight">Loyalty Points</h1>
           <p className="text-muted-foreground">
             Manage and track loyalty points for members.
           </p>
@@ -105,7 +105,7 @@ const LoyaltyPoints: React.FC = () => {
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{summary.totalIssued.toLocaleString()}</div>
+            <div className="text-2xl font-semibold">{summary.totalIssued.toLocaleString()}</div>
           </CardContent>
         </Card>
 
@@ -118,7 +118,7 @@ const LoyaltyPoints: React.FC = () => {
             <Award className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{summary.currentOutstanding.toLocaleString()}</div>
+            <div className="text-2xl font-semibold">{summary.currentOutstanding.toLocaleString()}</div>
           </CardContent>
         </Card>
 
@@ -131,7 +131,7 @@ const LoyaltyPoints: React.FC = () => {
             <CreditCard className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{summary.monthlyGrowth.toLocaleString()}</div>
+            <div className="text-2xl font-semibold">{summary.monthlyGrowth.toLocaleString()}</div>
             <div className="text-xs text-muted-foreground mt-1">
               Redemption rate: {summary.redemptionRate} points = $1
             </div>
@@ -345,18 +345,18 @@ const LoyaltyPoints: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <div className="rounded-lg border p-4">
                   <div className="text-sm font-medium text-muted-foreground mb-2">Points Issued</div>
-                  <div className="text-2xl font-bold">{summary.totalIssued.toLocaleString()}</div>
+                  <div className="text-2xl font-semibold">{summary.totalIssued.toLocaleString()}</div>
                 </div>
                 <div className="rounded-lg border p-4">
                   <div className="text-sm font-medium text-muted-foreground mb-2">Points Redeemed</div>
-                  <div className="text-2xl font-bold">{summary.totalRedeemed.toLocaleString()}</div>
+                  <div className="text-2xl font-semibold">{summary.totalRedeemed.toLocaleString()}</div>
                   <div className="text-xs text-muted-foreground mt-1">
                     {Math.round((summary.totalRedeemed / summary.totalIssued) * 100 || 0)}% redemption rate
                   </div>
                 </div>
                 <div className="rounded-lg border p-4">
                   <div className="text-sm font-medium text-muted-foreground mb-2">Financial Liability</div>
-                  <div className="text-2xl font-bold">
+                  <div className="text-2xl font-semibold">
                     ${((summary.currentOutstanding / summary.redemptionRate) || 0).toLocaleString(undefined, {
                       minimumFractionDigits: 2,
                       maximumFractionDigits: 2
