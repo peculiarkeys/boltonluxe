@@ -95,7 +95,7 @@ const ConsumerDashboard = () => {
   return (
     <div className="space-y-8 animate-fade-in font-sans pb-10">
       <div className="mb-4">
-        <h1 className="text-2xl font-medium text-gray-800">Dashboard</h1>
+        <h1 className="text-2xl font-medium text-gray-800">Welcome, {profile.name.split(' ')[0]}</h1>
       </div>
 
       {/* Main Profile Area (Gradient Card) */}
