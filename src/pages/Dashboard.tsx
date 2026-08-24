@@ -26,12 +26,10 @@ const Dashboard = () => {
   const { data: totalMembers, isLoading: isMembersLoading } = useQuery({
     queryKey: ['total-loyalty-members'],
     queryFn: async () => {
-      const { count, error } = await supabase
-        .from('loyalty_members')
-        .select('*', { count: 'exact', head: true });
+      const { data, error } = await supabase.rpc('get_all_loyalty_members');
       
       if (error) throw error;
-      return count || 0;
+      return data?.length || 0;
     }
   });
 
@@ -78,17 +76,24 @@ const Dashboard = () => {
   const { data: recentActivities, isLoading: isActivitiesLoading } = useQuery({
     queryKey: ['recent-loyalty-activities'],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data: members, error: membersError } = await supabase.rpc('get_all_loyalty_members');
+      if (membersError) throw membersError;
+
+      const { data: txns, error: txnsError } = await supabase
         .from('loyalty_point_transactions')
-        .select(`
-          *,
-          loyalty_members(name)
-        `)
+        .select('*')
         .order('date', { ascending: false })
         .limit(5);
       
-      if (error) throw error;
-      return data;
+      if (txnsError) throw txnsError;
+      
+      return txns?.map(txn => {
+        const member = members?.find((m: any) => m.id === txn.member_id);
+        return {
+          ...txn,
+          loyalty_members: { name: member?.name || 'Unknown Member' }
+        };
+      }) || [];
     }
   });
 
