@@ -197,9 +197,6 @@ const ConsumerDashboard = () => {
                    <p className="text-sm font-semibold text-gray-800 mt-0.5">₦156,000 / night</p>
                  </div>
                  <div className="flex gap-2 shrink-0">
-                   <a href="https://boltonwhitehotel.com/" target="_blank" rel="noopener noreferrer" className="bg-white text-gray-800 border border-gray-200 px-3 py-2 rounded-full text-xs font-medium hover:bg-gray-50 transition-colors shadow-sm">
-                     Visit Website
-                   </a>
                    <a href={getWhatsAppLink('Bolton White Hotel', '2347074825096')} target="_blank" rel="noopener noreferrer" className="bg-gray-900 text-white px-3 py-2 rounded-full text-xs font-medium hover:bg-gray-800 transition-colors shadow-sm">
                      Book Now
                    </a>
@@ -234,9 +231,6 @@ const ConsumerDashboard = () => {
                    <p className="text-sm font-semibold text-gray-800 mt-0.5">₦125,000 / night</p>
                  </div>
                  <div className="flex gap-2 shrink-0">
-                   <a href="https://boltonwhiteresidence.com/" target="_blank" rel="noopener noreferrer" className="bg-white text-gray-800 border border-gray-200 px-3 py-2 rounded-full text-xs font-medium hover:bg-gray-50 transition-colors shadow-sm">
-                     Visit Website
-                   </a>
                    <a href={getWhatsAppLink('Bolton White Residence', '2349038852632')} target="_blank" rel="noopener noreferrer" className="bg-gray-900 text-white px-3 py-2 rounded-full text-xs font-medium hover:bg-gray-800 transition-colors shadow-sm">
                      Book Now
                    </a>
@@ -271,9 +265,6 @@ const ConsumerDashboard = () => {
                    <p className="text-sm font-semibold text-gray-800 mt-0.5">₦350,000 / night</p>
                  </div>
                  <div className="flex gap-2 shrink-0">
-                   <a href="https://johnwoodhotels.com/" target="_blank" rel="noopener noreferrer" className="bg-white text-gray-800 border border-gray-200 px-3 py-2 rounded-full text-xs font-medium hover:bg-gray-50 transition-colors shadow-sm">
-                     Visit Website
-                   </a>
                    <a href={getWhatsAppLink('Johnwood Hotel by Bolton', '2349038852600')} target="_blank" rel="noopener noreferrer" className="bg-gray-900 text-white px-3 py-2 rounded-full text-xs font-medium hover:bg-gray-800 transition-colors shadow-sm">
                      Book Now
                    </a>
