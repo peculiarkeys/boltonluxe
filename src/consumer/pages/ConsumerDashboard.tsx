@@ -194,7 +194,7 @@ const ConsumerDashboard = () => {
                <div className="mt-4 pt-4 border-t border-gray-100 flex items-end justify-between gap-2">
                  <div>
                    <p className="text-[10px] text-gray-400 uppercase font-medium">Starting at</p>
-                   <p className="text-sm font-semibold text-gray-800 mt-0.5">$180 / night</p>
+                   <p className="text-sm font-semibold text-gray-800 mt-0.5">₦156,000 / night</p>
                  </div>
                  <div className="flex gap-2 shrink-0">
                    <a href="https://boltonwhitehotel.com/" target="_blank" rel="noopener noreferrer" className="bg-white text-gray-800 border border-gray-200 px-3 py-2 rounded-full text-xs font-medium hover:bg-gray-50 transition-colors shadow-sm">
@@ -231,7 +231,7 @@ const ConsumerDashboard = () => {
                <div className="mt-4 pt-4 border-t border-gray-100 flex items-end justify-between gap-2">
                  <div>
                    <p className="text-[10px] text-gray-400 uppercase font-medium">Starting at</p>
-                   <p className="text-sm font-semibold text-gray-800 mt-0.5">$220 / night</p>
+                   <p className="text-sm font-semibold text-gray-800 mt-0.5">₦125,000 / night</p>
                  </div>
                  <div className="flex gap-2 shrink-0">
                    <a href="https://boltonwhiteresidence.com/" target="_blank" rel="noopener noreferrer" className="bg-white text-gray-800 border border-gray-200 px-3 py-2 rounded-full text-xs font-medium hover:bg-gray-50 transition-colors shadow-sm">
@@ -268,7 +268,7 @@ const ConsumerDashboard = () => {
                <div className="mt-4 pt-4 border-t border-gray-100 flex items-end justify-between gap-2">
                  <div>
                    <p className="text-[10px] text-gray-400 uppercase font-medium">Starting at</p>
-                   <p className="text-sm font-semibold text-gray-800 mt-0.5">$250 / night</p>
+                   <p className="text-sm font-semibold text-gray-800 mt-0.5">₦350,000 / night</p>
                  </div>
                  <div className="flex gap-2 shrink-0">
                    <a href="https://johnwoodhotels.com/" target="_blank" rel="noopener noreferrer" className="bg-white text-gray-800 border border-gray-200 px-3 py-2 rounded-full text-xs font-medium hover:bg-gray-50 transition-colors shadow-sm">
