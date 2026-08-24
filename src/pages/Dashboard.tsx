@@ -1,6 +1,7 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 import { 
   Users, 
   CalendarCheck, 
@@ -10,7 +11,8 @@ import {
   Clock,
   ChevronRight,
   UserPlus,
-  CreditCard
+  CreditCard,
+  Loader2
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -19,6 +21,79 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 
 const Dashboard = () => {
   const navigate = useNavigate();
+
+  // Fetch total loyalty members
+  const { data: totalMembers, isLoading: isMembersLoading } = useQuery({
+    queryKey: ['total-loyalty-members'],
+    queryFn: async () => {
+      const { count, error } = await supabase
+        .from('loyalty_members')
+        .select('*', { count: 'exact', head: true });
+      
+      if (error) throw error;
+      return count || 0;
+    }
+  });
+
+  // Fetch MTD points issued
+  const { data: pointsIssued, isLoading: isPointsLoading } = useQuery({
+    queryKey: ['points-issued-mtd'],
+    queryFn: async () => {
+      const startOfMonth = new Date();
+      startOfMonth.setDate(1);
+      startOfMonth.setHours(0, 0, 0, 0);
+
+      const { data, error } = await supabase
+        .from('loyalty_point_transactions')
+        .select('amount')
+        .gte('date', startOfMonth.toISOString());
+      
+      if (error) throw error;
+      // Filter out negative amounts if you only want 'issued' points
+      return data?.reduce((acc, curr) => acc + (curr.amount > 0 ? curr.amount : 0), 0) || 0;
+    }
+  });
+
+  // Fetch active leads and calculate conversion rate
+  const { data: leadsData, isLoading: isLeadsLoading } = useQuery({
+    queryKey: ['leads-dashboard-data'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('leads')
+        .select('status');
+      
+      if (error) throw error;
+      
+      const totalLeads = data?.length || 0;
+      const activeLeads = data?.filter(l => l.status !== 'Converted' && l.status !== 'Closed').length || 0;
+      const convertedLeads = data?.filter(l => l.status === 'Converted').length || 0;
+      
+      const conversionRate = totalLeads > 0 ? ((convertedLeads / totalLeads) * 100).toFixed(1) : '0.0';
+
+      return { activeLeads, conversionRate };
+    }
+  });
+
+  // Fetch recent loyalty activities
+  const { data: recentActivities, isLoading: isActivitiesLoading } = useQuery({
+    queryKey: ['recent-loyalty-activities'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('loyalty_point_transactions')
+        .select(`
+          *,
+          loyalty_members(name)
+        `)
+        .order('date', { ascending: false })
+        .limit(5);
+      
+      if (error) throw error;
+      return data;
+    }
+  });
+
+  const isLoadingStats = isMembersLoading || isPointsLoading || isLeadsLoading;
+
   return (
     <div className="space-y-6">
       {/* Header section matching the style exactly */}
@@ -52,9 +127,11 @@ const Dashboard = () => {
             <Users className="h-4 w-4 text-zinc-400" />
           </CardHeader>
           <CardContent className="p-4">
-            <div className="text-2xl font-medium text-zinc-800">1,284</div>
-            <p className="text-xs font-medium text-emerald-500 mt-1">
-              +124 from last month
+            <div className="text-2xl font-medium text-zinc-800">
+              {isLoadingStats ? <Loader2 className="h-5 w-5 animate-spin text-zinc-400" /> : totalMembers?.toLocaleString()}
+            </div>
+            <p className="text-xs font-medium text-zinc-400 mt-1">
+              Currently active
             </p>
           </CardContent>
         </Card>
@@ -66,9 +143,11 @@ const Dashboard = () => {
             <Award className="h-4 w-4 text-zinc-400" />
           </CardHeader>
           <CardContent className="p-4">
-            <div className="text-2xl font-medium text-zinc-800">45,230</div>
-            <p className="text-xs font-medium text-emerald-500 mt-1">
-              +8.2% from last month
+            <div className="text-2xl font-medium text-zinc-800">
+              {isLoadingStats ? <Loader2 className="h-5 w-5 animate-spin text-zinc-400" /> : pointsIssued?.toLocaleString()}
+            </div>
+            <p className="text-xs font-medium text-zinc-400 mt-1">
+              This month
             </p>
           </CardContent>
         </Card>
@@ -80,9 +159,11 @@ const Dashboard = () => {
             <TrendingUp className="h-4 w-4 text-zinc-400" />
           </CardHeader>
           <CardContent className="p-4">
-            <div className="text-2xl font-medium text-zinc-800">42</div>
-            <p className="text-xs font-medium text-emerald-500 mt-1">
-              12 new this week
+            <div className="text-2xl font-medium text-zinc-800">
+              {isLoadingStats ? <Loader2 className="h-5 w-5 animate-spin text-zinc-400" /> : leadsData?.activeLeads}
+            </div>
+            <p className="text-xs font-medium text-zinc-400 mt-1">
+              In pipeline
             </p>
           </CardContent>
         </Card>
@@ -94,9 +175,11 @@ const Dashboard = () => {
             <DollarSign className="h-4 w-4 text-zinc-400" />
           </CardHeader>
           <CardContent className="p-4">
-            <div className="text-2xl font-medium text-zinc-800">24.5%</div>
-            <p className="text-xs font-medium text-emerald-500 mt-1">
-              +2.1% from last month
+            <div className="text-2xl font-medium text-zinc-800">
+              {isLoadingStats ? <Loader2 className="h-5 w-5 animate-spin text-zinc-400" /> : `${leadsData?.conversionRate}%`}
+            </div>
+            <p className="text-xs font-medium text-zinc-400 mt-1">
+              Historical average
             </p>
           </CardContent>
         </Card>
@@ -125,22 +208,38 @@ const Dashboard = () => {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {[
-                      { member: 'Sarah Johnson', activity: 'Room Booking', points: '+450', date: 'Today' },
-                      { member: 'Michael Chen', activity: 'Spa Service', points: '+120', date: 'Yesterday' },
-                      { member: 'Emily Wilson', activity: 'Reward Redemption', points: '-2000', date: '2 days ago' },
-                      { member: 'James Martin', activity: 'Dining', points: '+85', date: '2 days ago' },
-                      { member: 'Olivia Thompson', activity: 'Room Booking', points: '+600', date: '3 days ago' },
-                    ].map((activity, index) => (
-                      <TableRow key={index} className="border-zinc-100 hover:bg-zinc-50/50">
-                        <TableCell className="font-medium text-zinc-700 text-sm py-3">{activity.member}</TableCell>
-                        <TableCell className="text-zinc-600 text-sm py-3">{activity.activity}</TableCell>
-                        <TableCell className={`text-sm font-medium py-3 ${activity.points.startsWith('+') ? 'text-emerald-500' : 'text-zinc-500'}`}>
-                          {activity.points}
+                    {isActivitiesLoading ? (
+                      <TableRow>
+                        <TableCell colSpan={4} className="text-center py-8 text-zinc-500">
+                          <Loader2 className="h-5 w-5 animate-spin mx-auto mb-2" />
+                          Loading activities...
                         </TableCell>
-                        <TableCell className="text-zinc-500 text-sm py-3">{activity.date}</TableCell>
                       </TableRow>
-                    ))}
+                    ) : recentActivities?.length === 0 ? (
+                      <TableRow>
+                        <TableCell colSpan={4} className="text-center py-8 text-zinc-500">
+                          No recent activities found.
+                        </TableCell>
+                      </TableRow>
+                    ) : (
+                      recentActivities?.map((activity, index) => {
+                        const memberData = activity.loyalty_members as any;
+                        const memberName = memberData?.name || 'Unknown Member';
+                        const pointsStr = activity.amount > 0 ? `+${activity.amount}` : `${activity.amount}`;
+                        const displayDate = activity.date ? new Date(activity.date).toLocaleDateString() : 'N/A';
+                        
+                        return (
+                          <TableRow key={activity.id || index} className="border-zinc-100 hover:bg-zinc-50/50">
+                            <TableCell className="font-medium text-zinc-700 text-sm py-3">{memberName}</TableCell>
+                            <TableCell className="text-zinc-600 text-sm py-3">{activity.description || activity.type}</TableCell>
+                            <TableCell className={`text-sm font-medium py-3 ${activity.amount > 0 ? 'text-emerald-500' : 'text-zinc-500'}`}>
+                              {pointsStr}
+                            </TableCell>
+                            <TableCell className="text-zinc-500 text-sm py-3">{displayDate}</TableCell>
+                          </TableRow>
+                        );
+                      })
+                    )}
                   </TableBody>
                 </Table>
               </CardContent>
@@ -151,6 +250,7 @@ const Dashboard = () => {
               </CardHeader>
               <CardContent className="p-4">
                 <div className="space-y-1">
+                  {/* Kept as mock data since no meeting table exists yet */}
                   {[
                     { company: 'Apex Inc.', topic: 'Corporate Contract Renewal', time: '10:00 AM', date: 'Tomorrow' },
                     { company: 'Globex Corp', topic: 'Annual Conference Pitch', time: '2:30 PM', date: 'Jun 15' },
@@ -203,3 +303,4 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
