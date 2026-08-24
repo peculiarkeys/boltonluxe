@@ -494,86 +494,94 @@ const Members = () => {
         </Button>
       </div>
 
-      <div className="rounded-xl border border-zinc-200 bg-white overflow-hidden shadow-sm">
-        <Table>
-          <TableHeader className="bg-zinc-50/80">
-            <TableRow className="border-zinc-200 hover:bg-transparent">
-              <TableHead className="w-[120px] text-zinc-500 font-medium h-12">Member ID</TableHead>
-              <TableHead className="text-zinc-500 font-medium h-12">Name</TableHead>
-              <TableHead className="text-zinc-500 font-medium h-12">Tier</TableHead>
-              <TableHead className="text-zinc-500 font-medium h-12">Status</TableHead>
-              <TableHead className="text-right text-zinc-500 font-medium h-12">Points</TableHead>
-              <TableHead className="w-[50px]"></TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {filteredMembers.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={6} className="text-center py-12 text-zinc-500 font-medium">
-                  {isLoading ? 'Loading members...' : 'No members found.'}
-                </TableCell>
-              </TableRow>
-            ) : (
-              filteredMembers.map((member) => (
-                <TableRow 
-                  key={member.id} 
-                  className="cursor-pointer hover:bg-zinc-50/60 transition-colors border-zinc-100 group"
-                  onClick={() => {
-                    setSelectedMember(member);
-                    setSheetOpen(true);
-                  }}
-                >
-                  <TableCell className="font-medium text-zinc-500 text-sm">{member.member_id}</TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-3">
-                      <div className="h-9 w-9 rounded-full bg-zinc-100 flex items-center justify-center text-zinc-700 text-xs font-semibold ring-1 ring-zinc-200/50">
-                        {member.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}
-                      </div>
-                      <div className="flex flex-col">
-                        <span className="font-semibold text-zinc-800">{member.name}</span>
-                        {member.email && <span className="text-xs text-zinc-500 font-medium">{member.email}</span>}
-                      </div>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <span className={`px-2.5 py-1 rounded-full text-[11px] font-semibold tracking-wide border ${getTierColor(member.tier)}`}>
-                      {member.tier}
-                    </span>
-                  </TableCell>
-                  <TableCell>
-                    <span className={`flex items-center gap-1.5 font-medium text-sm ${getStatusColor(member.status)}`}>
-                      {getStatusIcon(member.status)}
-                      {member.status}
-                    </span>
-                  </TableCell>
-                  <TableCell className="text-right font-semibold text-zinc-800">
-                    {member.points.toLocaleString()}
-                  </TableCell>
-                  <TableCell onClick={(e) => e.stopPropagation()}>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon" className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity focus:opacity-100 data-[state=open]:opacity-100">
-                          <MoreHorizontal className="h-4 w-4 text-zinc-500" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="w-48 rounded-xl border-zinc-200">
-                        <DropdownMenuItem className="flex gap-2 cursor-pointer font-medium text-zinc-700 focus:bg-zinc-50 focus:text-zinc-900" onClick={() => { setEditingMember(member); setEditDialogOpen(true); }}>
-                          <Edit2 className="h-4 w-4" /> <span>Edit Profile</span>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem className="flex gap-2 cursor-pointer font-medium text-zinc-700 focus:bg-zinc-50 focus:text-zinc-900" onClick={() => { setAdjustPointsMember(member); setPointsDialogOpen(true); }}>
-                          <Award className="h-4 w-4" /> <span>Adjust Points</span>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem className="flex gap-2 cursor-pointer text-red-600 font-medium focus:bg-red-50 focus:text-red-700" onClick={() => { setDeletingMember(member); setDeleteDialogOpen(true); }}>
-                          <Trash className="h-4 w-4" /> <span>Delete Member</span>
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {filteredMembers.length === 0 ? (
+          <div className="col-span-full flex flex-col items-center justify-center py-16 text-zinc-500 font-medium bg-zinc-50/50 rounded-2xl border border-zinc-200 border-dashed">
+            {isLoading ? 'Loading members...' : 'No members found.'}
+          </div>
+        ) : (
+          filteredMembers.map((member) => (
+            <div
+              key={member.id}
+              onClick={() => {
+                setSelectedMember(member);
+                setSheetOpen(true);
+              }}
+              className="group flex flex-col bg-white border border-zinc-200 rounded-2xl p-5 hover:border-zinc-300 transition-colors cursor-pointer"
+            >
+              <div className="flex justify-between items-start mb-4">
+                <span className={`px-2.5 py-1 rounded-full text-[11px] font-semibold tracking-wide border ${getTierColor(member.tier)}`}>
+                  {member.tier}
+                </span>
+                <div onClick={(e) => e.stopPropagation()}>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="icon" className="h-8 w-8 -mr-2 -mt-2 text-zinc-400 hover:text-zinc-600 transition-colors">
+                        <MoreHorizontal className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-48 rounded-xl border-zinc-200">
+                      <DropdownMenuItem className="flex gap-2 cursor-pointer font-medium text-zinc-700 focus:bg-zinc-50 focus:text-zinc-900" onClick={() => { setEditingMember(member); setEditDialogOpen(true); }}>
+                        <Edit2 className="h-4 w-4" /> <span>Edit Profile</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem className="flex gap-2 cursor-pointer font-medium text-zinc-700 focus:bg-zinc-50 focus:text-zinc-900" onClick={() => { setAdjustPointsMember(member); setPointsDialogOpen(true); }}>
+                        <Award className="h-4 w-4" /> <span>Adjust Points</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem className="flex gap-2 cursor-pointer text-red-600 font-medium focus:bg-red-50 focus:text-red-700" onClick={() => { setDeletingMember(member); setDeleteDialogOpen(true); }}>
+                        <Trash className="h-4 w-4" /> <span>Delete Member</span>
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-4 mb-5">
+                <div className="h-12 w-12 rounded-full bg-zinc-100 flex items-center justify-center text-zinc-700 text-sm font-semibold ring-1 ring-zinc-200/50">
+                  {member.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}
+                </div>
+                <div className="flex flex-col">
+                  <h3 className="font-semibold text-zinc-800 text-lg leading-tight">{member.name}</h3>
+                  <span className="text-xs text-zinc-500 font-medium flex items-center gap-1 mt-1">
+                    <User className="h-3 w-3" />
+                    {member.member_id}
+                  </span>
+                </div>
+              </div>
+
+              <div className="space-y-2.5 mb-5 flex-1">
+                {member.email && (
+                  <div className="flex items-center gap-2.5 text-zinc-600 text-sm font-medium">
+                    <Mail className="h-4 w-4 text-zinc-400" />
+                    <span className="truncate">{member.email}</span>
+                  </div>
+                )}
+                {member.phone && (
+                  <div className="flex items-center gap-2.5 text-zinc-600 text-sm font-medium">
+                    <Phone className="h-4 w-4 text-zinc-400" />
+                    <span>{member.phone}</span>
+                  </div>
+                )}
+                <div className="flex items-center gap-2.5 text-zinc-600 text-sm font-medium">
+                  <BadgeCheck className="h-4 w-4 text-zinc-400" />
+                  <span className={`flex items-center gap-1.5 ${getStatusColor(member.status)}`}>
+                    {getStatusIcon(member.status)}
+                    {member.status}
+                  </span>
+                </div>
+              </div>
+
+              <div className="pt-4 border-t border-zinc-100 flex justify-between items-center mt-auto">
+                <div className="flex items-center gap-1.5">
+                  <Award className="h-4 w-4 text-primary" />
+                  <span className="font-semibold text-zinc-800">{member.points.toLocaleString()} <span className="text-zinc-500 font-medium text-xs">pts</span></span>
+                </div>
+                <div className="text-xs font-semibold text-zinc-500 bg-zinc-50 px-2 py-1 rounded-md border border-zinc-100">
+                  {member.stays} {member.stays === 1 ? 'stay' : 'stays'}
+                </div>
+              </div>
+            </div>
+          ))
+        )}
       </div>
 
       {/* Member Details Side Panel */}
