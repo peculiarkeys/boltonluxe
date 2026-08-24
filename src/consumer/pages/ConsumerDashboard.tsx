@@ -285,7 +285,9 @@ const ConsumerDashboard = () => {
         <div className="bg-white rounded-2xl p-6 md:p-8 border border-gray-100 flex flex-col lg:flex-row gap-8 lg:gap-12 items-center lg:items-start justify-between shadow-[0_2px_8px_rgba(0,0,0,0.01)]">
             {/* Left: The Card */}
             <div className="flex justify-center w-full lg:w-auto shrink-0 relative py-2">
-                 <LoyaltyCard name={profile.name} cardNumber={profile.memberId || 'MEM00000000'} expiryDate="12/30" />
+                 <div id="loyalty-card-element">
+                   <LoyaltyCard name={profile.name} cardNumber={profile.memberId || 'MEM00000000'} expiryDate="12/30" />
+                 </div>
             </div>
             
             {/* Right: Details and Instructions */}
@@ -326,12 +328,39 @@ const ConsumerDashboard = () => {
                </div>
                
                <div className="pt-2 flex flex-col sm:flex-row gap-3">
-                 <Link to="/stays" className="w-full sm:flex-1 bg-gray-900 text-white px-5 py-2.5 rounded-full text-sm font-medium hover:bg-gray-800 transition-colors shadow-sm text-center">
-                   View My Stays
-                 </Link>
-                 <Link to="/rewards" className="w-full sm:flex-1 bg-white text-zinc-800 px-5 py-2.5 rounded-full text-sm font-medium border border-gray-200 hover:bg-gray-50 transition-colors text-center">
-                   Explore Rewards
-                 </Link>
+                 <button 
+                   onClick={async () => {
+                     const cardElement = document.getElementById('loyalty-card-element');
+                     if (!cardElement) return;
+                     try {
+                       const html2canvas = (await import('html2canvas')).default;
+                       const canvas = await html2canvas(cardElement, {
+                         backgroundColor: null,
+                         scale: 2,
+                       });
+                       const link = document.createElement('a');
+                       link.download = `Bolton_Luxe_Card_${profile?.memberId || 'member'}.png`;
+                       link.href = canvas.toDataURL('image/png');
+                       link.click();
+                     } catch (error) {
+                       console.error('Error generating card image:', error);
+                     }
+                   }}
+                   className="w-full sm:flex-1 bg-gray-900 text-white px-5 py-2.5 rounded-full text-sm font-medium hover:bg-gray-800 transition-colors shadow-sm text-center"
+                 >
+                   Download Card
+                 </button>
+                 <button 
+                   onClick={() => {
+                     const text = `Hey! I'm a ${profile?.tier || 'Bronze'} member at the Bolton Luxe Loyalty program. My member ID is ${profile?.memberId || 'MEM00000000'}.`;
+                     const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(text)}`;
+                     window.open(whatsappUrl, '_blank');
+                   }}
+                   className="w-full sm:flex-1 bg-[#25D366] text-white px-5 py-2.5 rounded-full text-sm font-medium hover:bg-[#1ebd5b] transition-colors shadow-sm text-center flex items-center justify-center gap-2"
+                 >
+                   <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" className="css-i6dzq1"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+                   Share on WhatsApp
+                 </button>
                </div>
             </div>
         </div>
