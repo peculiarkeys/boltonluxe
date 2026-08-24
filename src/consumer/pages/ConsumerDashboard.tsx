@@ -40,7 +40,7 @@ const ConsumerDashboard = () => {
             name: data.name,
             tier: data.tier.charAt(0).toUpperCase() + data.tier.slice(1),
             points: data.points,
-            nextTierPoints: data.tier === 'bronze' ? 5000 : data.tier === 'silver' ? 15000 : 50000,
+            nextTierPoints: (data.tier.toLowerCase() === 'standard' || data.tier.toLowerCase() === 'bronze') ? 5000 : data.tier.toLowerCase() === 'silver' ? 15000 : data.tier.toLowerCase() === 'gold' ? 50000 : 100000,
             stays: data.stays || 0,
             rewardsUsed: 0, // Will be fetched from redemptions table in future
             memberId: data.member_id
@@ -396,7 +396,7 @@ const ConsumerDashboard = () => {
                   <MapPin size={18} strokeWidth={1.5} />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-800">Bolton Luxe #{upcomingStay.property_id}</p>
+                  <p className="text-sm font-medium text-gray-800">{upcomingStay.hotel_name}</p>
                   <p className="text-xs text-gray-500">Suite</p>
                 </div>
               </div>

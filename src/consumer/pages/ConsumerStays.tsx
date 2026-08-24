@@ -78,7 +78,7 @@ const ConsumerStays = () => {
                 <Building size={24} strokeWidth={1.5} />
               </div>
               <div>
-                <h3 className="text-lg font-medium text-gray-800">Bolton Luxe Property #{stay.property_id}</h3>
+                <h3 className="text-lg font-medium text-gray-800">{stay.hotel_name}</h3>
                 <p className="flex items-center justify-center md:justify-start gap-1.5 text-sm text-gray-500 mt-1 font-medium">
                   <Calendar size={14} strokeWidth={2} /> {new Date(stay.check_in).toLocaleDateString()} - {new Date(stay.check_out).toLocaleDateString()}
                 </p>
