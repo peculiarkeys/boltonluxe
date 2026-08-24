@@ -69,8 +69,7 @@ export const useLoyaltyPoints = () => {
       if (transactionsError) throw transactionsError;
 
       const { data: membersData, error: membersError } = await supabase
-        .from('loyalty_members')
-        .select('id, name');
+        .rpc('get_all_loyalty_members');
 
       if (membersError) throw membersError;
 
@@ -126,11 +125,12 @@ export const useLoyaltyPoints = () => {
 
       if (updateError) throw updateError;
 
-      const { data: memberData, error: memberError } = await supabase
-        .from('loyalty_members')
-        .select('name')
-        .eq('id', transactionData.member_id)
-        .single();
+      const { data: allMembers, error: memberError } = await supabase
+        .rpc('get_all_loyalty_members');
+
+      if (memberError) throw memberError;
+      
+      const memberData = allMembers?.find((m: any) => m.id === transactionData.member_id);
 
       if (memberError) throw memberError;
 

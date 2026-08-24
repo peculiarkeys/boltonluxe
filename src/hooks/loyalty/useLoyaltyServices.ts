@@ -35,8 +35,7 @@ export const useLoyaltyServices = () => {
 
       // Fetch member data to get names
       const { data: membersData, error: membersError } = await supabase
-        .from('loyalty_members')
-        .select('id, name');
+        .rpc('get_all_loyalty_members');
 
       if (membersError) throw membersError;
 
@@ -88,11 +87,12 @@ export const useLoyaltyServices = () => {
       if (updateError) throw updateError;
       
       // Fetch the member name
-      const { data: memberData, error: memberError } = await supabase
-        .from('loyalty_members')
-        .select('name')
-        .eq('id', serviceData.member_id)
-        .single();
+      const { data: allMembers, error: memberError } = await supabase
+        .rpc('get_all_loyalty_members');
+
+      if (memberError) throw memberError;
+      
+      const memberData = allMembers?.find((m: any) => m.id === serviceData.member_id);
 
       if (memberError) throw memberError;
 

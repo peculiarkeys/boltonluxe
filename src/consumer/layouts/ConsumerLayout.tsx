@@ -41,7 +41,7 @@ const ConsumerLayout = () => {
   ];
 
   return (
-    <div className="consumer-app flex h-screen bg-[#f7f7f9] font-sans font-normal text-gray-600 overflow-hidden">
+    <div className="consumer-app flex h-screen bg-[#f7f7f9] font-sans font-normal text-gray-600 overflow-hidden overscroll-none w-full max-w-full">
       {/* Desktop Sidebar Navigation */}
       <aside className="hidden md:flex w-64 bg-white flex-col border-r border-gray-200 shrink-0">
         <div className="p-6">
@@ -95,7 +95,7 @@ const ConsumerLayout = () => {
       </aside>
 
       {/* Main Content Area */}
-      <main className="flex-1 overflow-y-auto bg-[#f8fafc] pb-20 md:pb-0 relative flex flex-col">
+      <main className="flex-1 overflow-y-auto overflow-x-hidden bg-[#f8fafc] pb-20 md:pb-0 relative flex flex-col w-full max-w-full">
         {/* Top Header */}
         <header className="h-16 bg-white/80 backdrop-blur-md border-b border-gray-200 flex items-center justify-between px-4 md:px-10 sticky top-0 z-40 shrink-0 gap-4">
           <div className="md:hidden shrink-0">

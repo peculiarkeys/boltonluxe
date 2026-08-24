@@ -60,11 +60,12 @@ export const useLoyaltyMembers = () => {
     setError(null);
 
     try {
-      const { data, error } = await supabase
-        .from('loyalty_members')
-        .select('*')
-        .eq('id', id)
-        .single();
+      const { data: allMembers, error } = await supabase
+        .rpc('get_all_loyalty_members');
+
+      if (error) throw error;
+      const data = allMembers?.find((m: any) => m.id === id);
+      if (!data) throw new Error('Member not found');
 
       if (error) throw error;
       return data as LoyaltyMember;
@@ -210,11 +211,12 @@ export const useLoyaltyMembers = () => {
     setError(null);
 
     try {
-      const { data: memberData, error: memberError } = await supabase
-        .from('loyalty_members')
-        .select('points')
-        .eq('id', id)
-        .single();
+      const { data: allMembers, error: memberError } = await supabase
+        .rpc('get_all_loyalty_members');
+
+      if (memberError) throw memberError;
+      const memberData = allMembers?.find((m: any) => m.id === id);
+      if (!memberData) throw new Error('Member not found');
 
       if (memberError) throw memberError;
 

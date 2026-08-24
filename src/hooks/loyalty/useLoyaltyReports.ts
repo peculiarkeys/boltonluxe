@@ -43,9 +43,9 @@ export const useLoyaltyReports = () => {
 
     try {
       // Get total members
-      const { count: totalMembers, error: membersError } = await supabase
-        .from('loyalty_members')
-        .select('*', { count: 'exact', head: true });
+      const { data: allMembers, error: membersError } = await supabase
+        .rpc('get_all_loyalty_members');
+      const totalMembers = allMembers?.length || 0;
 
       if (membersError) throw membersError;
 
@@ -72,21 +72,8 @@ export const useLoyaltyReports = () => {
       const sixMonthsAgo = new Date();
       sixMonthsAgo.setMonth(currentDate.getMonth() - 6);
 
-      const { count: lastQuarterMembers, error: lastQuarterError } = await supabase
-        .from('loyalty_members')
-        .select('*', { count: 'exact', head: true })
-        .gte('created_at', threeMonthsAgo.toISOString())
-        .lt('created_at', currentDate.toISOString());
-
-      if (lastQuarterError) throw lastQuarterError;
-
-      const { count: previousQuarterMembers, error: previousQuarterError } = await supabase
-        .from('loyalty_members')
-        .select('*', { count: 'exact', head: true })
-        .gte('created_at', sixMonthsAgo.toISOString())
-        .lt('created_at', threeMonthsAgo.toISOString());
-
-      if (previousQuarterError) throw previousQuarterError;
+      const lastQuarterMembers = allMembers?.filter((m: any) => new Date(m.created_at) >= threeMonthsAgo && new Date(m.created_at) < currentDate).length || 0;
+      const previousQuarterMembers = allMembers?.filter((m: any) => new Date(m.created_at) >= sixMonthsAgo && new Date(m.created_at) < threeMonthsAgo).length || 0;
 
       // Calculate summary values
       const pointsIssued = issuedData.reduce((sum, tx) => sum + tx.amount, 0);
@@ -130,8 +117,7 @@ export const useLoyaltyReports = () => {
 
     try {
       const { data, error } = await supabase
-        .from('loyalty_members')
-        .select('tier');
+        .rpc('get_all_loyalty_members');
 
       if (error) throw error;
 
@@ -281,8 +267,7 @@ export const useLoyaltyReports = () => {
 
     try {
       const { data, error } = await supabase
-        .from('loyalty_members')
-        .select('created_at');
+        .rpc('get_all_loyalty_members');
 
       if (error) throw error;
 
