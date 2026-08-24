@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useConsumerAuth } from '../contexts/ConsumerAuthContext';
 import { Star, TrendingUp, Calendar as CalendarIcon, MapPin, Gift, ArrowUpRight } from 'lucide-react';
@@ -185,14 +186,19 @@ const ConsumerDashboard = () => {
                  <p className="text-sm text-gray-600 mt-1 line-clamp-2 font-normal">Our flagship hotel offering premium luxury, exquisite dining, and world-class amenities in the heart of the city.</p>
                </div>
                
-               <div className="mt-4 pt-4 border-t border-gray-100 flex items-end justify-between">
+               <div className="mt-4 pt-4 border-t border-gray-100 flex items-end justify-between gap-2">
                  <div>
                    <p className="text-[10px] text-gray-400 uppercase font-medium">Starting at</p>
                    <p className="text-sm font-semibold text-gray-800 mt-0.5">$180 / night</p>
                  </div>
-                 <button className="bg-gray-900 text-white px-4 py-2 rounded-full text-xs font-medium hover:bg-gray-800 transition-colors shadow-sm">
-                   Book Now
-                 </button>
+                 <div className="flex gap-2 shrink-0">
+                   <a href="https://boltonwhitehotel.com/" target="_blank" rel="noopener noreferrer" className="bg-white text-gray-800 border border-gray-200 px-3 py-2 rounded-full text-xs font-medium hover:bg-gray-50 transition-colors shadow-sm">
+                     Visit Website
+                   </a>
+                   <button className="bg-gray-900 text-white px-3 py-2 rounded-full text-xs font-medium hover:bg-gray-800 transition-colors shadow-sm">
+                     Book Now
+                   </button>
+                 </div>
                </div>
              </div>
            </div>
@@ -217,14 +223,19 @@ const ConsumerDashboard = () => {
                  <p className="text-sm text-gray-600 mt-1 line-clamp-2 font-normal">Experience the comfort of home with the luxury of a hotel in our fully serviced premium residences.</p>
                </div>
                
-               <div className="mt-4 pt-4 border-t border-gray-100 flex items-end justify-between">
+               <div className="mt-4 pt-4 border-t border-gray-100 flex items-end justify-between gap-2">
                  <div>
                    <p className="text-[10px] text-gray-400 uppercase font-medium">Starting at</p>
                    <p className="text-sm font-semibold text-gray-800 mt-0.5">$220 / night</p>
                  </div>
-                 <button className="bg-gray-900 text-white px-4 py-2 rounded-full text-xs font-medium hover:bg-gray-800 transition-colors shadow-sm">
-                   Book Now
-                 </button>
+                 <div className="flex gap-2 shrink-0">
+                   <a href="https://boltonwhiteresidence.com/" target="_blank" rel="noopener noreferrer" className="bg-white text-gray-800 border border-gray-200 px-3 py-2 rounded-full text-xs font-medium hover:bg-gray-50 transition-colors shadow-sm">
+                     Visit Website
+                   </a>
+                   <button className="bg-gray-900 text-white px-3 py-2 rounded-full text-xs font-medium hover:bg-gray-800 transition-colors shadow-sm">
+                     Book Now
+                   </button>
+                 </div>
                </div>
              </div>
            </div>
@@ -249,14 +260,19 @@ const ConsumerDashboard = () => {
                  <p className="text-sm text-gray-600 mt-1 line-clamp-2 font-normal">A boutique hotel experience blending contemporary design with unrivaled personalized service.</p>
                </div>
                
-               <div className="mt-4 pt-4 border-t border-gray-100 flex items-end justify-between">
+               <div className="mt-4 pt-4 border-t border-gray-100 flex items-end justify-between gap-2">
                  <div>
                    <p className="text-[10px] text-gray-400 uppercase font-medium">Starting at</p>
                    <p className="text-sm font-semibold text-gray-800 mt-0.5">$250 / night</p>
                  </div>
-                 <button className="bg-gray-900 text-white px-4 py-2 rounded-full text-xs font-medium hover:bg-gray-800 transition-colors shadow-sm">
-                   Book Now
-                 </button>
+                 <div className="flex gap-2 shrink-0">
+                   <a href="https://johnwoodhotels.com/" target="_blank" rel="noopener noreferrer" className="bg-white text-gray-800 border border-gray-200 px-3 py-2 rounded-full text-xs font-medium hover:bg-gray-50 transition-colors shadow-sm">
+                     Visit Website
+                   </a>
+                   <button className="bg-gray-900 text-white px-3 py-2 rounded-full text-xs font-medium hover:bg-gray-800 transition-colors shadow-sm">
+                     Book Now
+                   </button>
+                 </div>
                </div>
              </div>
            </div>
@@ -314,12 +330,12 @@ const ConsumerDashboard = () => {
                </div>
                
                <div className="pt-2 flex flex-col sm:flex-row gap-3">
-                 <button className="w-full sm:flex-1 bg-gray-900 text-white px-5 py-2.5 rounded-full text-sm font-medium hover:bg-gray-800 transition-colors shadow-sm">
-                   Add to Apple Wallet
-                 </button>
-                 <button className="w-full sm:flex-1 bg-white text-gray-900 px-5 py-2.5 rounded-full text-sm font-medium border border-gray-200 hover:bg-gray-50 transition-colors">
-                   View Full Benefits
-                 </button>
+                 <Link to="/stays" className="w-full sm:flex-1 bg-gray-900 text-white px-5 py-2.5 rounded-full text-sm font-medium hover:bg-gray-800 transition-colors shadow-sm text-center">
+                   View My Stays
+                 </Link>
+                 <Link to="/rewards" className="w-full sm:flex-1 bg-white text-gray-900 px-5 py-2.5 rounded-full text-sm font-medium border border-gray-200 hover:bg-gray-50 transition-colors text-center">
+                   Explore Rewards
+                 </Link>
                </div>
             </div>
         </div>
