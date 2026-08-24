@@ -24,11 +24,11 @@ const ConsumerAccount = () => {
           return;
         }
 
-        const { data } = await supabase
-          .from('loyalty_members')
-          .select('*')
-          .eq('email', user.email)
-          .single();
+        const { data: allMembers, error } = await supabase.rpc('get_all_loyalty_members');
+        let data = null;
+        if (allMembers && allMembers.length > 0) {
+          data = allMembers.find((m: any) => m.email === user.email);
+        }
 
         if (data) {
           setProfile({

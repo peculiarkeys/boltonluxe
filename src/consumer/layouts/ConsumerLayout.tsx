@@ -13,11 +13,11 @@ const ConsumerLayout = () => {
     const fetchProfile = async () => {
       if (!user?.email) return;
       try {
-        const { data } = await supabase
-          .from('loyalty_members')
-          .select('name, tier')
-          .eq('email', user.email)
-          .single();
+        const { data: allMembers, error } = await supabase.rpc('get_all_loyalty_members');
+        let data = null;
+        if (allMembers && allMembers.length > 0) {
+          data = allMembers.find((m: any) => m.email === user.email);
+        }
         
         if (data) {
           setProfile(data);

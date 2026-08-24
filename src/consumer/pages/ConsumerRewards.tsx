@@ -14,11 +14,11 @@ const ConsumerRewards = () => {
         if (!user?.email) {
           return;
         }
-        const { data } = await supabase
-          .from('loyalty_members')
-          .select('points')
-          .eq('email', user.email)
-          .single();
+        const { data: allMembers, error } = await supabase.rpc('get_all_loyalty_members');
+        let data = null;
+        if (allMembers && allMembers.length > 0) {
+          data = allMembers.find((m: any) => m.email === user.email);
+        }
         
         if (data) {
           setPoints(data.points);

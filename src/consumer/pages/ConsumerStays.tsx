@@ -15,20 +15,30 @@ const ConsumerStays = () => {
           return;
         }
         
-        const { data: member } = await supabase
-          .from('loyalty_members')
-          .select('id')
-          .eq('email', user.email)
-          .single();
+        const { data: allMembers, error } = await supabase.rpc('get_all_loyalty_members');
+        let member = null;
+        if (allMembers && allMembers.length > 0) {
+          member = allMembers.find((m: any) => m.email === user.email);
+        }
           
         if (member) {
           const { data } = await supabase
-            .from('loyalty_stays')
+            .from('loyalty_bookings')
             .select('*')
             .eq('member_id', member.id)
-            .order('check_out', { ascending: false });
+            .order('check_in_date', { ascending: false });
             
-          setStays(data || []);
+          // Map to match the expected format
+          const mappedStays = (data || []).map(b => ({
+            ...b,
+            hotel_name: 'Bolton Luxe Hotel',
+            check_in: b.check_in_date,
+            check_out: b.check_out_date,
+            amount: b.amount_spent,
+            status: new Date(b.check_in_date) > new Date() ? 'Upcoming' : 'Completed'
+          }));
+          
+          setStays(mappedStays);
         }
       } catch (error) {
         console.error('Error fetching stays:', error);

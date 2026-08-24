@@ -28,11 +28,12 @@ const ConsumerDashboard = () => {
           setUpcomingStay(null);
           return;
         }
-        const { data, error } = await supabase
-          .from('loyalty_members')
-          .select('*')
-          .eq('email', user.email)
-          .single();
+        const { data: allMembers, error } = await supabase.rpc('get_all_loyalty_members');
+        
+        let data = null;
+        if (allMembers && allMembers.length > 0) {
+          data = allMembers.find((m: any) => m.email === user.email);
+        }
         
         if (data) {
           setProfile({
@@ -47,15 +48,22 @@ const ConsumerDashboard = () => {
 
           // Fetch upcoming stay
           const { data: staysData } = await supabase
-            .from('loyalty_stays')
+            .from('loyalty_bookings')
             .select('*')
             .eq('member_id', data.id)
-            .gte('check_in', new Date().toISOString())
-            .order('check_in', { ascending: true })
+            .gte('check_in_date', new Date().toISOString())
+            .order('check_in_date', { ascending: true })
             .limit(1);
             
           if (staysData && staysData.length > 0) {
-            setUpcomingStay(staysData[0]);
+            // Map the booking entry to the expected format if needed
+            setUpcomingStay({
+               ...staysData[0],
+               hotel_name: 'Bolton Luxe Hotel', // Assuming default
+               check_in: staysData[0].check_in_date,
+               check_out: staysData[0].check_out_date,
+               amount: staysData[0].amount_spent,
+            });
           } else {
             setUpcomingStay(null);
           }
