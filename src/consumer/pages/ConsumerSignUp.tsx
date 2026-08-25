@@ -18,6 +18,7 @@ const bgImages = [
 
 const signUpSchema = z.object({
   fullName: z.string().min(2, 'Full name is required'),
+  phoneNumber: z.string().min(10, 'Please enter a valid phone number'),
   email: z.string().email('Please enter a valid email address'),
   password: z.string().min(6, 'Password must be at least 6 characters'),
 });
@@ -56,6 +57,7 @@ const ConsumerSignUp = () => {
       options: {
         data: {
           full_name: data.fullName,
+          phone_number: data.phoneNumber,
         },
         emailRedirectTo: redirectUrl
       }
@@ -86,10 +88,27 @@ const ConsumerSignUp = () => {
             first_name: data.fullName.split(' ')[0] || '',
             last_name: data.fullName.split(' ').slice(1).join(' ') || '',
             email: authData.user.email,
-            phone: '',
+            phone: data.phoneNumber,
           }
         ]);
         
+        // Trigger Welcome Email
+        try {
+          await fetch('/api/send-welcome-email', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              email: authData.user.email,
+              fullName: data.fullName,
+              memberId: memberId
+            }),
+          });
+        } catch (emailError) {
+          console.error('Failed to send welcome email:', emailError);
+        }
+
         setRegisteredEmail(authData.user.email);
         setIsSuccess(true);
       } else {
@@ -142,6 +161,17 @@ const ConsumerSignUp = () => {
                       className={`w-full bg-white border ${errors.fullName ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-200 focus:ring-gray-400 focus:border-gray-400'} rounded-xl px-4 py-3.5 focus:ring-1 outline-none transition-all text-gray-800 placeholder:text-gray-400`}
                     />
                     {errors.fullName && <p className="text-red-500 text-xs mt-1">{errors.fullName.message}</p>}
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="block text-sm font-medium text-gray-700">Phone Number</label>
+                    <input 
+                      type="tel" 
+                      {...register('phoneNumber')}
+                      placeholder="+1 (555) 000-0000"
+                      className={`w-full bg-white border ${errors.phoneNumber ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-200 focus:ring-gray-400 focus:border-gray-400'} rounded-xl px-4 py-3.5 focus:ring-1 outline-none transition-all text-gray-800 placeholder:text-gray-400`}
+                    />
+                    {errors.phoneNumber && <p className="text-red-500 text-xs mt-1">{errors.phoneNumber.message}</p>}
                   </div>
 
                   <div className="space-y-1.5">
