@@ -141,32 +141,33 @@ const ConsumerLogin = () => {
               className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out ${index === currentImageIndex ? 'opacity-100' : 'opacity-0'}`}
             />
           ))}
-          <div className="absolute inset-0 bg-black/10 z-10"></div>
+          {/* Enhanced Premium Testimonial Section */}
+          <div className="absolute inset-0 bg-gradient-to-t from-gray-900/95 via-gray-900/40 to-transparent z-10 pointer-events-none"></div>
           
-          {/* Glassmorphic Testimonial Card */}
-          <div className="absolute bottom-12 left-12 right-12 bg-white/20 backdrop-blur-xl border border-white/30 rounded-[2rem] p-8 text-white shadow-2xl z-20">
-            <p className="text-2xl font-medium leading-relaxed mb-8 drop-shadow-sm">
+          <div className="absolute bottom-12 left-12 right-12 z-20 text-white">
+            <div className="flex gap-1.5 mb-6">
+              {[...Array(5)].map((_, i) => (
+                <Star key={i} size={18} fill="#fbbf24" strokeWidth={0} />
+              ))}
+            </div>
+            
+            <p className="text-3xl sm:text-4xl font-normal leading-snug mb-10 text-white/95 max-w-2xl">
               "To provide our guests the best experiences, we are constantly perfecting every detail of your stay."
             </p>
-            <div className="flex items-center justify-between">
-              <div>
-                <h4 className="text-lg font-medium">Eleanor Vance</h4>
-                <p className="text-white/80 text-sm mt-1">Concierge Director<br/>Bolton Luxe Collection</p>
+            
+            <div className="flex items-center justify-between border-t border-white/20 pt-8">
+              <div className="flex flex-col justify-center">
+                <h4 className="text-lg font-semibold tracking-wide !text-white">Eleanor Vance</h4>
+                <p className="text-white/60 text-xs tracking-[0.2em] uppercase mt-1">Concierge Director</p>
               </div>
-              <div className="flex flex-col items-end gap-3">
-                <div className="flex gap-1">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} size={16} fill="currentColor" strokeWidth={0} />
-                  ))}
-                </div>
-                <div className="flex gap-3">
-                  <button className="w-10 h-10 rounded-full border border-white/30 flex items-center justify-center hover:bg-white/10 transition-colors">
-                    <ChevronLeft size={18} strokeWidth={1.5} />
-                  </button>
-                  <button className="w-10 h-10 rounded-full border border-white/30 flex items-center justify-center hover:bg-white/10 transition-colors">
-                    <ChevronRight size={18} strokeWidth={1.5} />
-                  </button>
-                </div>
+              
+              <div className="flex gap-4">
+                <button className="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center hover:bg-white/10 hover:border-white/40 transition-all backdrop-blur-sm group">
+                  <ChevronLeft size={20} strokeWidth={1.5} className="text-white/70 group-hover:text-white transition-colors" />
+                </button>
+                <button className="w-12 h-12 rounded-full bg-white text-gray-900 flex items-center justify-center hover:bg-gray-100 transition-all shadow-xl hover:scale-105 active:scale-95">
+                  <ChevronRight size={20} strokeWidth={2} />
+                </button>
               </div>
             </div>
           </div>

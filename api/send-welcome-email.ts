@@ -31,147 +31,173 @@ export default async function handler(req, res) {
       <title>Welcome to Bolton Luxe</title>
       <style>
         body {
-          font-family: 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-          background-color: #f9fafb;
-          color: #1f2937;
+          font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+          background-color: #f5f6f8;
+          color: #050505;
           margin: 0;
-          padding: 0;
+          padding: 40px 20px;
+          -webkit-font-smoothing: antialiased;
         }
         .container {
           max-width: 600px;
-          margin: 40px auto;
+          margin: 0 auto;
           background-color: #ffffff;
-          border-radius: 12px;
+          border-radius: 8px;
           overflow: hidden;
-          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+          box-shadow: 0 2px 8px rgba(0,0,0,0.04);
         }
         .header {
-          background-color: #111827;
-          padding: 40px 30px;
-          text-align: center;
-          color: #ffffff;
+          padding: 30px 40px 10px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
         }
-        .header h1 {
-          margin: 0;
+        .logo {
           font-size: 24px;
-          font-weight: 400;
-          letter-spacing: 0.05em;
-          text-transform: uppercase;
+          font-weight: 700;
+          letter-spacing: -0.5px;
+          color: #111;
+          text-decoration: none;
+        }
+        .header-link {
+          font-size: 14px;
+          color: #4f46e5;
+          text-decoration: none;
+          font-weight: 500;
         }
         .content {
-          padding: 40px 30px;
+          padding: 20px 40px 40px;
         }
-        .greeting {
-          font-size: 20px;
-          font-weight: 500;
-          margin-bottom: 20px;
-          color: #111827;
+        h1 {
+          font-size: 40px;
+          line-height: 1.1;
+          font-weight: 800;
+          margin: 0 0 30px;
+          color: #000;
+          letter-spacing: -1px;
         }
-        .message {
-          font-size: 15px;
+        p {
+          font-size: 16px;
           line-height: 1.6;
-          color: #4b5563;
-          margin-bottom: 30px;
+          color: #111;
+          margin: 0 0 24px;
+        }
+        .button {
+          display: inline-block;
+          background-color: #4f46e5; /* Match Miro blue/indigo style */
+          color: #ffffff;
+          padding: 16px 32px;
+          text-decoration: none;
+          border-radius: 100px; /* Pill shape */
+          font-weight: 500;
+          font-size: 16px;
+          margin: 10px 0 30px;
+          transition: background-color 0.2s;
+        }
+        .perks-box {
+          background-color: #f4f5f9;
+          border-radius: 12px;
+          padding: 30px;
+          margin: 10px 0;
+        }
+        .perks-box h2 {
+          font-size: 20px;
+          font-weight: 700;
+          margin: 0 0 15px;
+          color: #000;
+        }
+        .perks-box p {
+          font-size: 15px;
+          margin-bottom: 10px;
+        }
+        .perks-box p:last-child {
+          margin-bottom: 0;
         }
         .card-container {
           background: linear-gradient(135deg, #1f2937 0%, #000000 100%);
-          border-radius: 16px;
-          padding: 30px;
+          border-radius: 12px;
+          padding: 24px;
           color: #ffffff;
-          margin: 30px 0;
-          position: relative;
-          overflow: hidden;
+          margin-top: 20px;
           border: 1px solid #374151;
-        }
-        .card-container::before {
-          content: '';
-          position: absolute;
-          top: -50%;
-          left: -50%;
-          width: 200%;
-          height: 200%;
-          background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 60%);
-          transform: rotate(30deg);
-          pointer-events: none;
         }
         .card-header {
           display: flex;
           justify-content: space-between;
-          align-items: flex-start;
-          margin-bottom: 40px;
-        }
-        .card-title {
-          font-size: 12px;
-          text-transform: uppercase;
-          letter-spacing: 0.1em;
-          color: #9ca3af;
+          margin-bottom: 24px;
         }
         .card-tier {
-          font-size: 14px;
+          font-size: 12px;
           font-weight: 600;
           color: #d1d5db;
           text-transform: uppercase;
           letter-spacing: 0.1em;
         }
         .card-member-name {
-          font-size: 20px;
-          font-weight: 400;
-          letter-spacing: 0.05em;
-          margin-bottom: 8px;
+          font-size: 18px;
+          font-weight: 500;
+          margin-bottom: 4px;
         }
         .card-member-id {
-          font-size: 14px;
+          font-size: 13px;
           font-family: monospace;
           color: #9ca3af;
-          letter-spacing: 0.1em;
         }
         .footer {
-          background-color: #f3f4f6;
-          padding: 30px;
-          text-align: center;
-          font-size: 13px;
-          color: #6b7280;
-        }
-        .button {
-          display: inline-block;
-          background-color: #111827;
-          color: #ffffff;
-          padding: 14px 28px;
-          text-decoration: none;
-          border-radius: 8px;
-          font-weight: 500;
-          font-size: 15px;
-          margin-top: 10px;
+          padding: 0 40px 40px;
+          font-size: 14px;
+          color: #666;
+          line-height: 1.5;
         }
       </style>
     </head>
     <body>
       <div class="container">
+        <!-- Header -->
         <div class="header">
-          <h1>Bolton Luxe</h1>
+          <span style="display:inline-block; width: 100%;">
+            <a href="https://boltonwhitegroup.com" class="logo" style="float:left;">Bolton Luxe</a>
+            <a href="https://loyalty.boltonwhitegroup.com/login" class="header-link" style="float:right; margin-top: 6px;">Sign in &rarr;</a>
+          </span>
+          <div style="clear:both;"></div>
         </div>
-        <div class="content">
-          <div class="greeting">Welcome to Bolton Luxe, ${fullName}.</div>
-          <div class="message">
-            We are thrilled to welcome you to our exclusive loyalty program. As a member, you'll enjoy unparalleled service, exclusive rates, and curated experiences designed just for you. Below is your digital loyalty card which you can use for your upcoming stays.
-          </div>
-          
-          <div class="card-container">
-            <div class="card-header">
-              <div class="card-title">Membership Card</div>
-              <div class="card-tier">Bronze</div>
-            </div>
-            <div class="card-member-name">${fullName}</div>
-            <div class="card-member-id">${memberId}</div>
-          </div>
 
-          <div class="message" style="text-align: center;">
-            <a href="https://loyalty.boltonwhitegroup.com/login" class="button">Access Your Account</a>
+        <div class="content">
+          <!-- Big Bold Heading -->
+          <h1>Welcome To The Pinnacle Of Luxury</h1>
+          
+          <p>
+            At Bolton Luxe, we're dedicated to providing an unparalleled experience that exceeds your expectations. We are thrilled to welcome you, <strong>${fullName}</strong>, into our exclusive loyalty program where every stay is designed just for you.
+          </p>
+          <p>
+            Your membership unlocks a world of curated experiences, priority services, and exclusive rates across all our properties. We can't wait to host you.
+          </p>
+
+          <!-- Primary Button -->
+          <a href="https://loyalty.boltonwhitegroup.com/login" class="button">Access your account &rarr;</a>
+
+          <!-- Info Box (like the Miro "As a thank you" box) -->
+          <div class="perks-box">
+            <h2>Your Membership Details</h2>
+            <p>
+              You've officially joined as a <strong>Bronze</strong> member. Earn points on every stay, unlock complimentary room upgrades, and enjoy late check-outs.
+            </p>
+            
+            <!-- Sleek Digital Card inside the box -->
+            <div class="card-container">
+              <div class="card-header">
+                <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: #9ca3af;">Digital Card</div>
+                <div class="card-tier">Bronze</div>
+              </div>
+              <div class="card-member-name">${fullName}</div>
+              <div class="card-member-id">${memberId}</div>
+            </div>
           </div>
         </div>
+        
         <div class="footer">
-          &copy; ${new Date().getFullYear()} Bolton White Group. All rights reserved.<br>
-          If you have any questions, please reply to this email.
+          Thank you, and happy travels!<br>
+          The Bolton Luxe Concierge Team
         </div>
       </div>
     </body>
