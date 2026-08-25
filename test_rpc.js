@@ -7,9 +7,8 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
 
 async function check() {
   const { data, error } = await supabase.rpc('get_all_loyalty_members');
-  console.log("RPC Data length:", data?.length);
   if (data?.length > 0) {
-    console.log("First item:", data[0]);
+    console.log("Members with stays > 0:", data.filter(m => m.stays > 0).map(m => ({ email: m.email, stays: m.stays })));
   }
   if (error) console.error(error);
 }

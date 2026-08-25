@@ -135,13 +135,18 @@ export const useLoyaltyCheckin = () => {
 
       // Best-effort: insert booking detail record
       try {
-        const { error: bookingError } = await supabase.from('loyalty_bookings').insert([{
+        const { error: bookingError } = await supabase.from('loyalty_stays').insert([{
           member_id: member.id,
-          ...stay,
+          check_in: stay.check_in_date,
+          check_out: stay.check_out_date,
+          room_type: stay.room_type,
+          amount: stay.amount_spent,
           points_earned: pointsEarned,
-          discount_applied: config.discount,
+          property: 'Bolton White Hotel',
+          stay_id: `STAY-${Date.now()}-${member.id.substring(0,4)}`
         }]);
-        if (bookingError) console.error("Booking insert error:", bookingError);
+        
+        if (bookingError) console.error('Failed to log booking details:', bookingError);
       } catch (e) { console.error(e); }
 
       // Best-effort: log to points ledger
