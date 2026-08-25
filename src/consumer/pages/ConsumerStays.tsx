@@ -23,19 +23,19 @@ const ConsumerStays = () => {
           
         if (member) {
           const { data } = await supabase
-            .from('loyalty_bookings')
+            .from('loyalty_stays')
             .select('*')
             .eq('member_id', member.id)
-            .order('check_in_date', { ascending: false });
+            .order('check_in', { ascending: false });
             
           // Map to match the expected format
           const mappedStays = (data || []).map(b => ({
             ...b,
-            hotel_name: (b as any).property || 'Bolton White Hotel',
-            check_in: b.check_in_date,
-            check_out: b.check_out_date,
-            amount: b.amount_spent,
-            status: new Date(b.check_in_date) > new Date() ? 'Upcoming' : 'Completed'
+            hotel_name: b.property || 'Bolton White Hotel',
+            check_in: b.check_in,
+            check_out: b.check_out,
+            amount: b.amount,
+            status: new Date(b.check_in) > new Date() ? 'Upcoming' : 'Completed'
           }));
           
           setStays(mappedStays);
