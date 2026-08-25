@@ -22,7 +22,7 @@ export const TIER_CONFIG = {
   Silver:   { discount: 10, multiplier: 1.0, freeNightAt: 200, color: 'text-slate-500', bg: 'bg-slate-100', border: 'border-slate-300' },
   Gold:     { discount: 20, multiplier: 1.5, freeNightAt: 150, color: 'text-amber-500', bg: 'bg-amber-50',  border: 'border-amber-300' },
   Platinum: { discount: 30, multiplier: 2.0, freeNightAt: 100, color: 'text-purple-600', bg: 'bg-purple-50', border: 'border-purple-300' },
-  Standard: { discount: 0,  multiplier: 0,   freeNightAt: 200, color: 'text-gray-400',  bg: 'bg-gray-100', border: 'border-gray-200' },
+  Standard: { discount: 0,  multiplier: 0.5,   freeNightAt: 200, color: 'text-gray-400',  bg: 'bg-gray-100', border: 'border-gray-200' },
 };
 
 export const generateCardNumber = () => {
@@ -46,34 +46,6 @@ export const calculatePoints = (amountSpent: number, tier: LoyaltyMember['tier']
   return Math.floor((amountSpent / 1000) * config.multiplier);
 };
 
-// ── Demo Fallbacks (for presentation reliability) ───────────────────────────
-const DEMO_MEMBERS: Record<string, LoyaltyMember> = {
-  'BWG LX123 4567': {
-    id: 'demo-john',
-    member_id: 'BWG LX123 4567',
-    name: 'John Bolton',
-    email: 'john.bolton@example.com',
-    phone: '+234 801 234 5678',
-    tier: 'Gold',
-    points: 2500,
-    stays: 12,
-    status: 'Active',
-    join_date: '2025-01-15',
-  },
-  'BWG LX999 0000': {
-    id: 'demo-sarah',
-    member_id: 'BWG LX999 0000',
-    name: 'Sarah Williams',
-    email: 'sarah.w@example.com',
-    phone: '+234 802 999 0000',
-    tier: 'Silver',
-    points: 450,
-    stays: 3,
-    status: 'Active',
-    join_date: '2026-02-10',
-  }
-};
-
 export const useLoyaltyCheckin = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isLoggingStay, setIsLoggingStay] = useState(false);
@@ -86,24 +58,15 @@ export const useLoyaltyCheckin = () => {
     const cleanNo = cardNumber.trim().toUpperCase();
     
     try {
-      // 1. Try Live Database (Using RPC to bypass RLS since admin auth is mocked client-side)
       const { data, error } = await supabase.rpc('get_all_loyalty_members');
 
       if (!error && data) {
         const found = data.find((m: any) => m.member_id === cleanNo);
         if (found) return found as LoyaltyMember;
       }
-      
-      // 2. Try Demo Fallback (for board presentations)
-      if (DEMO_MEMBERS[cleanNo]) {
-        return DEMO_MEMBERS[cleanNo];
-      }
 
       return null;
     } catch (err: any) {
-      // Fallback even on network error
-      if (DEMO_MEMBERS[cleanNo]) return DEMO_MEMBERS[cleanNo];
-      
       toast({ variant: 'destructive', title: 'Lookup failed', description: err.message });
       return null;
     } finally {
@@ -130,7 +93,7 @@ export const useLoyaltyCheckin = () => {
   };
 
   // ── Log Stay ─────────────────────────────────────────────────────────────────
-  // The critical write (member points + stays) always runs.
+  // Uses RPCs exclusively for the critical member update (points + stays).
   // Auxiliary writes (bookings table, point ledger) are best-effort.
   const logStay = async (
     member: LoyaltyMember,
@@ -158,32 +121,19 @@ export const useLoyaltyCheckin = () => {
         newTier = 'Gold';
       }
 
-      // Simulation check for Demo IDs (for board presentation)
-      if (member.id.startsWith('demo-')) {
-        await new Promise(r => setTimeout(r, 1000)); // Simulate network
-        toast({
-          title: `Stay logged (Demo Mode) — +${pointsEarned} points`,
-          description: `${member.name} now has ${newPoints.toLocaleString()} points.`,
-        });
-        setIsLoggingStay(false);
-        return true;
-      }
-
-      // Fallback or use RPC if update fails due to RLS
-      const { error: memberError } = await supabase
-        .from('loyalty_members')
-        .update({ points: newPoints, stays: newStays, tier: newTier })
-        .eq('id', member.id);
-
-      if (memberError) {
-         // Silently ignore or log it, we rely on RPC below if it fails silently
-      }
-
-      // Always call the RPCs to guarantee update since .update() might silently fail
+      // Use RPCs exclusively to update member (bypasses RLS)
       await supabase.rpc('update_member_stays', { p_member_id: member.id, p_points: 0, p_amount: 1 });
       await supabase.rpc('update_member_points', { p_member_id: member.id, p_points: pointsEarned });
 
-      // Best-effort: insert booking detail record (log errors if any)
+      // Handle tier upgrade separately if needed
+      if (newTier !== member.tier) {
+        await supabase
+          .from('loyalty_members')
+          .update({ tier: newTier })
+          .eq('id', member.id);
+      }
+
+      // Best-effort: insert booking detail record
       try {
         const { error: bookingError } = await supabase.from('loyalty_bookings').insert([{
           member_id: member.id,
@@ -194,12 +144,12 @@ export const useLoyaltyCheckin = () => {
         if (bookingError) console.error("Booking insert error:", bookingError);
       } catch (e) { console.error(e); }
 
-      // Best-effort: log to points ledger (already done mostly by RPC but we can log details)
+      // Best-effort: log to points ledger
       try {
         const { error: txnError } = await supabase.from('loyalty_point_transactions').insert([{
           member_id: member.id,
           amount: pointsEarned,
-          type: 'Earn',
+          type: 'earned',
           description: `Stay: ${stay.room_type} (${stay.check_in_date} – ${stay.check_out_date})`,
           date: new Date().toISOString(),
         }]);

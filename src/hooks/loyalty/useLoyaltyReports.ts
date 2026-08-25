@@ -169,11 +169,12 @@ export const useLoyaltyReports = () => {
       data.forEach(transaction => {
         const date = new Date(transaction.date);
         const month = months[date.getMonth()];
+        const amount = Number(transaction.amount);
         
-        if (transaction.amount > 0) {
-          monthlyData[month].earned += transaction.amount;
+        if (amount > 0) {
+          monthlyData[month].earned += amount;
         } else {
-          monthlyData[month].redeemed += Math.abs(transaction.amount);
+          monthlyData[month].redeemed += Math.abs(amount);
         }
       });
 
@@ -220,23 +221,7 @@ export const useLoyaltyReports = () => {
         rewardNames[rewardId] = rewardName;
       });
 
-      // If no redemptions yet, let's use dummy data to show the chart
-      if (Object.keys(rewardCounts).length === 0) {
-        // Get all rewards
-        const { data: rewards, error: rewardsError } = await supabase
-          .from('loyalty_rewards')
-          .select('id, name');
-          
-        if (rewardsError) throw rewardsError;
-        
-        if (rewards.length > 0) {
-          rewards.forEach((reward, index) => {
-            const count = Math.floor(Math.random() * 10) + 1; // Random count between 1-10
-            rewardCounts[reward.id] = count;
-            rewardNames[reward.id] = reward.name;
-          });
-        }
-      }
+      // Removed fake data generation. Chart will now accurately show empty if there are no redemptions.
 
       const totalRedemptions = Object.values(rewardCounts).reduce((a, b) => a + b, 0);
 

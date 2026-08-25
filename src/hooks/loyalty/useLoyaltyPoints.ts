@@ -49,12 +49,14 @@ export const useLoyaltyPoints = () => {
       .filter(t => t.type === 'earned' && new Date(t.date) >= startOfMonth)
       .reduce((sum, t) => sum + t.amount, 0);
 
+    const redemptionRate = totalIssued > 0 ? Math.round((totalRedeemed / totalIssued) * 100) : 0;
+
     return {
       totalIssued,
       totalRedeemed,
       currentOutstanding,
       monthlyGrowth,
-      redemptionRate: 25
+      redemptionRate
     };
   };
 
@@ -90,7 +92,7 @@ export const useLoyaltyPoints = () => {
     totalRedeemed: 0,
     currentOutstanding: 0,
     monthlyGrowth: 0,
-    redemptionRate: 25
+    redemptionRate: 0
   }, isLoading: isLoadingSummary } = useQuery({
     queryKey: ['loyalty_points_summary'],
     queryFn: fetchPointsSummary

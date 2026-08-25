@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useConsumerAuth } from '../contexts/ConsumerAuthContext';
 import { Star, TrendingUp, Calendar as CalendarIcon, MapPin, Gift, ArrowUpRight } from 'lucide-react';
@@ -7,8 +7,18 @@ import LoyaltyCard from '../components/LoyaltyCard';
 import Preloader from '../components/Preloader';
 import ImageCarousel from '../components/ImageCarousel';
 
+// Centralized tier thresholds — single source of truth
+const TIER_THRESHOLDS: Record<string, number> = {
+  standard: 5000,
+  bronze: 5000,
+  silver: 15000,
+  gold: 50000,
+  platinum: 100000,
+};
+
 const ConsumerDashboard = () => {
   const { user } = useConsumerAuth();
+  const navigate = useNavigate();
   const [profile, setProfile] = useState<any>(null);
   const [upcomingStay, setUpcomingStay] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -21,7 +31,7 @@ const ConsumerDashboard = () => {
             name: 'User',
             tier: 'Bronze',
             points: 0,
-            nextTierPoints: 5000,
+            nextTierPoints: TIER_THRESHOLDS['bronze'],
             stays: 0,
             rewardsUsed: 0
           });
@@ -36,13 +46,28 @@ const ConsumerDashboard = () => {
         }
         
         if (data) {
+          const tierKey = (data.tier || 'bronze').toLowerCase();
+          const nextTierPoints = TIER_THRESHOLDS[tierKey] || TIER_THRESHOLDS['bronze'];
+
+          // Fetch actual rewards used count from redemptions table
+          let rewardsUsedCount = 0;
+          try {
+            const { data: redemptions, error: redemptionsError } = await supabase
+              .from('loyalty_reward_redemptions')
+              .select('id')
+              .eq('member_id', data.id);
+            if (!redemptionsError && redemptions) {
+              rewardsUsedCount = redemptions.length;
+            }
+          } catch { /* silent — supplementary data */ }
+
           setProfile({
             name: data.name,
             tier: data.tier.charAt(0).toUpperCase() + data.tier.slice(1),
-            points: data.points,
-            nextTierPoints: (data.tier.toLowerCase() === 'standard' || data.tier.toLowerCase() === 'bronze') ? 5000 : data.tier.toLowerCase() === 'silver' ? 15000 : data.tier.toLowerCase() === 'gold' ? 50000 : 100000,
+            points: data.points || 0,
+            nextTierPoints,
             stays: data.stays || 0,
-            rewardsUsed: 0, // Will be fetched from redemptions table in future
+            rewardsUsed: rewardsUsedCount,
             memberId: data.member_id
           });
 
@@ -56,10 +81,9 @@ const ConsumerDashboard = () => {
             .limit(1);
             
           if (staysData && staysData.length > 0) {
-            // Map the booking entry to the expected format if needed
             setUpcomingStay({
                ...staysData[0],
-               hotel_name: 'Bolton Luxe Hotel', // Assuming default
+               hotel_name: (staysData[0] as any).property || 'Bolton White Hotel',
                check_in: staysData[0].check_in_date,
                check_out: staysData[0].check_out_date,
                amount: staysData[0].amount_spent,
@@ -72,7 +96,7 @@ const ConsumerDashboard = () => {
             name: user.email.split('@')[0],
             tier: 'Bronze',
             points: 0,
-            nextTierPoints: 5000,
+            nextTierPoints: TIER_THRESHOLDS['bronze'],
             stays: 0,
             rewardsUsed: 0
           });
@@ -84,7 +108,7 @@ const ConsumerDashboard = () => {
           name: user?.email ? user.email.split('@')[0] : 'User',
           tier: 'Bronze',
           points: 0,
-          nextTierPoints: 5000,
+          nextTierPoints: TIER_THRESHOLDS['bronze'],
           stays: 0,
           rewardsUsed: 0
         });
@@ -129,8 +153,8 @@ const ConsumerDashboard = () => {
           </div>
           
           <div className="flex gap-3 w-full md:w-auto">
-             <button className="flex-1 md:flex-none bg-gray-800 text-white px-5 py-2.5 rounded-full text-sm font-medium hover:bg-gray-700 transition-colors">Update profile</button>
-             <button className="flex-1 md:flex-none bg-white text-gray-800 px-5 py-2.5 rounded-full text-sm font-medium shadow-[0_2px_10px_rgba(0,0,0,0.04)] border border-gray-100 hover:bg-gray-50 transition-colors">View stays</button>
+             <button onClick={() => navigate('/account')} className="flex-1 md:flex-none bg-gray-800 text-white px-5 py-2.5 rounded-full text-sm font-medium hover:bg-gray-700 transition-colors">Update profile</button>
+             <button onClick={() => navigate('/stays')} className="flex-1 md:flex-none bg-white text-gray-800 px-5 py-2.5 rounded-full text-sm font-medium shadow-[0_2px_10px_rgba(0,0,0,0.04)] border border-gray-100 hover:bg-gray-50 transition-colors">View stays</button>
           </div>
         </div>
 
@@ -141,7 +165,7 @@ const ConsumerDashboard = () => {
              <div className="flex items-center justify-between">
                <p className="text-sm text-gray-500 font-medium flex items-center gap-1.5"><TrendingUp size={14} className="text-blue-500" /> Lifetime Stays</p>
              </div>
-             <p className="text-xl md:text-[22px] font-semibold text-gray-800">{profile.stays} <span className="text-xs font-medium text-emerald-600 ml-1">↑ 12% vs last year</span></p>
+             <p className="text-xl md:text-[22px] font-semibold text-gray-800">{profile.stays}</p>
            </div>
            
            {/* Rewards Used */}
@@ -149,7 +173,7 @@ const ConsumerDashboard = () => {
              <div className="flex items-center justify-between">
                <p className="text-sm text-gray-500 font-medium flex items-center gap-1.5"><Gift size={14} className="text-orange-500" /> Rewards Used</p>
              </div>
-             <p className="text-xl md:text-[22px] font-semibold text-gray-800">{profile.rewardsUsed} <span className="text-xs font-medium text-emerald-600 ml-1">↑ 2% vs last year</span></p>
+             <p className="text-xl md:text-[22px] font-semibold text-gray-800">{profile.rewardsUsed}</p>
            </div>
 
            {/* Current Points */}
@@ -165,7 +189,7 @@ const ConsumerDashboard = () => {
              <div className="flex items-center justify-between">
                <p className="text-sm text-gray-500 font-medium flex items-center gap-1.5"><ArrowUpRight size={14} className="text-purple-500" /> Next Tier Goal</p>
              </div>
-             <p className="text-xl md:text-[22px] font-semibold text-gray-800">{profile.nextTierPoints}</p>
+             <p className="text-xl md:text-[22px] font-semibold text-gray-800">{profile.nextTierPoints.toLocaleString()}</p>
            </div>
         </div>
       </div>
@@ -413,9 +437,14 @@ const ConsumerDashboard = () => {
                 </span>
               </div>
               <div className="col-span-1 md:col-span-3 text-left md:text-right mt-2 md:mt-0">
-                <button className="text-sm font-medium text-gray-600 hover:text-zinc-800 border border-gray-200 bg-white rounded-full px-4 py-1.5 shadow-sm transition-colors">
+                <a 
+                  href={getWhatsAppLink('Bolton White Hotel', '2347074825096')} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-sm font-medium text-gray-600 hover:text-zinc-800 border border-gray-200 bg-white rounded-full px-4 py-1.5 shadow-sm transition-colors inline-block"
+                >
                   Manage
-                </button>
+                </a>
               </div>
             </div>
           ) : (
@@ -425,9 +454,14 @@ const ConsumerDashboard = () => {
                </div>
                <p className="text-sm font-medium text-gray-800 mb-1">No upcoming stays</p>
                <p className="text-sm text-gray-500 mb-4">You don't have any upcoming reservations.</p>
-               <button className="text-sm font-medium text-white hover:bg-gray-700 border border-transparent bg-gray-800 rounded-full px-5 py-2 shadow-sm transition-colors">
+               <a 
+                 href={getWhatsAppLink('Bolton White Hotel', '2347074825096')} 
+                 target="_blank" 
+                 rel="noopener noreferrer"
+                 className="text-sm font-medium text-white hover:bg-gray-700 border border-transparent bg-gray-800 rounded-full px-5 py-2 shadow-sm transition-colors inline-block"
+               >
                  Book a Room
-               </button>
+               </a>
             </div>
           )}
         </div>

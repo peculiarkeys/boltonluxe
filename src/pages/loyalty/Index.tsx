@@ -20,49 +20,49 @@ const modules = [
     title: 'Enrol New Member',
     description: 'Register a new guest — generates unique card number, captures identity details, and fires a welcome notification',
     icon: <UserPlus className="w-8 h-8 text-primary" />,
-    link: '/loyalty/enroll',
+    link: '/boltonadmin/loyalty/enroll',
     color: 'bg-gradient-to-br from-primary/10 to-primary/5',
   },
   {
     title: 'Members',
     description: 'Manage all loyalty programme members, profiles, and card details',
     icon: <Users className="w-8 h-8 text-primary" />,
-    link: '/loyalty/members',
+    link: '/boltonadmin/loyalty/members',
     color: 'bg-gradient-to-br from-blue-500/10 to-blue-600/5'
   },
   {
     title: 'Points Management',
     description: 'Track and manage loyalty points earned, adjusted, and redeemed',
     icon: <Activity className="w-8 h-8 text-primary" />,
-    link: '/loyalty/points',
+    link: '/boltonadmin/loyalty/points',
     color: 'bg-gradient-to-br from-purple-500/10 to-purple-600/5'
   },
   {
     title: 'Rewards Catalogue',
     description: 'Configure and manage available rewards and member benefits',
     icon: <Gift className="w-8 h-8 text-primary" />,
-    link: '/loyalty/rewards',
+    link: '/boltonadmin/loyalty/rewards',
     color: 'bg-gradient-to-br from-indigo-500/10 to-indigo-600/5'
   },
   {
     title: 'Notifications',
     description: 'Communications centre — full log of every email, SMS, and alert sent to members',
     icon: <Bell className="w-8 h-8 text-primary" />,
-    link: '/loyalty/notifications',
+    link: '/boltonadmin/loyalty/notifications',
     color: 'bg-gradient-to-br from-rose-500/10 to-rose-600/5',
   },
   {
     title: 'Member Activities',
     description: 'Track stays, services used, and special requests per member',
     icon: <Award className="w-8 h-8 text-primary" />,
-    link: '/loyalty/activities',
+    link: '/boltonadmin/loyalty/activities',
     color: 'bg-gradient-to-br from-green-500/10 to-green-600/5'
   },
   {
     title: 'Reports',
     description: 'Analytics and performance reports on loyalty programme metrics',
     icon: <BarChart2 className="w-8 h-8 text-primary" />,
-    link: '/loyalty/reports',
+    link: '/boltonadmin/loyalty/reports',
     color: 'bg-gradient-to-br from-amber-500/10 to-amber-600/5'
   },
 ];
@@ -79,7 +79,7 @@ const LoyaltyIndex = () => {
       </div>
 
       {/* Hero: Check-In Widget */}
-      <Link to="/loyalty/checkin">
+      <Link to="/boltonadmin/loyalty/checkin">
         <Card className="border-2 border-primary/30 bg-gradient-to-br from-primary/5 to-primary/10 hover:border-primary/60 hover:shadow-lg transition-all duration-200 cursor-pointer">
           <CardContent className="pt-6 pb-6">
             <div className="flex items-center gap-6">

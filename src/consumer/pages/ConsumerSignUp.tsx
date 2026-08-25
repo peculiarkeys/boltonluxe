@@ -75,20 +75,11 @@ const ConsumerSignUp = () => {
             name: data.fullName,
             email: authData.user.email,
             member_id: memberId,
-            tier: 'Bronze',
+            tier: 'Standard',
             points: 500,
             stays: 0,
             status: 'Active',
             join_date: new Date().toISOString().split('T')[0]
-          }
-        ]);
-
-        await supabase.from('guests').insert([
-          {
-            first_name: data.fullName.split(' ')[0] || '',
-            last_name: data.fullName.split(' ').slice(1).join(' ') || '',
-            email: authData.user.email,
-            phone: data.phoneNumber,
           }
         ]);
         

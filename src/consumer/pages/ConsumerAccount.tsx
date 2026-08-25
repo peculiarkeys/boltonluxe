@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { User, Mail, Phone, MapPin, FileText, Heart } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useConsumerAuth } from '../contexts/ConsumerAuthContext';
+import { toast } from 'sonner';
 
 const ConsumerAccount = () => {
   const { user } = useConsumerAuth();
@@ -55,20 +56,40 @@ const ConsumerAccount = () => {
   }, [user]);
 
   const handleSave = async () => {
-    if (!user) return;
+    if (!user?.email) return;
     setSaving(true);
-    const { error } = await supabase
-      .from('guests')
-      .update({
-        phone: profile.phone,
-        address: profile.address,
-        passport_number: profile.passport,
-        nationality: profile.nationality,
-        preferences: profile.preferences
-      })
-      .eq('auth_id', user.id);
-    
-    setSaving(false);
+    try {
+      // Find the member by email first
+      const { data: allMembers } = await supabase.rpc('get_all_loyalty_members');
+      const member = allMembers?.find((m: any) => m.email === user.email);
+      
+      if (!member) {
+        console.error('Member not found for email:', user.email);
+        setSaving(false);
+        return;
+      }
+
+      const { error } = await supabase
+        .from('loyalty_members')
+        .update({
+          phone: profile.phone || null,
+          address: profile.address || null,
+          preferences: profile.preferences || null,
+        })
+        .eq('id', member.id);
+
+      if (error) {
+        console.error('Profile save error:', error);
+        toast.error('Failed to update profile.');
+      } else {
+        toast.success('Profile updated successfully.');
+      }
+    } catch (err) {
+      console.error('Failed to save profile:', err);
+      toast.error('An unexpected error occurred.');
+    } finally {
+      setSaving(false);
+    }
   };
 
   if (loading) return <div className="p-8 text-center text-gray-400 font-normal">Loading...</div>;

@@ -1,79 +1,94 @@
-
 import { useState, useEffect } from 'react';
-import { addDays, subDays, format } from 'date-fns';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
-const generateMockBookings = () => {
-  const today = new Date();
-  const statuses = ['confirmed', 'checked-in', 'checked-out', 'cancelled', 'no-show'];
-  const roomTypes = ['Standard', 'Deluxe', 'Suite', 'Executive'];
-  const guestNames = [
-    'John Smith', 'Sarah Johnson', 'Robert Williams', 'Maria Garcia', 
-    'David Brown', 'Jennifer Miller', 'Michael Davis', 'Emma Wilson', 
-    'James Taylor', 'Patricia Martinez', 'Christopher Anderson', 'Linda Thomas',
-    'Daniel Jackson', 'Elizabeth White', 'Matthew Harris', 'Susan Martin'
-  ];
-
-  return Array.from({ length: 50 }, (_, i) => {
-    const checkIn = addDays(subDays(today, 15), Math.floor(Math.random() * 30));
-    const nights = Math.floor(Math.random() * 7) + 1;
-    const checkOut = addDays(checkIn, nights);
-    
-    return {
-      bookingId: `BK-${10000 + i}`,
-      guestName: guestNames[Math.floor(Math.random() * guestNames.length)],
-      roomNumber: String(100 + Math.floor(Math.random() * 400)),
-      roomType: roomTypes[Math.floor(Math.random() * roomTypes.length)],
-      checkIn: checkIn.toISOString(),
-      checkOut: checkOut.toISOString(),
-      nights,
-      totalAmount: (Math.floor(Math.random() * 200) + 100) * nights,
-      status: statuses[Math.floor(Math.random() * statuses.length)],
-      guestEmail: `guest${i}@example.com`,
-      guestPhone: `+1 555-${1000 + Math.floor(Math.random() * 9000)}`,
-      paymentStatus: Math.random() > 0.3 ? 'paid' : 'pending',
-      specialRequests: Math.random() > 0.7 ? 'Late check-in requested' : '',
-    };
-  });
-};
-
-export const useMockBookings = () => {
+export const useBookings = () => {
   const [bookings, setBookings] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchBookings = async () => {
-      setIsLoading(true);
-      
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 800));
-      
-      setBookings(generateMockBookings());
+  const fetchBookings = async () => {
+    setIsLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('bookings')
+        .select('*')
+        .order('check_in', { ascending: false });
+        
+      if (error) {
+        // Fallback silently if table doesn't exist yet
+        console.warn('Bookings table might not exist yet:', error.message);
+        setBookings([]);
+      } else {
+        setBookings(data || []);
+      }
+    } catch (err) {
+      console.error('Error fetching bookings:', err);
+    } finally {
       setIsLoading(false);
-    };
+    }
+  };
 
+  useEffect(() => {
     fetchBookings();
   }, []);
 
-  const addBooking = (booking: any) => {
-    setBookings(prev => [
-      {
-        ...booking,
-        bookingId: `BK-${10000 + bookings.length}`,
-      },
-      ...prev
-    ]);
+  const addBooking = async (booking: any) => {
+    try {
+      const { data, error } = await supabase
+        .from('bookings')
+        .insert([booking])
+        .select();
+        
+      if (error) throw error;
+      setBookings(prev => [data[0], ...prev]);
+      toast.success('Booking added successfully');
+      return true;
+    } catch (error: any) {
+      toast.error('Failed to add booking: ' + error.message);
+      return false;
+    }
   };
 
-  const updateBooking = (updatedBooking: any) => {
-    setBookings(prev => 
-      prev.map(booking => 
-        booking.bookingId === updatedBooking.bookingId ? updatedBooking : booking
-      )
-    );
+  const updateBooking = async (updatedBooking: any) => {
+    try {
+      const { error } = await supabase
+        .from('bookings')
+        .update(updatedBooking)
+        .eq('id', updatedBooking.id || updatedBooking.bookingId);
+        
+      if (error) throw error;
+      
+      setBookings(prev => 
+        prev.map(booking => 
+          (booking.id || booking.bookingId) === (updatedBooking.id || updatedBooking.bookingId) 
+            ? updatedBooking 
+            : booking
+        )
+      );
+      toast.success('Booking updated successfully');
+      return true;
+    } catch (error: any) {
+      toast.error('Failed to update booking: ' + error.message);
+      return false;
+    }
   };
 
-  const deleteBooking = (bookingId: string) => {
-    setBookings(prev => prev.filter(booking => booking.bookingId !== bookingId));
+  const deleteBooking = async (bookingId: string) => {
+    try {
+      const { error } = await supabase
+        .from('bookings')
+        .delete()
+        .eq('id', bookingId);
+        
+      if (error) throw error;
+      
+      setBookings(prev => prev.filter(booking => booking.id !== bookingId && booking.bookingId !== bookingId));
+      toast.success('Booking deleted successfully');
+      return true;
+    } catch (error: any) {
+      toast.error('Failed to delete booking: ' + error.message);
+      return false;
+    }
   };
 
   return {
@@ -81,6 +96,7 @@ export const useMockBookings = () => {
     isLoading,
     addBooking,
     updateBooking,
-    deleteBooking
+    deleteBooking,
+    refreshBookings: fetchBookings
   };
 };

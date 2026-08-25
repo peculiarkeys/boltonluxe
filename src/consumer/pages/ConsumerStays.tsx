@@ -31,7 +31,7 @@ const ConsumerStays = () => {
           // Map to match the expected format
           const mappedStays = (data || []).map(b => ({
             ...b,
-            hotel_name: 'Bolton Luxe Hotel',
+            hotel_name: (b as any).property || 'Bolton White Hotel',
             check_in: b.check_in_date,
             check_out: b.check_out_date,
             amount: b.amount_spent,
@@ -89,7 +89,7 @@ const ConsumerStays = () => {
               <div className="text-center md:text-left">
                 <p className="text-sm text-gray-500 font-medium">Amount</p>
                 <p className="font-semibold text-gray-800 mt-1 flex items-center justify-center md:justify-start gap-1.5">
-                  <CreditCard size={14} className="text-gray-400" strokeWidth={2} /> ${stay.amount}
+                  <CreditCard size={14} className="text-gray-400" strokeWidth={2} /> ₦{stay.amount?.toLocaleString()}
                 </p>
               </div>
               <div className="text-center md:text-right">
