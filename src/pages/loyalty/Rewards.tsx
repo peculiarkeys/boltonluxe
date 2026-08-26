@@ -102,6 +102,7 @@ const RewardForm = ({
             required
           />
         </div>
+        <div className="space-y-2">
           <Label htmlFor="category">Category</Label>
           <Select 
             name="category" 
