@@ -5,11 +5,13 @@ export default async function handler(req, res) {
     return res.status(405).json({ message: 'Method not allowed' });
   }
 
-  const { email, fullName, memberId } = req.body;
+  const { email, fullName, memberId, tier = 'Standard', points = 500 } = req.body;
 
   if (!email || !fullName || !memberId) {
     return res.status(400).json({ message: 'Missing required fields' });
   }
+
+  const firstName = fullName.split(' ')[0];
 
   // Use provided SMTP credentials
   const transporter = nodemailer.createTransport({
@@ -149,6 +151,31 @@ export default async function handler(req, res) {
           color: #666;
           line-height: 1.5;
         }
+        @media only screen and (max-width: 600px) {
+          body {
+            padding: 0;
+          }
+          .container {
+            border-radius: 0;
+            box-shadow: none;
+          }
+          .header {
+            padding: 20px 20px 10px;
+          }
+          .content {
+            padding: 10px 20px 30px;
+          }
+          h1 {
+            font-size: 30px;
+            margin-bottom: 20px;
+          }
+          .footer {
+            padding: 0 20px 30px;
+          }
+          .perks-box, .card-container {
+            padding: 20px;
+          }
+        }
       </style>
     </head>
     <body>
@@ -164,13 +191,16 @@ export default async function handler(req, res) {
 
         <div class="content">
           <!-- Big Bold Heading -->
-          <h1>Welcome To The Pinnacle Of Luxury</h1>
+          <h1>Welcome to Bolton Luxe</h1>
           
           <p>
-            At Bolton Luxe, we're dedicated to providing an unparalleled experience that exceeds your expectations. We are thrilled to welcome you, <strong>${fullName}</strong>, into our exclusive loyalty program where every stay is designed just for you.
+            Hi ${firstName},
           </p>
           <p>
-            Your membership unlocks a world of curated experiences, priority services, and exclusive rates across all our properties. We can't wait to host you.
+            Welcome to the Bolton Luxe loyalty program. We are delighted to have you as a member, and we're committed to making your future stays with us more rewarding.
+          </p>
+          <p>
+            As a member, you'll unlock curated experiences, priority services, and exclusive rates across all our properties. We look forward to hosting you soon.
           </p>
 
           <!-- Primary Button -->
@@ -180,14 +210,14 @@ export default async function handler(req, res) {
           <div class="perks-box">
             <h2>Your Membership Details</h2>
             <p>
-              You've officially joined as a <strong>Bronze</strong> member. Earn points on every stay, unlock complimentary room upgrades, and enjoy late check-outs.
+              You've officially joined as a <strong>${tier}</strong> member. Start earning points on every stay, unlock complimentary room upgrades, and enjoy late check-outs.
             </p>
             
             <!-- Sleek Digital Card inside the box -->
             <div class="card-container">
               <div class="card-header">
                 <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: #9ca3af;">Digital Card</div>
-                <div class="card-tier">Bronze</div>
+                <div class="card-tier">${tier}</div>
               </div>
               <div class="card-member-name">${fullName}</div>
               <div class="card-member-id">${memberId}</div>

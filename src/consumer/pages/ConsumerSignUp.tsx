@@ -93,11 +93,31 @@ const ConsumerSignUp = () => {
             body: JSON.stringify({
               email: authData.user.email,
               fullName: data.fullName,
-              memberId: memberId
+              memberId: memberId,
+              tier: 'Standard',
+              points: 500
             }),
           });
         } catch (emailError) {
           console.error('Failed to send welcome email:', emailError);
+        }
+
+        // Trigger Admin Notification Email
+        try {
+          await fetch('/api/send-admin-notification', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              email: authData.user.email,
+              fullName: data.fullName,
+              memberId: memberId,
+              tier: 'Standard',
+            }),
+          });
+        } catch (adminEmailError) {
+          console.error('Failed to send admin notification:', adminEmailError);
         }
 
         setRegisteredEmail(authData.user.email);
