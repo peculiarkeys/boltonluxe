@@ -153,8 +153,8 @@ const ConsumerDashboard = () => {
           </div>
           
           <div className="flex gap-3 w-full md:w-auto">
-             <button onClick={() => navigate('/account')} className="flex-1 md:flex-none bg-gray-800 text-white px-5 py-2.5 rounded-full text-sm font-medium hover:bg-gray-700 transition-colors">Update profile</button>
-             <button onClick={() => navigate('/stays')} className="flex-1 md:flex-none bg-white text-gray-800 px-5 py-2.5 rounded-full text-sm font-medium shadow-[0_2px_10px_rgba(0,0,0,0.04)] border border-gray-100 hover:bg-gray-50 transition-colors">View stays</button>
+             <Link to="/account" className="flex-1 md:flex-none text-center bg-gray-800 text-white px-5 py-2.5 rounded-full text-sm font-medium hover:bg-gray-700 transition-colors">Update profile</Link>
+             <Link to="/stays" className="flex-1 md:flex-none text-center bg-white text-gray-800 px-5 py-2.5 rounded-full text-sm font-medium shadow-[0_2px_10px_rgba(0,0,0,0.04)] border border-gray-100 hover:bg-gray-50 transition-colors">View stays</Link>
           </div>
         </div>
 
