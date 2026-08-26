@@ -105,27 +105,18 @@ export const useLoyaltyPoints = () => {
       type: 'earned' | 'redeemed';
       description: string;
     }) => {
-      const { data, error } = await supabase
-        .from('loyalty_point_transactions')
-        .insert([{
-          ...transactionData,
-          date: new Date().toISOString()
-        }])
-        .select();
-
-      if (error) throw error;
-
       const pointsChange = transactionData.type === 'earned' 
         ? transactionData.amount 
         : -transactionData.amount;
 
-      const { error: updateError } = await supabase
-        .rpc('update_member_points', {
-          p_member_id: transactionData.member_id,
-          p_points: pointsChange
-        });
+      const { data, error } = await supabase.rpc('adjust_member_points', {
+        p_member_id: transactionData.member_id,
+        p_points: pointsChange,
+        p_description: transactionData.description,
+        p_admin_id: 'ADMIN' // Could be updated to actual user ID
+      });
 
-      if (updateError) throw updateError;
+      if (error) throw error;
 
       const { data: allMembers, error: memberError } = await supabase
         .rpc('get_all_loyalty_members');
@@ -134,11 +125,12 @@ export const useLoyaltyPoints = () => {
       
       const memberData = allMembers?.find((m: any) => m.id === transactionData.member_id);
 
-      if (memberError) throw memberError;
-
       return {
-        ...data[0],
-        memberName: memberData.name
+        amount: transactionData.amount,
+        type: transactionData.type,
+        description: transactionData.description,
+        member_id: transactionData.member_id,
+        memberName: memberData?.name || 'Unknown'
       } as PointTransaction;
     },
     onSuccess: (data, variables) => {

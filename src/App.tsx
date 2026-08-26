@@ -34,6 +34,7 @@ const Notifications = React.lazy(() => import('@/pages/loyalty/Notifications'));
 const Members = React.lazy(() => import('@/pages/loyalty/Members'));
 const PointsManagement = React.lazy(() => import('@/pages/loyalty/Points'));
 const Rewards = React.lazy(() => import('@/pages/loyalty/Rewards'));
+const Redemptions = React.lazy(() => import('@/pages/loyalty/Redemptions'));
 const MemberActivities = React.lazy(() => import('@/pages/loyalty/Activities'));
 const Reports = React.lazy(() => import('@/pages/loyalty/Reports'));
 
@@ -136,6 +137,12 @@ const AdminRoutes = () => {
         <Route path="loyalty/rewards" element={
           <ProtectedRoute>
             <Layout><Rewards /></Layout>
+          </ProtectedRoute>
+        } />
+
+        <Route path="loyalty/redemptions" element={
+          <ProtectedRoute>
+            <Layout><Redemptions /></Layout>
           </ProtectedRoute>
         } />
         

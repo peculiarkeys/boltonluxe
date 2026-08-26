@@ -6,6 +6,7 @@ import { Star, TrendingUp, Calendar as CalendarIcon, MapPin, Gift, ArrowUpRight 
 import LoyaltyCard from '../components/LoyaltyCard';
 import Preloader from '../components/Preloader';
 import ImageCarousel from '../components/ImageCarousel';
+import { getLuxePointsReferenceValue, formatNairaValue } from '@/hooks/loyalty/loyaltyUtils';
 
 // Centralized tier thresholds — single source of truth
 const TIER_THRESHOLDS: Record<string, number> = {
@@ -181,7 +182,10 @@ const ConsumerDashboard = () => {
              <div className="flex items-center justify-between">
                <p className="text-sm text-gray-500 font-medium flex items-center gap-1.5"><Star size={14} className="text-yellow-500" /> Current Points</p>
              </div>
-             <p className="text-xl md:text-[22px] font-semibold text-gray-800">{profile.points}</p>
+             <div>
+               <p className="text-xl md:text-[22px] font-semibold text-gray-800 leading-none">{profile.points}</p>
+               <p className="text-xs font-medium text-emerald-600 mt-1">≈ {formatNairaValue(getLuxePointsReferenceValue(profile.points))}</p>
+             </div>
            </div>
 
            {/* Next Tier */}

@@ -121,12 +121,11 @@ export const useLoyaltyMembers = () => {
     setError(null);
 
     try {
-      // Create a clean payload for update
-      const { id: _id, created_at, updated_at, ...cleanData } = member as any;
+      // Create a clean payload for update, excluding points to enforce RPC
+      const { id: _id, created_at, updated_at, points, ...cleanData } = member as any;
       
       // Ensure numeric fields are cast to numbers
       if (cleanData.stays !== undefined) cleanData.stays = Number(cleanData.stays);
-      if (cleanData.points !== undefined) cleanData.points = Number(cleanData.points);
 
       const { data, error } = await supabase
         .from('loyalty_members')
@@ -140,9 +139,6 @@ export const useLoyaltyMembers = () => {
         // Fallback to RPC if direct update fails due to RLS
         if (cleanData.stays !== undefined) {
            await supabase.rpc('update_member_stays', { p_member_id: id, p_points: 0, p_amount: cleanData.stays });
-        }
-        if (cleanData.points !== undefined) {
-           await supabase.rpc('update_member_points', { p_member_id: id, p_points: cleanData.points });
         }
         
         // Re-fetch to get the updated data
@@ -211,47 +207,25 @@ export const useLoyaltyMembers = () => {
     setError(null);
 
     try {
-      const { data: allMembers, error: memberError } = await supabase
-        .rpc('get_all_loyalty_members');
-
-      if (memberError) throw memberError;
-      const memberData = allMembers?.find((m: any) => m.id === id);
-      if (!memberData) throw new Error('Member not found');
-
-      if (memberError) throw memberError;
-
-      const currentPoints = memberData.points || 0;
-      const newPoints = Number(currentPoints) + Number(pointsToAdd);
-
-      const { data, error } = await supabase
-        .from('loyalty_members')
-        .update({ points: newPoints })
-        .eq('id', id)
-        .select();
+      const { data, error } = await supabase.rpc('adjust_member_points', {
+        p_member_id: id,
+        p_points: pointsToAdd,
+        p_description: reason,
+        p_admin_id: 'ADMIN' // Could dynamically inject current user id if available
+      });
 
       if (error) throw error;
       
-      if (!data || data.length === 0) {
-        // Fallback to RPC if direct update fails
-        await supabase.rpc('update_member_points', { p_member_id: id, p_points: newPoints });
-      }
-
-      await supabase
-        .from('loyalty_point_transactions')
-        .insert([{
-          member_id: id,
-          amount: pointsToAdd,
-          type: pointsToAdd > 0 ? 'Earn' : 'Redeem',
-          description: reason,
-          date: new Date().toISOString()
-        }]);
+      // Fetch updated member data to return
+      const { data: refreshed } = await supabase.rpc('get_all_loyalty_members');
+      const updatedMember = refreshed?.find((m: any) => m.id === id);
       
       toast({
         title: 'Points adjusted',
         description: `${Math.abs(pointsToAdd)} points ${pointsToAdd > 0 ? 'added to' : 'deducted from'} member's account.`,
       });
       
-      return data[0] as LoyaltyMember;
+      return updatedMember as LoyaltyMember;
     } catch (err: any) {
       setError(err.message);
       toast({

@@ -54,7 +54,7 @@ const ConsumerLogin = () => {
         setLoading(false);
       } else if (error.message.toLowerCase().includes('invalid login credentials')) {
         setIsNewUserFlow(true);
-        setError("Account not found. Please provide details to create one.");
+        // Do not show an error, just seamlessly transition to the create account flow
         setLoading(false);
       } else {
         setError(error.message);

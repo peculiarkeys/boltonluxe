@@ -9,9 +9,15 @@ export interface LoyaltyReward {
   name: string;
   description: string;
   points_cost: number;
-  category: 'Room' | 'Dining' | 'Wellness' | 'Transportation' | 'Experience';
+  category: 'Room' | 'Room Upgrade' | 'Stay Credit' | 'Stay Experience' | 'Dining' | 'Wellness' | 'Transportation' | 'Experience';
   availability: string;
   status: 'Active' | 'Inactive' | 'Seasonal';
+  reference_naira_value?: number;
+  min_tier?: string;
+  quantity?: number;
+  valid_from?: string;
+  valid_until?: string;
+  terms_conditions?: string;
   created_at?: string;
   updated_at?: string;
 }

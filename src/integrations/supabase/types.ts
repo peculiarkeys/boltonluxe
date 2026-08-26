@@ -552,6 +552,12 @@ export type Database = {
           id: string
           member_id: string | null
           type: string
+          balance_after: number | null
+          reference_type: string | null
+          reference_id: string | null
+          status: string | null
+          created_by: string | null
+          metadata: Json | null
         }
         Insert: {
           amount: number
@@ -561,6 +567,12 @@ export type Database = {
           id?: string
           member_id?: string | null
           type: string
+          balance_after?: number | null
+          reference_type?: string | null
+          reference_id?: string | null
+          status?: string | null
+          created_by?: string | null
+          metadata?: Json | null
         }
         Update: {
           amount?: number
@@ -570,6 +582,12 @@ export type Database = {
           id?: string
           member_id?: string | null
           type?: string
+          balance_after?: number | null
+          reference_type?: string | null
+          reference_id?: string | null
+          status?: string | null
+          created_by?: string | null
+          metadata?: Json | null
         }
         Relationships: [
           {
@@ -591,6 +609,13 @@ export type Database = {
           reward_id: string | null
           status: string
           updated_at: string | null
+          points_spent: number | null
+          redemption_code: string | null
+          used_at: string | null
+          expires_at: string | null
+          property_id: string | null
+          used_by: string | null
+          metadata: Json | null
         }
         Insert: {
           created_at?: string | null
@@ -601,6 +626,13 @@ export type Database = {
           reward_id?: string | null
           status: string
           updated_at?: string | null
+          points_spent?: number | null
+          redemption_code?: string | null
+          used_at?: string | null
+          expires_at?: string | null
+          property_id?: string | null
+          used_by?: string | null
+          metadata?: Json | null
         }
         Update: {
           created_at?: string | null
@@ -611,6 +643,13 @@ export type Database = {
           reward_id?: string | null
           status?: string
           updated_at?: string | null
+          points_spent?: number | null
+          redemption_code?: string | null
+          used_at?: string | null
+          expires_at?: string | null
+          property_id?: string | null
+          used_by?: string | null
+          metadata?: Json | null
         }
         Relationships: [
           {
@@ -641,6 +680,12 @@ export type Database = {
           reward_id: string
           status: string
           updated_at: string | null
+          reference_naira_value: number | null
+          min_tier: string | null
+          quantity: number | null
+          valid_from: string | null
+          valid_until: string | null
+          terms_conditions: string | null
         }
         Insert: {
           availability?: string | null
@@ -653,6 +698,12 @@ export type Database = {
           reward_id: string
           status: string
           updated_at?: string | null
+          reference_naira_value?: number | null
+          min_tier?: string | null
+          quantity?: number | null
+          valid_from?: string | null
+          valid_until?: string | null
+          terms_conditions?: string | null
         }
         Update: {
           availability?: string | null
@@ -665,6 +716,12 @@ export type Database = {
           reward_id?: string
           status?: string
           updated_at?: string | null
+          reference_naira_value?: number | null
+          min_tier?: string | null
+          quantity?: number | null
+          valid_from?: string | null
+          valid_until?: string | null
+          terms_conditions?: string | null
         }
         Relationships: []
       }
@@ -1042,6 +1099,29 @@ export type Database = {
           p_amount: number
         }
         Returns: undefined
+      }
+      redeem_reward: {
+        Args: {
+          p_member_id: string
+          p_reward_id: string
+          p_property_id?: string
+        }
+        Returns: Json
+      }
+      adjust_member_points: {
+        Args: {
+          p_member_id: string
+          p_points: number
+          p_description: string
+          p_admin_id?: string
+        }
+        Returns: number
+      }
+      reconcile_member_points: {
+        Args: {
+          p_member_id: string
+        }
+        Returns: Json
       }
     }
     Enums: {

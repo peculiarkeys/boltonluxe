@@ -1,5 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
+import { getLuxePointsReferenceValue, formatNairaValue } from '@/hooks/loyalty/loyaltyUtils';
 import { 
   Card, 
   CardContent, 
@@ -573,7 +573,10 @@ const Members = () => {
               <div className="pt-4 border-t border-zinc-100 flex justify-between items-center mt-auto">
                 <div className="flex items-center gap-1.5">
                   <Award className="h-4 w-4 text-primary" />
-                  <span className="font-semibold text-zinc-800">{member.points.toLocaleString()} <span className="text-zinc-500 font-medium text-xs">pts</span></span>
+                  <div className="flex flex-col">
+                    <span className="font-semibold text-zinc-800 leading-none">{member.points.toLocaleString()} <span className="text-zinc-500 font-medium text-[10px]">pts</span></span>
+                    <span className="text-[10px] text-emerald-600 font-medium mt-0.5">≈ {formatNairaValue(getLuxePointsReferenceValue(member.points))}</span>
+                  </div>
                 </div>
                 <div className="text-xs font-semibold text-zinc-500 bg-zinc-50 px-2 py-1 rounded-md border border-zinc-100">
                   {member.stays} {member.stays === 1 ? 'stay' : 'stays'}
@@ -624,10 +627,15 @@ const Members = () => {
                   </div>
                   <div className="bg-white p-4 rounded-xl border border-zinc-200 shadow-sm">
                     <p className="text-[10px] font-semibold text-zinc-500 uppercase tracking-wider mb-1">Points</p>
-                    <p className="text-lg font-semibold text-zinc-800 flex items-center gap-1.5">
-                      <Award className="h-4 w-4 text-primary" />
-                      {selectedMember.points.toLocaleString()}
-                    </p>
+                    <div className="flex flex-col">
+                      <p className="text-lg font-semibold text-zinc-800 flex items-center gap-1.5 leading-none">
+                        <Award className="h-4 w-4 text-primary" />
+                        {selectedMember.points.toLocaleString()}
+                      </p>
+                      <p className="text-xs text-emerald-600 font-medium mt-1 ml-5">
+                        ≈ {formatNairaValue(getLuxePointsReferenceValue(selectedMember.points))}
+                      </p>
+                    </div>
                   </div>
                   <div className="bg-white p-4 rounded-xl border border-zinc-200 shadow-sm">
                     <p className="text-[10px] font-semibold text-zinc-500 uppercase tracking-wider mb-1">Total Stays</p>

@@ -51,6 +51,7 @@ const Sidebar = () => {
         { name: 'Members',          path: '/boltonadmin/loyalty/members' },
         { name: 'Points Management',path: '/boltonadmin/loyalty/points' },
         { name: 'Rewards',          path: '/boltonadmin/loyalty/rewards' },
+        { name: 'Redemptions',      path: '/boltonadmin/loyalty/redemptions' },
         { name: 'Notifications',    path: '/boltonadmin/loyalty/notifications' },
         { name: 'Activities',       path: '/boltonadmin/loyalty/activities' },
         { name: 'Reports',          path: '/boltonadmin/loyalty/reports' },

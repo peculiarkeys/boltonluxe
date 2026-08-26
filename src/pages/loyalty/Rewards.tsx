@@ -1,5 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
+import { formatNairaValue } from '@/hooks/loyalty/loyaltyUtils';
 import { 
   Card, 
   CardContent, 
@@ -102,7 +102,6 @@ const RewardForm = ({
             required
           />
         </div>
-        <div className="space-y-2">
           <Label htmlFor="category">Category</Label>
           <Select 
             name="category" 
@@ -114,12 +113,44 @@ const RewardForm = ({
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="Room">Room</SelectItem>
+              <SelectItem value="Room Upgrade">Room Upgrade</SelectItem>
+              <SelectItem value="Stay Credit">Stay Credit</SelectItem>
+              <SelectItem value="Stay Experience">Stay Experience</SelectItem>
               <SelectItem value="Dining">Dining</SelectItem>
               <SelectItem value="Wellness">Wellness</SelectItem>
               <SelectItem value="Transportation">Transportation</SelectItem>
               <SelectItem value="Experience">Experience</SelectItem>
             </SelectContent>
           </Select>
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="reference_naira_value">Reference Naira Value</Label>
+          <Input 
+            id="reference_naira_value" 
+            name="reference_naira_value" 
+            type="number" 
+            value={formData.reference_naira_value || ''} 
+            onChange={handleChange}
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="min_tier">Min Tier</Label>
+          <Input 
+            id="min_tier" 
+            name="min_tier" 
+            value={formData.min_tier || ''} 
+            onChange={handleChange}
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="quantity">Quantity</Label>
+          <Input 
+            id="quantity" 
+            name="quantity" 
+            type="number" 
+            value={formData.quantity || ''} 
+            onChange={handleChange}
+          />
         </div>
         <div className="space-y-2">
           <Label htmlFor="availability">Availability</Label>
@@ -339,9 +370,16 @@ const Rewards = () => {
               </div>
             </CardContent>
             <CardFooter className="pt-2 pb-4 flex justify-between items-center">
-              <div className="flex items-center">
-                <Gift className="h-5 w-5 mr-2 text-primary" />
-                <span className="font-semibold text-lg">{reward.points_cost.toLocaleString()} points</span>
+              <div>
+                <div className="flex items-center">
+                  <Gift className="h-5 w-5 mr-2 text-primary" />
+                  <span className="font-semibold text-lg">{reward.points_cost.toLocaleString()} points</span>
+                </div>
+                {reward.reference_naira_value && (
+                  <div className="text-sm text-muted-foreground mt-1 ml-7">
+                    ≈ {formatNairaValue(reward.reference_naira_value)}
+                  </div>
+                )}
               </div>
               <Badge variant="outline" className={getStatusColor(reward.status)}>
                 {reward.status}

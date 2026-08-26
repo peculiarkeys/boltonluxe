@@ -93,8 +93,6 @@ export const useLoyaltyCheckin = () => {
   };
 
   // ── Log Stay ─────────────────────────────────────────────────────────────────
-  // Uses RPCs exclusively for the critical member update (points + stays).
-  // Auxiliary writes (bookings table, point ledger) are best-effort.
   const logStay = async (
     member: LoyaltyMember,
     stay: {
@@ -121,6 +119,21 @@ export const useLoyaltyCheckin = () => {
         newTier = 'Gold';
       }
 
+      const stayId = `STAY-${Date.now()}-${member.id.substring(0,4)}`;
+
+      // Idempotency check
+      const { data: existingTxn } = await supabase
+        .from('loyalty_point_transactions')
+        .select('id')
+        .eq('reference_type', 'STAY')
+        .eq('reference_id', stayId)
+        .maybeSingle();
+
+      if (existingTxn) {
+        console.log('Stay already logged for this reference ID');
+        return true;
+      }
+
       // Use RPCs exclusively to update member (bypasses RLS)
       await supabase.rpc('update_member_stays', { p_member_id: member.id, p_points: 0, p_amount: 1 });
       await supabase.rpc('update_member_points', { p_member_id: member.id, p_points: pointsEarned });
@@ -143,7 +156,8 @@ export const useLoyaltyCheckin = () => {
           amount: stay.amount_spent,
           points_earned: pointsEarned,
           property: 'Bolton White Hotel',
-          stay_id: `STAY-${Date.now()}-${member.id.substring(0,4)}`
+          stay_id: stayId,
+          nights: 1 // default placeholder, could be calculated
         }]);
         
         if (bookingError) console.error('Failed to log booking details:', bookingError);
@@ -157,6 +171,11 @@ export const useLoyaltyCheckin = () => {
           type: 'earned',
           description: `Stay: ${stay.room_type} (${stay.check_in_date} – ${stay.check_out_date})`,
           date: new Date().toISOString(),
+          balance_after: newPoints,
+          reference_type: 'STAY',
+          reference_id: stayId,
+          status: 'COMPLETED',
+          created_by: 'SYSTEM'
         }]);
         if (txnError) console.error("Txn insert error:", txnError);
       } catch (e) { console.error(e); }
