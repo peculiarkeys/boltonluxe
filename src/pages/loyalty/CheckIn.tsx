@@ -5,6 +5,7 @@ import {
   CalendarDays, Sparkles, AlertCircle, CheckCircle2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
@@ -13,6 +14,40 @@ import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
 import { useLoyaltyCheckin, TIER_CONFIG, LoyaltyBookingEntry, ROOM_PRICES } from '@/hooks/loyalty/useLoyaltyCheckin';
 import { LoyaltyMember } from '@/hooks/loyalty/useLoyaltyMembers';
+import { useProperty } from '@/contexts/PropertyContext';
+
+const FRONT_DESK_STAFF: Record<string, string[]> = {
+  BWH: [
+    'JOY EDEM UDO (HOD)',
+    'ANGEL BELEMA MINIMA',
+    'FAVOUR OCHENI',
+    'REGINA IHOTU AYEGBA',
+    'SENGOHOL FAVOUR TSEKE',
+    'UZOMA CYNTHIA ONYEBUCHI',
+    'JOHNSON U ENEMUGWEM',
+    'OJUKWU CHINONYE STELLA',
+    'CHIOMA RUTH OKORIE',
+    'RACHAEL CHISOM AGULLAH'
+  ],
+  JOHNWOOD: [
+    'Helen Bulus',
+    'Akanimo Umoh',
+    'Winner Ogidi',
+    'Vivian Nzenwata',
+    'Benefit Chima',
+    'Sarah Fagbemiro',
+    'Philip Haruna',
+    'Kingsley Isitoke',
+    'Augustine Elayon',
+    'Emmanuel Nwakoro',
+    'Mathew Hiembe'
+  ],
+  BWR: [
+    'JOHN ADEMU',
+    'MARYCYNTHIA CHIOMA OKIKA',
+    'PATIENCE AYUBA'
+  ]
+};
 
 const TierBadge = ({ tier }: { tier: LoyaltyMember['tier'] }) => {
   const cfg = TIER_CONFIG[tier] || TIER_CONFIG.Standard;
@@ -63,7 +98,10 @@ const LogStayModal = ({
   onSuccess: () => void;
 }) => {
   const { logStay, isLoggingStay } = useLoyaltyCheckin();
+  const { property } = useProperty();
   const cfg = TIER_CONFIG[member.tier as keyof typeof TIER_CONFIG] || TIER_CONFIG.Standard;
+
+  const staffList = property ? (FRONT_DESK_STAFF[property.code] || []) : [];
 
   const [form, setForm] = useState({
     check_in_date: new Date().toISOString().split('T')[0],
@@ -94,9 +132,7 @@ const LogStayModal = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (totalAmount <= 0) {
-      toast({
-        variant: 'destructive',
-        title: 'Invalid Stay Details',
+      toast.error('Invalid Stay Details', {
         description: 'Please ensure Check-Out is after Check-In and a Room Type is selected.',
       });
       return;
@@ -181,10 +217,25 @@ const LogStayModal = ({
 
           <div className="space-y-1.5">
             <Label className="text-zinc-600 font-medium text-xs uppercase tracking-wider">Logged By</Label>
-            <Input placeholder="Staff Name"
-              className="bg-zinc-50 border-zinc-200 text-zinc-700 h-11 rounded-xl"
-              value={form.staff_name}
-              onChange={e => setForm(f => ({ ...f, staff_name: e.target.value }))} required />
+            {staffList.length > 0 ? (
+              <Select onValueChange={v => setForm(f => ({ ...f, staff_name: v }))} required>
+                <SelectTrigger className="bg-zinc-50 border-zinc-200 text-zinc-700 h-11 rounded-xl">
+                  <SelectValue placeholder="Select your name" />
+                </SelectTrigger>
+                <SelectContent>
+                  {staffList.map(name => (
+                    <SelectItem key={name} value={name} className="text-zinc-700">
+                      {name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            ) : (
+              <Input placeholder="Staff Name"
+                className="bg-zinc-50 border-zinc-200 text-zinc-700 h-11 rounded-xl"
+                value={form.staff_name}
+                onChange={e => setForm(f => ({ ...f, staff_name: e.target.value }))} required />
+            )}
           </div>
 
           <DialogFooter className="pt-2 border-t border-zinc-100">

@@ -5,10 +5,10 @@ interface LoyaltyCardProps {
   name: string;
   cardNumber: string;
   expiryDate: string;
-  tier?: 'bronze' | 'silver' | 'gold' | 'platinum';
+  tier?: 'Standard' | 'Silver' | 'Gold' | 'Platinum';
 }
 
-const LoyaltyCard: React.FC<LoyaltyCardProps> = ({ name, cardNumber, expiryDate, tier = 'bronze' }) => {
+const LoyaltyCard: React.FC<LoyaltyCardProps> = ({ name, cardNumber, expiryDate, tier = 'Standard' }) => {
   const frontRef = useRef<HTMLDivElement>(null);
   const backRef = useRef<HTMLDivElement>(null);
 

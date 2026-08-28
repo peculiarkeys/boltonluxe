@@ -135,7 +135,7 @@ export const useLoyaltyRedemptions = () => {
     }
   };
 
-  const markAsUsed = async (id: string, adminId: string) => {
+  const markAsUsed = async (id: string, adminId: string, propertyId?: string) => {
     setIsLoading(true);
     setError(null);
     try {
@@ -144,7 +144,8 @@ export const useLoyaltyRedemptions = () => {
         .update({
           status: 'USED',
           used_at: new Date().toISOString(),
-          used_by: adminId
+          used_by: adminId,
+          property_id: propertyId || null
         })
         .eq('id', id)
         .select();

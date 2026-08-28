@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import NotFound from '@/pages/NotFound';
+import { PropertyProvider } from '@/contexts/PropertyContext';
 
 // Consumer App context and layout
 import { ConsumerAuthProvider, useConsumerAuth } from '@/consumer/contexts/ConsumerAuthContext';
@@ -73,8 +74,9 @@ const AdminRoutes = () => {
   const { user } = useAuth();
 
   return (
-    <Suspense fallback={<PageLoader />}>
-      <Routes>
+    <PropertyProvider>
+      <Suspense fallback={<PageLoader />}>
+        <Routes>
         <Route path="login" element={<Login />} />
         <Route path="unauthorized" element={<Unauthorized />} />
         
@@ -215,6 +217,7 @@ const AdminRoutes = () => {
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Suspense>
+    </PropertyProvider>
   );
 };
 

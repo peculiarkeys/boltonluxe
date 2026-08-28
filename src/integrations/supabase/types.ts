@@ -1123,6 +1123,10 @@ export type Database = {
         }
         Returns: Json
       }
+      get_all_loyalty_members: {
+        Args: Record<PropertyKey, never>
+        Returns: any[]
+      }
     }
     Enums: {
       [_ in never]: never

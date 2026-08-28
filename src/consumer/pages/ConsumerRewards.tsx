@@ -69,7 +69,7 @@ const ConsumerRewards = () => {
     
     setIsRedeeming(true);
     try {
-      const result = await redeemReward(memberId, selectedReward.id);
+      const result: any = await redeemReward(memberId, selectedReward.id);
       setPoints(result.balance_after);
       setSuccessRedemption(result);
       setSelectedReward(null);

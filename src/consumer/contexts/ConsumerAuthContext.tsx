@@ -7,6 +7,7 @@ interface ConsumerAuthContextType {
   user: User | null;
   isLoading: boolean;
   signOut: () => Promise<void>;
+  login: (email: string, password: string) => Promise<{ error: Error | null }>;
 }
 
 const ConsumerAuthContext = createContext<ConsumerAuthContextType | undefined>(undefined);
@@ -16,31 +17,92 @@ export const ConsumerAuthProvider: React.FC<{ children: React.ReactNode }> = ({ 
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  const checkAndSetConsumer = async (session: Session | null) => {
+    if (!session) {
+      setSession(null);
+      setUser(null);
+      setIsLoading(false);
+      return;
+    }
+
+    // Check if the user is an admin. If so, they are not allowed here.
+    try {
+      const { data: adminProfile, error } = await supabase
+        .from('admin_profiles')
+        .select('id')
+        .eq('auth_user_id', session.user.id)
+        .maybeSingle();
+
+      if (adminProfile) {
+        console.error('Admins cannot access the consumer portal.');
+        await supabase.auth.signOut();
+        setSession(null);
+        setUser(null);
+      } else {
+        setSession(session);
+        setUser(session.user);
+      }
+    } catch (err) {
+      console.error('Error verifying consumer session', err);
+      setSession(null);
+      setUser(null);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      setIsLoading(false);
+      checkAndSetConsumer(session);
     }).catch((error) => {
       console.error('Error getting session:', error);
       setIsLoading(false);
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      setIsLoading(false);
+      checkAndSetConsumer(session);
     });
 
     return () => subscription.unsubscribe();
   }, []);
+
+  const login = async (email: string, password: string) => {
+    setIsLoading(true);
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error) {
+      setIsLoading(false);
+      return { error };
+    }
+
+    if (data.user) {
+      // Pre-flight check before allowing the login flow to proceed
+      const { data: adminProfile } = await supabase
+        .from('admin_profiles')
+        .select('id')
+        .eq('auth_user_id', data.user.id)
+        .maybeSingle();
+
+      if (adminProfile) {
+        await supabase.auth.signOut();
+        setIsLoading(false);
+        return { error: new Error('Administrators must use the Admin Portal.') };
+      }
+    }
+
+    setIsLoading(false);
+    return { error: null };
+  };
 
   const signOut = async () => {
     await supabase.auth.signOut();
   };
 
   return (
-    <ConsumerAuthContext.Provider value={{ session, user, isLoading, signOut }}>
+    <ConsumerAuthContext.Provider value={{ session, user, isLoading, signOut, login }}>
       {children}
     </ConsumerAuthContext.Provider>
   );

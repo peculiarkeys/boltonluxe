@@ -4,6 +4,8 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useLoyaltyRedemptions } from '@/hooks/loyalty/useLoyaltyRedemptions';
+import { useProperty } from '@/contexts/PropertyContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { Search, Loader2, CheckCircle, XCircle } from 'lucide-react';
 import { format } from 'date-fns';
 
@@ -12,8 +14,9 @@ export default function Redemptions() {
   const [searchQuery, setSearchQuery] = useState('');
   const { fetchAdminRedemptions, searchByCode, markAsUsed, cancelRedemption, isLoading } = useLoyaltyRedemptions();
   
-  // Admin mock ID for now
-  const adminId = 'ADMIN_USER';
+  const { propertyId } = useProperty();
+  const { user } = useAuth();
+  const adminId = user?.id || 'SYSTEM';
 
   const loadData = async () => {
     const data = await fetchAdminRedemptions();
@@ -53,7 +56,7 @@ export default function Redemptions() {
 
   const handleMarkUsed = async (id: string) => {
     if (window.confirm('Mark this redemption as used by the guest?')) {
-      await markAsUsed(id, adminId);
+      await markAsUsed(id, adminId, propertyId || undefined);
       loadData();
     }
   };

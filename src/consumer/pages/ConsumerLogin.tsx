@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
+import { useConsumerAuth } from '../contexts/ConsumerAuthContext';
 import { Eye, EyeOff, Star, ChevronLeft, ChevronRight } from 'lucide-react';
 
 const bgImages = [
@@ -25,6 +26,7 @@ const ConsumerLogin = () => {
   const [isUnconfirmedEmail, setIsUnconfirmedEmail] = useState(false);
   const [fullName, setFullName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
+  const { login } = useConsumerAuth();
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -43,10 +45,7 @@ const ConsumerLogin = () => {
     setLoading(true);
     setError(null);
 
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    const { error } = await login(email, password);
 
     if (error) {
       if (error.message.toLowerCase().includes('email not confirmed')) {

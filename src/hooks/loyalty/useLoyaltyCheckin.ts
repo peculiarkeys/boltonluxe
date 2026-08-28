@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { LoyaltyMember } from './useLoyaltyMembers';
+import { useProperty } from '@/contexts/PropertyContext';
+import { useAuth } from '@/contexts/AuthContext';
 
 export interface LoyaltyBookingEntry {
   id: string;
@@ -50,6 +52,8 @@ export const useLoyaltyCheckin = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isLoggingStay, setIsLoggingStay] = useState(false);
   const { toast } = useToast();
+  const { propertyId } = useProperty();
+  const { user } = useAuth();
 
   // ── Card number lookup ──────────────────────────────────────────────────────
   const lookupByCardNumber = async (cardNumber: string): Promise<LoyaltyMember | null> => {
@@ -148,16 +152,17 @@ export const useLoyaltyCheckin = () => {
 
       // Best-effort: insert booking detail record
       try {
-        const { error: bookingError } = await supabase.from('loyalty_stays').insert([{
+        const { error: bookingError } = await supabase.from('loyalty_bookings').insert([{
           member_id: member.id,
-          check_in: stay.check_in_date,
-          check_out: stay.check_out_date,
+          check_in_date: stay.check_in_date,
+          check_out_date: stay.check_out_date,
           room_type: stay.room_type,
-          amount: stay.amount_spent,
+          amount_spent: stay.amount_spent,
           points_earned: pointsEarned,
-          property: 'Bolton White Hotel',
-          stay_id: stayId,
-          nights: 1 // default placeholder, could be calculated
+          discount_applied: config.discount,
+          staff_name: stay.staff_name || user?.name || 'System',
+          notes: stay.notes || stayId,
+          property_id: propertyId
         }]);
         
         if (bookingError) console.error('Failed to log booking details:', bookingError);
@@ -175,7 +180,8 @@ export const useLoyaltyCheckin = () => {
           reference_type: 'STAY',
           reference_id: stayId,
           status: 'COMPLETED',
-          created_by: 'SYSTEM'
+          created_by: user?.name || 'SYSTEM',
+          property_id: propertyId
         }]);
         if (txnError) console.error("Txn insert error:", txnError);
       } catch (e) { console.error(e); }

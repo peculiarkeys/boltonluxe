@@ -1,6 +1,6 @@
 import nodemailer from 'nodemailer';
 
-export default async function handler(req, res) {
+export default async function handler(req: any, res: any) {
   if (req.method !== 'POST') {
     return res.status(405).json({ message: 'Method not allowed' });
   }
@@ -59,6 +59,6 @@ export default async function handler(req, res) {
     res.status(200).json({ success: true, messageId: info.messageId });
   } catch (error) {
     console.error('Error sending admin notification email:', error);
-    res.status(500).json({ success: false, error: error.message });
+    res.status(500).json({ success: false, error: error instanceof Error ? error.message : String(error) });
   }
 }

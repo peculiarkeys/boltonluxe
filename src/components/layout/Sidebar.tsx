@@ -21,9 +21,12 @@ import {
   DollarSign,
   UserPlus,
   Briefcase,
-  Award
+  Briefcase,
+  Award,
+  Building
 } from 'lucide-react';
 import { useAuth, UserRole } from '@/contexts/AuthContext';
+import { useProperty } from '@/contexts/PropertyContext';
 import { cn } from '@/lib/utils';
 
 interface SidebarItemProps {
@@ -36,6 +39,7 @@ interface SidebarItemProps {
 
 const Sidebar = () => {
   const { user, hasPermission, logout } = useAuth();
+  const { property } = useProperty();
   const location = useLocation();
   
   const navigationItems: SidebarItemProps[] = [
@@ -100,12 +104,18 @@ const Sidebar = () => {
   return (
     <div className="hidden md:flex w-64 flex-col bg-white border-r border-zinc-100 h-screen">
       <div className="px-6 py-6 flex items-center justify-center">
-        <Link to="/boltonadmin" className="flex items-center justify-center">
+        <Link to="/boltonadmin" className="flex flex-col items-center justify-center">
           <img 
             src="/app_logo.png" 
             alt="Bolton HQ" 
-            className="h-10 w-auto object-contain" 
+            className="h-10 w-auto object-contain mb-2" 
           />
+          {property && (
+            <div className="flex items-center gap-1.5 text-xs font-semibold tracking-wider text-slate-500 uppercase bg-slate-100 px-2.5 py-1 rounded-md border border-slate-200">
+              <Building className="w-3.5 h-3.5 text-slate-400" />
+              {property.name}
+            </div>
+          )}
         </Link>
       </div>
 

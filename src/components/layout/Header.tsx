@@ -20,9 +20,12 @@ import {
 } from "@/components/ui/dropdown-menu";
 import Sidebar from './Sidebar';
 import { useAuth } from '@/contexts/AuthContext';
+import { useProperty } from '@/contexts/PropertyContext';
+import { Building } from 'lucide-react';
 
 const Header = () => {
   const { user, logout } = useAuth();
+  const { property } = useProperty();
 
   const handleLogout = () => {
     logout();
@@ -42,6 +45,13 @@ const Header = () => {
               <Sidebar />
             </SheetContent>
           </Sheet>
+          
+          {property && (
+            <div className="hidden md:flex ml-4 items-center gap-2 px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-700">
+              <Building className="w-4 h-4 text-slate-500" />
+              <span className="text-sm font-medium">{property.name}</span>
+            </div>
+          )}
         </div>
 
         <div className="hidden md:flex flex-1 max-w-md mx-6">
