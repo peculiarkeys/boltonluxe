@@ -21,7 +21,6 @@ import {
   DollarSign,
   UserPlus,
   Briefcase,
-  Briefcase,
   Award,
   Building
 } from 'lucide-react';
