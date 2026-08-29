@@ -82,7 +82,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       if (error || !data) {
         console.error('Failed to load admin profile:', error);
-        await supabase.auth.signOut();
         setUser(null);
         setLoading(false);
         return;

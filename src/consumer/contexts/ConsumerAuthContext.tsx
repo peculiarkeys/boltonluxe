@@ -35,7 +35,6 @@ export const ConsumerAuthProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
       if (adminProfile) {
         console.error('Admins cannot access the consumer portal.');
-        await supabase.auth.signOut();
         setSession(null);
         setUser(null);
       } else {
@@ -91,6 +90,11 @@ export const ConsumerAuthProvider: React.FC<{ children: React.ReactNode }> = ({ 
         setIsLoading(false);
         return { error: new Error('Administrators must use the Admin Portal.') };
       }
+    }
+
+    if (data.session) {
+      setSession(data.session);
+      setUser(data.user);
     }
 
     setIsLoading(false);

@@ -26,7 +26,13 @@ const ConsumerLogin = () => {
   const [isUnconfirmedEmail, setIsUnconfirmedEmail] = useState(false);
   const [fullName, setFullName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
-  const { login } = useConsumerAuth();
+  const { login, user } = useConsumerAuth();
+
+  useEffect(() => {
+    if (user) {
+      navigate('/dashboard');
+    }
+  }, [user, navigate]);
 
   useEffect(() => {
     const interval = setInterval(() => {
