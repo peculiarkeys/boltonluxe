@@ -2,24 +2,48 @@
 -- Luxe Royalty: Multi-Property Administration Schema
 -- =============================================
 
--- 1. Create properties table
+-- 1. Create properties table or alter existing
 CREATE TABLE IF NOT EXISTS public.properties (
   id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
   name text NOT NULL,
-  code text NOT NULL UNIQUE,
-  slug text NOT NULL UNIQUE,
+  code text UNIQUE,
+  slug text UNIQUE,
   address text,
   status text DEFAULT 'active' NOT NULL,
   created_at timestamptz DEFAULT now() NOT NULL,
   updated_at timestamptz DEFAULT now() NOT NULL
 );
 
+DO $$
+BEGIN
+  BEGIN
+    ALTER TABLE public.properties ADD COLUMN code text UNIQUE;
+  EXCEPTION
+    WHEN duplicate_column THEN NULL;
+  END;
+  BEGIN
+    ALTER TABLE public.properties ADD COLUMN slug text UNIQUE;
+  EXCEPTION
+    WHEN duplicate_column THEN NULL;
+  END;
+  BEGIN
+    ALTER TABLE public.properties ADD COLUMN address text;
+  EXCEPTION
+    WHEN duplicate_column THEN NULL;
+  END;
+  BEGIN
+    ALTER TABLE public.properties ADD COLUMN status text DEFAULT 'active' NOT NULL;
+  EXCEPTION
+    WHEN duplicate_column THEN NULL;
+  END;
+END $$;
+
 -- Seed properties
-INSERT INTO public.properties (name, code, slug)
+INSERT INTO public.properties (name, code, slug, location)
 VALUES 
-  ('Johnwood Hotel', 'JOHNWOOD', 'johnwood'),
-  ('Bolton White Hotel', 'BWH', 'bolton-white-hotel'),
-  ('Bolton White Residence', 'BWR', 'bolton-white-residence')
+  ('Johnwood Hotel', 'JOHNWOOD', 'johnwood', 'Abuja'),
+  ('Bolton White Hotel', 'BWH', 'bolton-white-hotel', 'Abuja'),
+  ('Bolton White Residence', 'BWR', 'bolton-white-residence', 'Abuja')
 ON CONFLICT (code) DO NOTHING;
 
 -- 2. Create admin_profiles table
@@ -105,10 +129,6 @@ CREATE POLICY "Admins can view property stays"
     property_id IN (
       SELECT property_id FROM public.admin_profiles WHERE auth_user_id = auth.uid()
     )
-    OR
-    member_id IN (
-      SELECT id FROM public.loyalty_members WHERE user_id = auth.uid()
-    )
   );
 
 DROP POLICY IF EXISTS "Admins can insert property stays" ON public.loyalty_bookings;
@@ -129,9 +149,5 @@ CREATE POLICY "Admins can view property redemptions"
   USING (
     property_id IS NULL OR property_id IN (
       SELECT property_id FROM public.admin_profiles WHERE auth_user_id = auth.uid()
-    )
-    OR
-    member_id IN (
-      SELECT id FROM public.loyalty_members WHERE user_id = auth.uid()
     )
   );

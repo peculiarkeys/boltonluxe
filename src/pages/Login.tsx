@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate, Navigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -8,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
+import { Lock, Mail, ArrowRight } from 'lucide-react';
 
 const loginSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
@@ -21,7 +21,7 @@ const Login: React.FC = () => {
   const { user, login } = useAuth();
   const navigate = useNavigate();
 
-  const { register, handleSubmit, setValue, formState: { errors } } = useForm<LoginFormValues>({
+  const { register, handleSubmit, formState: { errors } } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: { email: '', password: '' }
   });
@@ -42,140 +42,116 @@ const Login: React.FC = () => {
     }
   };
 
-  const demoUsers = [
-    { role: 'Director', email: 'director@boltonhq.com', password: 'password' },
-    { role: 'Group GM', email: 'gm@boltonhq.com', password: 'password' },
-    { role: 'Manager', email: 'manager@boltonhq.com', password: 'password' },
-    { role: 'Staff', email: 'staff@boltonhq.com', password: 'password' },
-  ];
-
   return (
-    <div className="min-h-screen flex bg-[#F9FAFB] dark:bg-[#0A0A0B] font-sans selection:bg-primary/20">
-      {/* Left Column: Brand imagery (Hidden on mobile/tablet) */}
-      <div className="hidden lg:flex w-1/2 relative bg-zinc-900 overflow-hidden">
-        {/* Background image with overlay */}
-        <div 
-          className="absolute inset-0 bg-cover bg-center opacity-20 mix-blend-overlay" 
-          style={{ backgroundImage: "url('/hotel_card_bg.png')" }} 
-        />
-        <div className="absolute inset-0 bg-gradient-to-br from-bolton-blue/80 to-bolton-blue-dark/95" />
+    <div className="min-h-screen flex bg-zinc-50 font-sans">
+      {/* Left Column: Brand imagery */}
+      <div className="hidden lg:flex lg:w-5/12 relative bg-zinc-900 overflow-hidden flex-col justify-between p-12">
+        <div className="absolute inset-0">
+          <img 
+            src="/hotels/bolton_white_hotel/BC3I7813.webp" 
+            alt="Bolton White Group" 
+            className="w-full h-full object-cover opacity-40 mix-blend-overlay"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-zinc-900 via-zinc-900/80 to-zinc-900/40" />
+        </div>
         
-        {/* Content */}
-        <div className="relative z-10 flex flex-col justify-between p-20 h-full w-full">
+        <div className="relative z-10">
           <img 
             src="/app_logo.png" 
             alt="Bolton HQ" 
-            className="h-10 w-auto object-contain brightness-0 invert self-start animate-fade-in opacity-90" 
+            className="h-10 w-auto object-contain brightness-0 invert opacity-90" 
           />
-          
-          <div className="text-white max-w-lg animate-fade-in [animation-delay:200ms] opacity-0" style={{ animationFillMode: 'forwards' }}>
-            <h1 className="text-4xl md:text-5xl font-heading font-light tracking-tight mb-8 leading-tight">
-              Elevate Your <br />
-              <span className="font-medium text-white/95">Hospitality Management.</span>
-            </h1>
-            <p className="text-lg text-white/70 font-light leading-relaxed">
-              Experience seamless operations, unmatched guest experiences, and powerful insights with the Bolton HQ platform.
-            </p>
-          </div>
+        </div>
+
+        <div className="relative z-10 text-white max-w-md">
+          <h1 className="text-4xl font-medium tracking-tight mb-6 leading-tight text-white">
+            Bolton HQ <br />
+            <span className="text-zinc-400 font-normal">Workspace</span>
+          </h1>
+          <p className="text-base text-zinc-400 font-normal leading-relaxed">
+            Secure access to property management, loyalty operations, and business development tools for authorized personnel.
+          </p>
         </div>
       </div>
 
       {/* Right Column: Login Form */}
-      <div className="flex-1 flex flex-col items-center justify-center p-6 sm:p-12 lg:p-24 relative">
-        <div className="w-full max-w-[400px] animate-fade-in space-y-12">
+      <div className="flex-1 flex flex-col justify-center px-8 sm:px-16 lg:px-32 relative">
+        <div className="w-full max-w-md mx-auto space-y-10">
           
           {/* Mobile Logo */}
-          <div className="lg:hidden flex flex-col items-center mb-8">
+          <div className="lg:hidden flex justify-center mb-12">
             <img 
               src="/app_logo.png" 
               alt="Bolton HQ" 
-              className="h-10 w-auto object-contain drop-shadow-sm opacity-90 dark:invert" 
+              className="h-10 w-auto object-contain" 
             />
           </div>
 
-          <div className="space-y-4 text-center lg:text-left">
-            <h2 className="text-3xl font-heading font-medium tracking-tight text-zinc-800 dark:text-zinc-50">
-              Welcome back
+          <div className="space-y-3 text-center lg:text-left">
+            <h2 className="text-3xl font-semibold tracking-tight text-zinc-900">
+              Admin Portal
             </h2>
-            <p className="text-[15px] text-zinc-500 dark:text-zinc-400">
-              Enter your credentials to access your account
+            <p className="text-base text-zinc-500 font-normal">
+              Sign in with your staff credentials.
             </p>
           </div>
 
-          <div className="space-y-8">
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-              <div className="space-y-3">
-                <Label htmlFor="email" className="text-[12px] font-medium text-zinc-600 dark:text-zinc-400 ml-1">
-                  Email Address
-                </Label>
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+            <div className="space-y-2">
+              <Label htmlFor="email" className="text-sm font-medium text-zinc-700">
+                Email Address
+              </Label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                  <Mail className="h-5 w-5 text-zinc-400" />
+                </div>
                 <Input
                   id="email"
                   type="email"
-                  placeholder="name@example.com"
+                  placeholder="admin@boltonhq.com"
                   {...register('email')}
-                  className={`h-14 rounded-2xl bg-white dark:bg-zinc-900/40 border-zinc-200/80 dark:border-zinc-800/80 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] transition-all focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:border-primary placeholder:text-zinc-400 text-[15px] ${errors.email ? 'border-red-500' : ''}`}
+                  className={`h-14 pl-12 rounded-xl bg-white border-zinc-200 shadow-sm transition-all focus-visible:ring-2 focus-visible:ring-zinc-900 focus-visible:border-transparent text-base ${errors.email ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
                 />
-                {errors.email && <p className="text-red-500 text-xs mt-1 ml-1">{errors.email.message}</p>}
               </div>
-              <div className="space-y-3">
-                <div className="flex items-center justify-between ml-1">
-                  <Label htmlFor="password" className="text-[12px] font-medium text-zinc-600 dark:text-zinc-400">
-                    Password
-                  </Label>
-                  <a href="#" className="text-[13px] font-medium text-primary hover:text-primary/80 transition-colors">
-                    Forgot password?
-                  </a>
+              {errors.email && <p className="text-red-500 text-sm mt-1.5">{errors.email.message}</p>}
+            </div>
+
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <Label htmlFor="password" className="text-sm font-medium text-zinc-700">
+                  Password
+                </Label>
+              </div>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                  <Lock className="h-5 w-5 text-zinc-400" />
                 </div>
                 <Input
                   id="password"
                   type="password"
+                  placeholder="••••••••"
                   {...register('password')}
-                  className={`h-14 rounded-2xl bg-white dark:bg-zinc-900/40 border-zinc-200/80 dark:border-zinc-800/80 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] transition-all focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:border-primary text-[15px] ${errors.password ? 'border-red-500' : ''}`}
+                  className={`h-14 pl-12 rounded-xl bg-white border-zinc-200 shadow-sm transition-all focus-visible:ring-2 focus-visible:ring-zinc-900 focus-visible:border-transparent text-base ${errors.password ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
                 />
-                {errors.password && <p className="text-red-500 text-xs mt-1 ml-1">{errors.password.message}</p>}
               </div>
-              
-              <Button 
-                type="submit" 
-                className="w-full h-14 mt-6 rounded-2xl font-medium text-[15px] shadow-[0_4px_14px_0_rgba(21,105,218,0.2)] hover:shadow-[0_6px_20px_rgba(21,105,218,0.23)] hover:bg-bolton-blue-light transition-all active:scale-[0.98]" 
-                disabled={isLoading}
-              >
-                {isLoading ? 'Signing in...' : 'Sign In'}
-              </Button>
-            </form>
-
-            <div className="relative pt-6">
-              <div className="absolute inset-0 flex items-center mt-6">
-                <span className="w-full border-t border-zinc-200/60 dark:border-zinc-800/40" />
-              </div>
-              <div className="relative flex justify-center text-[11px] uppercase">
-                <span className="bg-[#F9FAFB] dark:bg-[#0A0A0B] px-4 text-zinc-400 font-medium tracking-widest">
-                  Demo Accounts
-                </span>
-              </div>
+              {errors.password && <p className="text-red-500 text-sm mt-1.5">{errors.password.message}</p>}
             </div>
-
-            <div className="grid grid-cols-2 gap-3 pt-2">
-              {demoUsers.map((user, index) => (
-                <Button
-                  key={index}
-                  variant="outline"
-                  type="button"
-                  className="h-12 rounded-2xl text-[13px] font-medium border-zinc-200/60 dark:border-zinc-800/60 hover:bg-white dark:hover:bg-zinc-900 shadow-sm transition-all"
-                  onClick={() => {
-                    setValue('email', user.email);
-                    setValue('password', user.password);
-                  }}
-                >
-                  {user.role}
-                </Button>
-              ))}
-            </div>
-          </div>
+            
+            <Button 
+              type="submit" 
+              className="w-full h-14 mt-8 rounded-xl font-medium text-base bg-zinc-900 text-white shadow-md hover:bg-zinc-800 transition-all flex items-center justify-center gap-2" 
+              disabled={isLoading}
+            >
+              {isLoading ? 'Authenticating...' : 'Sign In to Workspace'}
+              {!isLoading && <ArrowRight className="w-5 h-5 opacity-70" />}
+            </Button>
+          </form>
           
-          <p className="text-center text-[13px] text-zinc-400 font-medium pt-8">
-            &copy; {new Date().getFullYear()} Bolton HQ. All rights reserved.
-          </p>
+          <div className="pt-12 text-center lg:text-left border-t border-zinc-200/60 mt-12">
+            <p className="text-sm text-zinc-400 font-medium">
+              &copy; {new Date().getFullYear()} Bolton White Group. All rights reserved.
+            </p>
+          </div>
         </div>
       </div>
     </div>
