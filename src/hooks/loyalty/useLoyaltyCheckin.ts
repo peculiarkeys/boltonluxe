@@ -33,13 +33,32 @@ export const generateCardNumber = () => {
   return `BWG LX${r3} ${r4}`;
 };
 
-export const ROOM_PRICES: Record<string, number> = {
-  'Superior Room': 350000,
-  'Deluxe Room': 410000,
-  'Executive Room': 475000,
-  'Premium Suite': 575000,
-  'VIP Suite': 750000,
-  'Apartment': 800000,
+export const ROOM_PRICES: Record<string, Record<string, number>> = {
+  JOHNWOOD: {
+    'Superior Room': 350000,
+    'Deluxe Room': 410000,
+    'Executive Room': 475000,
+    'Premium Suite': 575000,
+    'VIP Suite': 750000,
+    'Apartment': 800000,
+  },
+  BWH: {
+    'Standard Room': 156000,
+    'Royal Room': 160000,
+    'Deluxe Room': 212000,
+    'Twin Suite': 228000,
+    'Business Suite': 256000,
+    'Executive Suite': 280000,
+    'Diplomatic Suite': 320000,
+  },
+  BWR: {
+    'Standard Room': 125000,
+    'Deluxe Room': 145000,
+    'Executive Deluxe': 175000,
+    '1 Bedroom': 200000,
+    '2 Bedroom': 300000,
+    '3 Bedroom': 470000,
+  }
 };
 
 export const calculatePoints = (amountSpent: number, tier: LoyaltyMember['tier']): number => {

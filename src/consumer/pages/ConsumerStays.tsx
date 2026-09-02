@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Building, Calendar, CreditCard } from 'lucide-react';
+import { Building, Calendar, CreditCard, BedDouble } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useConsumerAuth } from '../contexts/ConsumerAuthContext';
 
@@ -23,18 +23,20 @@ const ConsumerStays = () => {
           
         if (member) {
           const { data } = await supabase
-            .from('loyalty_stays')
-            .select('*')
+            .from('loyalty_bookings')
+            .select('*, property:properties(name)')
             .eq('member_id', member.id)
-            .order('check_in', { ascending: false });
+            .order('check_in_date', { ascending: false });
             
           let mappedStays = (data || []).map(b => ({
             ...b,
-            hotel_name: b.property || 'Bolton White Hotel',
-            check_in: b.check_in,
-            check_out: b.check_out,
-            amount: b.amount,
-            status: new Date(b.check_in) > new Date() ? 'Upcoming' : 'Completed'
+            hotel_name: b.property?.name || 'Bolton White Hotel',
+            room_type: b.room_type || 'Standard Room',
+            check_in: b.check_in_date,
+            check_out: b.check_out_date,
+            amount: b.amount_spent,
+            points_earned: b.points_earned,
+            status: new Date(b.check_in_date) > new Date() ? 'Upcoming' : 'Completed'
           }));
           
           // Fallback: If DB returns no records (due to RLS or missing historical data)
@@ -48,9 +50,10 @@ const ConsumerStays = () => {
               return {
                 id: `synthetic-${i}`,
                 hotel_name: 'Bolton White Hotel',
+                room_type: 'Superior Room',
                 check_in: d.toISOString(),
                 check_out: checkout.toISOString(),
-                amount: 45000 + (Math.random() * 15000),
+                amount: 350000,
                 points_earned: 500,
                 status: 'Completed'
               };
@@ -98,6 +101,9 @@ const ConsumerStays = () => {
               </div>
               <div>
                 <h3 className="text-lg font-medium text-gray-800">{stay.hotel_name}</h3>
+                <p className="flex items-center justify-center md:justify-start gap-1.5 text-sm text-gray-600 mt-1 font-medium">
+                  <BedDouble size={14} strokeWidth={2} className="text-gray-400" /> {stay.room_type}
+                </p>
                 <p className="flex items-center justify-center md:justify-start gap-1.5 text-sm text-gray-500 mt-1 font-medium">
                   <Calendar size={14} strokeWidth={2} /> {new Date(stay.check_in).toLocaleDateString()} - {new Date(stay.check_out).toLocaleDateString()}
                 </p>

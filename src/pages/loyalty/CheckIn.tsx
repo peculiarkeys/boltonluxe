@@ -102,6 +102,7 @@ const LogStayModal = ({
   const cfg = TIER_CONFIG[member.tier as keyof typeof TIER_CONFIG] || TIER_CONFIG.Standard;
 
   const staffList = property ? (FRONT_DESK_STAFF[property.code] || []) : [];
+  const propertyRooms = property ? (ROOM_PRICES[property.code] || ROOM_PRICES['JOHNWOOD']) : ROOM_PRICES['JOHNWOOD'];
 
   const [form, setForm] = useState({
     check_in_date: new Date().toISOString().split('T')[0],
@@ -120,7 +121,7 @@ const LogStayModal = ({
   };
 
   const nights = calculateNights();
-  const roomPrice = form.room_type ? (ROOM_PRICES[form.room_type] || 0) : 0;
+  const roomPrice = form.room_type ? (propertyRooms[form.room_type] || 0) : 0;
   
   const discountedDailyPrice = roomPrice * (1 - cfg.discount / 100);
   const totalAmount = discountedDailyPrice * nights;
@@ -178,9 +179,9 @@ const LogStayModal = ({
                 <SelectValue placeholder="Select room type" />
               </SelectTrigger>
               <SelectContent>
-                {Object.keys(ROOM_PRICES).map(r => (
+                {Object.keys(propertyRooms).map(r => (
                   <SelectItem key={r} value={r} className="text-zinc-700">
-                    {r} — ₦{ROOM_PRICES[r].toLocaleString()}
+                    {r} — ₦{propertyRooms[r].toLocaleString()}
                   </SelectItem>
                 ))}
               </SelectContent>

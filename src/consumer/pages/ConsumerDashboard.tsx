@@ -74,20 +74,20 @@ const ConsumerDashboard = () => {
 
           // Fetch upcoming stay
           const { data: staysData } = await supabase
-            .from('loyalty_stays')
-            .select('*')
+            .from('loyalty_bookings')
+            .select('*, property:properties(name)')
             .eq('member_id', data.id)
-            .gte('check_in', new Date().toISOString())
-            .order('check_in', { ascending: true })
+            .gte('check_in_date', new Date().toISOString())
+            .order('check_in_date', { ascending: true })
             .limit(1);
             
           if (staysData && staysData.length > 0) {
             setUpcomingStay({
                ...staysData[0],
-               hotel_name: staysData[0].property || 'Bolton White Hotel',
-               check_in: staysData[0].check_in,
-               check_out: staysData[0].check_out,
-               amount: staysData[0].amount,
+               hotel_name: staysData[0].property?.name || 'Bolton White Hotel',
+               check_in: staysData[0].check_in_date,
+               check_out: staysData[0].check_out_date,
+               amount: staysData[0].amount_spent,
             });
           } else {
             setUpcomingStay(null);
