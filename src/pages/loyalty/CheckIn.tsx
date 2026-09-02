@@ -102,7 +102,13 @@ const LogStayModal = ({
   const cfg = TIER_CONFIG[member.tier as keyof typeof TIER_CONFIG] || TIER_CONFIG.Standard;
 
   const propertyCode = property?.code?.toUpperCase() || '';
-  const staffList = FRONT_DESK_STAFF[propertyCode] || [];
+  let staffList = FRONT_DESK_STAFF[propertyCode] || [];
+  
+  // Fallback: if no specific property matched or property is null, show ALL staff
+  if (staffList.length === 0) {
+    staffList = Object.values(FRONT_DESK_STAFF).flat();
+  }
+
   const propertyRooms = property ? (ROOM_PRICES[property.code] || ROOM_PRICES['JOHNWOOD']) : ROOM_PRICES['JOHNWOOD'];
 
   const [form, setForm] = useState({
