@@ -108,6 +108,44 @@ const ConsumerDashboard = () => {
 
           try {
             await supabase.from('loyalty_members').insert([newMember]);
+
+            // Trigger Welcome Email
+            try {
+              await fetch('/api/send-welcome-email', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  email: newMember.email,
+                  fullName: newMember.name,
+                  memberId: newMember.member_id,
+                  tier: newMember.tier,
+                  points: newMember.points
+                }),
+              });
+            } catch (emailError) {
+              console.error('Failed to send welcome email:', emailError);
+            }
+
+            // Trigger Admin Notification Email
+            try {
+              await fetch('/api/send-admin-notification', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  email: newMember.email,
+                  fullName: newMember.name,
+                  memberId: newMember.member_id,
+                  tier: newMember.tier,
+                }),
+              });
+            } catch (adminEmailError) {
+              console.error('Failed to send admin notification:', adminEmailError);
+            }
+
           } catch (e) {
             console.error('Failed to auto-register new loyalty member:', e);
           }
