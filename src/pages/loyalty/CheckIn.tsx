@@ -101,15 +101,29 @@ const LogStayModal = ({
   const { property } = useProperty();
   const cfg = TIER_CONFIG[member.tier as keyof typeof TIER_CONFIG] || TIER_CONFIG.Standard;
 
-  const propertyCode = property?.code?.toUpperCase() || '';
-  let staffList = FRONT_DESK_STAFF[propertyCode] || [];
+  let propertyKey = 'JOHNWOOD';
+  if (property) {
+    const code = property.code?.toUpperCase() || '';
+    const slug = property.slug?.toLowerCase() || '';
+    const name = property.name?.toLowerCase() || '';
+
+    if (code === 'BWH' || slug.includes('bolton-white-hotel') || name.includes('bolton white hotel') && !name.includes('residence')) {
+      propertyKey = 'BWH';
+    } else if (code === 'BWR' || slug.includes('residence') || name.includes('residence')) {
+      propertyKey = 'BWR';
+    } else if (code === 'JOHNWOOD' || slug.includes('johnwood') || name.includes('johnwood')) {
+      propertyKey = 'JOHNWOOD';
+    }
+  }
+
+  let staffList = FRONT_DESK_STAFF[propertyKey] || [];
   
   // Fallback: if no specific property matched or property is null, show ALL staff
   if (staffList.length === 0) {
     staffList = Object.values(FRONT_DESK_STAFF).flat();
   }
 
-  const propertyRooms = property ? (ROOM_PRICES[property.code] || ROOM_PRICES['JOHNWOOD']) : ROOM_PRICES['JOHNWOOD'];
+  const propertyRooms = ROOM_PRICES[propertyKey] || ROOM_PRICES['JOHNWOOD'];
 
   const [form, setForm] = useState({
     check_in_date: new Date().toISOString().split('T')[0],
