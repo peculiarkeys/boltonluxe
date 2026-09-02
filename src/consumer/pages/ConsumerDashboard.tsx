@@ -93,13 +93,33 @@ const ConsumerDashboard = () => {
             setUpcomingStay(null);
           }
         } else {
-          setProfile({
-            name: user.email.split('@')[0],
-            tier: 'Bronze',
-            points: 0,
-            nextTierPoints: TIER_THRESHOLDS['bronze'],
+          // If the member doesn't exist, we auto-create a loyalty record for them
+          const memberId = 'BWG LX' + Math.floor(100 + Math.random() * 900) + ' ' + Math.floor(1000 + Math.random() * 9000);
+          const newMember = {
+            name: user.user_metadata?.full_name || user.email.split('@')[0],
+            email: user.email,
+            member_id: memberId,
+            tier: 'Standard',
+            points: 500,
             stays: 0,
-            rewardsUsed: 0
+            status: 'Active',
+            join_date: new Date().toISOString().split('T')[0]
+          };
+
+          try {
+            await supabase.from('loyalty_members').insert([newMember]);
+          } catch (e) {
+            console.error('Failed to auto-register new loyalty member:', e);
+          }
+
+          setProfile({
+            name: newMember.name,
+            tier: newMember.tier,
+            points: newMember.points,
+            nextTierPoints: TIER_THRESHOLDS['bronze'],
+            stays: newMember.stays,
+            rewardsUsed: 0,
+            memberId: newMember.member_id
           });
           setUpcomingStay(null);
         }
@@ -366,7 +386,7 @@ const ConsumerDashboard = () => {
                <div className="pt-2 flex flex-col sm:flex-row gap-3">
                  <button 
                    onClick={async () => {
-                     const cardElement = document.getElementById('loyalty-card-element');
+                     const cardElement = document.getElementById('card-front');
                      if (!cardElement) return;
                      try {
                        const html2canvas = (await import('html2canvas')).default;
