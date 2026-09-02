@@ -101,7 +101,8 @@ const LogStayModal = ({
   const { property } = useProperty();
   const cfg = TIER_CONFIG[member.tier as keyof typeof TIER_CONFIG] || TIER_CONFIG.Standard;
 
-  const staffList = property ? (FRONT_DESK_STAFF[property.code] || []) : [];
+  const propertyCode = property?.code?.toUpperCase() || '';
+  const staffList = FRONT_DESK_STAFF[propertyCode] || [];
   const propertyRooms = property ? (ROOM_PRICES[property.code] || ROOM_PRICES['JOHNWOOD']) : ROOM_PRICES['JOHNWOOD'];
 
   const [form, setForm] = useState({
