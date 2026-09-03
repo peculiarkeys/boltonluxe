@@ -93,8 +93,8 @@ const ConsumerDashboard = () => {
             setUpcomingStay(null);
           }
         } else {
-          // If the member doesn't exist, we auto-create a loyalty record for them
-          const memberId = 'BWG LX' + Math.floor(100 + Math.random() * 900) + ' ' + Math.floor(1000 + Math.random() * 9000);
+          // If no member record exists, create one with MEM format
+          const memberId = 'MEM' + Math.floor(10000000 + Math.random() * 90000000);
           const newMember = {
             name: user.user_metadata?.full_name || user.email.split('@')[0],
             email: user.email,
