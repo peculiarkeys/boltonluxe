@@ -58,8 +58,7 @@ const ConsumerLogin = () => {
         setIsUnconfirmedEmail(true);
         setLoading(false);
       } else if (error.message.toLowerCase().includes('invalid login credentials')) {
-        setIsNewUserFlow(true);
-        // Do not show an error, just seamlessly transition to the create account flow
+        setError('Invalid email or password.');
         setLoading(false);
       } else {
         setError(error.message);

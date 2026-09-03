@@ -107,7 +107,8 @@ const ConsumerDashboard = () => {
           };
 
           try {
-            await supabase.from('loyalty_members').insert([newMember]);
+          const { error } = await supabase.from('loyalty_members').insert([newMember]);
+          if (error) throw error;
 
             // Trigger Welcome Email
             try {
@@ -146,20 +147,19 @@ const ConsumerDashboard = () => {
               console.error('Failed to send admin notification:', adminEmailError);
             }
 
+            setProfile({
+              name: newMember.name,
+              tier: newMember.tier,
+              points: newMember.points,
+              nextTierPoints: TIER_THRESHOLDS['bronze'],
+              stays: newMember.stays,
+              rewardsUsed: 0,
+              memberId: newMember.member_id
+            });
+            setUpcomingStay(null);
           } catch (e) {
             console.error('Failed to auto-register new loyalty member:', e);
           }
-
-          setProfile({
-            name: newMember.name,
-            tier: newMember.tier,
-            points: newMember.points,
-            nextTierPoints: TIER_THRESHOLDS['bronze'],
-            stays: newMember.stays,
-            rewardsUsed: 0,
-            memberId: newMember.member_id
-          });
-          setUpcomingStay(null);
         }
       } catch (err) {
         console.error('Error fetching profile:', err);
