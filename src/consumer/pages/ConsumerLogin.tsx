@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useConsumerAuth } from '../contexts/ConsumerAuthContext';
 import { Eye, EyeOff, Star, ChevronLeft, ChevronRight } from 'lucide-react';
-
+import TermsModal from '@/components/TermsModal';
 const bgImages = [
   '/hotels/bolton_white_hotel/BC3I7813.webp',
   '/hotels/bolton_white_hotel/BC3I7828.webp',
@@ -26,6 +26,8 @@ const ConsumerLogin = () => {
   const [isUnconfirmedEmail, setIsUnconfirmedEmail] = useState(false);
   const [fullName, setFullName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
+  const [showTerms, setShowTerms] = useState(false);
   const { login, user } = useConsumerAuth();
 
   useEffect(() => {
@@ -113,7 +115,7 @@ const ConsumerLogin = () => {
         ]);
         
         try {
-          await fetch('/api/send-welcome-email', {
+          fetch('/api/send-welcome-email', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email: authData.user.email, fullName, memberId, tier: 'Standard', points: 500 }),
@@ -121,7 +123,7 @@ const ConsumerLogin = () => {
         } catch (emailError) {}
 
         try {
-          await fetch('/api/send-admin-notification', {
+          fetch('/api/send-admin-notification', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email: authData.user.email, fullName, memberId, tier: 'Standard' }),
@@ -138,7 +140,7 @@ const ConsumerLogin = () => {
 
   return (
     <div className="consumer-app h-screen w-full flex font-normal bg-white">
-        
+      <TermsModal isOpen={showTerms} onClose={() => setShowTerms(false)} />        
         {/* Left Side: Form */}
         <div className="w-full lg:w-1/2 flex flex-col justify-center px-8 sm:px-16 lg:px-24 overflow-y-auto">
           <div className="w-full max-w-md mx-auto">
@@ -232,8 +234,8 @@ const ConsumerLogin = () => {
 
               <div className="flex items-center justify-between text-sm pt-1">
                 <label className="flex items-center text-gray-600 cursor-pointer">
-                  <input type="checkbox" className="mr-2 rounded border-gray-300 text-gray-800 focus:ring-gray-800" />
-                  Remember me
+                  <input type="checkbox" checked={agreedToTerms} onChange={(e) => setAgreedToTerms(e.target.checked)} className="mr-2 rounded border-gray-300 text-gray-800 focus:ring-gray-800" />
+                  I agree to the <button type="button" onClick={() => setShowTerms(true)} className="ml-1 text-gray-800 hover:underline font-medium">Terms of Service</button>
                 </label>
                 <a href="#" className="font-medium text-gray-700 hover:underline">Forgot password</a>
               </div>
@@ -241,7 +243,7 @@ const ConsumerLogin = () => {
               <div className="pt-2 space-y-4">
                 <button 
                   type="submit" 
-                  disabled={loading}
+                  disabled={loading || !agreedToTerms}
                   className="w-full py-3.5 bg-gray-800 text-white rounded-xl font-medium hover:bg-gray-700 transition-colors shadow-sm disabled:opacity-50"
                 >
                   {loading ? (isNewUserFlow ? 'Creating account...' : 'Signing in...') : (isNewUserFlow ? 'Create Account' : 'Sign in')}

@@ -25,6 +25,8 @@ const ConsumerDashboard = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const isFetchingRef = { current: false };
+
     const fetchProfile = async () => {
       try {
         if (!user?.email) {
@@ -94,6 +96,9 @@ const ConsumerDashboard = () => {
           }
         } else {
           // If no member record exists, create one with MEM format
+          if (isFetchingRef.current) return;
+          isFetchingRef.current = true;
+
           const memberId = 'MEM' + Math.floor(10000000 + Math.random() * 90000000);
           const newMember = {
             name: user.user_metadata?.full_name || user.email.split('@')[0],
@@ -112,7 +117,7 @@ const ConsumerDashboard = () => {
 
             // Trigger Welcome Email
             try {
-              await fetch('/api/send-welcome-email', {
+              fetch('/api/send-welcome-email', {
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json',
@@ -131,7 +136,7 @@ const ConsumerDashboard = () => {
 
             // Trigger Admin Notification Email
             try {
-              await fetch('/api/send-admin-notification', {
+              fetch('/api/send-admin-notification', {
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json',
@@ -159,6 +164,8 @@ const ConsumerDashboard = () => {
             setUpcomingStay(null);
           } catch (e) {
             console.error('Failed to auto-register new loyalty member:', e);
+          } finally {
+            isFetchingRef.current = false;
           }
         }
       } catch (err) {
@@ -424,18 +431,30 @@ const ConsumerDashboard = () => {
                <div className="pt-2 flex flex-col sm:flex-row gap-3">
                  <button 
                    onClick={async () => {
-                     const cardElement = document.getElementById('card-front');
-                     if (!cardElement) return;
+                     const frontElement = document.getElementById('card-front');
+                     const backElement = document.getElementById('card-back');
+                     if (!frontElement || !backElement) return;
                      try {
                        const html2canvas = (await import('html2canvas')).default;
-                       const canvas = await html2canvas(cardElement, {
-                         backgroundColor: null,
-                         scale: 2,
-                       });
-                       const link = document.createElement('a');
-                       link.download = `Bolton_Luxe_Card_${profile?.memberId || 'member'}.png`;
-                       link.href = canvas.toDataURL('image/png');
-                       link.click();
+                       const opts = { backgroundColor: null, scale: 3, useCORS: true, allowTaint: true };
+                       const frontCanvas = await html2canvas(frontElement, opts);
+                       const backCanvas = await html2canvas(backElement, opts);
+                       
+                       const combinedCanvas = document.createElement('canvas');
+                       combinedCanvas.width = frontCanvas.width;
+                       combinedCanvas.height = frontCanvas.height + backCanvas.height + 40;
+                       const ctx = combinedCanvas.getContext('2d');
+                       if (ctx) {
+                         ctx.fillStyle = 'transparent';
+                         ctx.fillRect(0, 0, combinedCanvas.width, combinedCanvas.height);
+                         ctx.drawImage(frontCanvas, 0, 0);
+                         ctx.drawImage(backCanvas, 0, frontCanvas.height + 40);
+                         
+                         const link = document.createElement('a');
+                         link.download = `Bolton_Luxe_Card_${profile?.memberId || 'member'}.png`;
+                         link.href = combinedCanvas.toDataURL('image/png', 1.0);
+                         link.click();
+                       }
                      } catch (error) {
                        console.error('Error generating card image:', error);
                      }

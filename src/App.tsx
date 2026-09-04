@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import NotFound from '@/pages/NotFound';
+import CookieConsent from '@/components/CookieConsent';
 import { PropertyProvider } from '@/contexts/PropertyContext';
 
 // Consumer App context and layout
@@ -256,6 +257,7 @@ function App() {
               </Routes>
             </Suspense>
             <Toaster position="top-right" />
+            <CookieConsent />
           </div>
         </Router>
       </ConsumerAuthProvider>

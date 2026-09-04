@@ -68,8 +68,40 @@ const ConsumerSignUp = () => {
       setLoading(false);
     } else {
       if (authData?.user?.email) {
+        const memberId = 'BWG LX' + Math.floor(100 + Math.random() * 900) + ' ' + Math.floor(1000 + Math.random() * 9000);
+        
+        await supabase.from('loyalty_members').insert([
+          {
+            name: data.fullName,
+            email: authData.user.email,
+            member_id: memberId,
+            tier: 'Standard',
+            points: 500,
+            stays: 0,
+            status: 'Active',
+            join_date: new Date().toISOString().split('T')[0]
+          }
+        ]);
+
+        try {
+          fetch('/api/send-welcome-email', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: authData.user.email, fullName: data.fullName, memberId, tier: 'Standard', points: 500 }),
+          });
+        } catch (emailError) {}
+
+        try {
+          fetch('/api/send-admin-notification', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: authData.user.email, fullName: data.fullName, memberId, tier: 'Standard' }),
+          });
+        } catch (adminEmailError) {}
+
         setRegisteredEmail(authData.user.email);
         setIsSuccess(true);
+        setLoading(false);
       } else {
         navigate('/dashboard');
       }
