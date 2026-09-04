@@ -132,6 +132,22 @@ const LogStayModal = ({
     staff_name: '',
     notes: '',
   });
+  const [step, setStep] = useState<'form' | 'success'>('form');
+  const [lastLoggedAmount, setLastLoggedAmount] = useState(0);
+  const [lastLoggedPoints, setLastLoggedPoints] = useState(0);
+
+  React.useEffect(() => {
+    if (open) {
+      setStep('form');
+      setForm({
+        check_in_date: new Date().toISOString().split('T')[0],
+        check_out_date: '',
+        room_type: '',
+        staff_name: '',
+        notes: '',
+      });
+    }
+  }, [open]);
 
   const calculateNights = () => {
     if (!form.check_in_date || !form.check_out_date) return 0;
@@ -164,18 +180,56 @@ const LogStayModal = ({
       ...form,
       amount_spent: totalAmount,
     });
-    if (ok) { onSuccess(); onClose(); }
+    if (ok) { 
+      setLastLoggedAmount(totalAmount);
+      setLastLoggedPoints(pointsPreview);
+      onSuccess(); 
+      setStep('success'); 
+    }
   };
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="max-w-md font-sans rounded-2xl">
-        <DialogHeader>
-          <DialogTitle className="font-medium text-zinc-700 text-lg">Log Stay</DialogTitle>
-          <DialogDescription className="text-zinc-500 font-normal">
-            Record a new stay for {member.name}. Points are calculated automatically.
-          </DialogDescription>
-        </DialogHeader>
+        {step === 'success' ? (
+          <div className="py-10 flex flex-col items-center justify-center text-center">
+            <div className="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mb-6">
+              <CheckCircle2 className="w-10 h-10 text-green-500" />
+            </div>
+            <h3 className="text-2xl font-medium text-zinc-800 tracking-tight">Stay Logged!</h3>
+            <p className="text-zinc-500 mt-2 text-base">Points have been added to {member.name}'s account.</p>
+            
+            <div className="w-full bg-zinc-50 p-6 rounded-2xl border border-zinc-100 mt-8 mb-8">
+              <div className="grid grid-cols-2 gap-4 divide-x divide-zinc-200">
+                <div>
+                  <p className="text-xs text-zinc-500 font-medium uppercase tracking-wider mb-2">Amount Spent</p>
+                  <p className="text-xl font-medium text-zinc-800">₦{lastLoggedAmount.toLocaleString()}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-zinc-500 font-medium uppercase tracking-wider mb-2">Points Earned</p>
+                  <p className="text-xl font-medium text-green-600">+{lastLoggedPoints.toLocaleString()}</p>
+                </div>
+              </div>
+            </div>
+
+            <Button 
+              className="w-full h-14 bg-zinc-800 hover:bg-zinc-700 text-white rounded-xl text-lg font-medium shadow-sm transition-transform active:scale-[0.98]"
+              onClick={() => {
+                setStep('form');
+                onClose();
+              }}
+            >
+              Done
+            </Button>
+          </div>
+        ) : (
+          <>
+            <DialogHeader>
+              <DialogTitle className="font-medium text-zinc-700 text-lg">Log Stay</DialogTitle>
+              <DialogDescription className="text-zinc-500 font-normal">
+                Record a new stay for {member.name}. Points are calculated automatically.
+              </DialogDescription>
+            </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-5 mt-2">
           <div className="grid grid-cols-2 gap-4">
@@ -267,6 +321,8 @@ const LogStayModal = ({
             </Button>
           </DialogFooter>
         </form>
+        </>
+        )}
       </DialogContent>
     </Dialog>
   );
