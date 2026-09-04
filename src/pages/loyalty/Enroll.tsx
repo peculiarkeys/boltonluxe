@@ -211,7 +211,7 @@ const Enroll = () => {
   const handleDownloadPDF = async () => {
     if (!tempMemberData) return;
     
-    const html2canvas = (await import('html2canvas')).default;
+    const htmlToImage = await import('html-to-image');
     const { jsPDF } = await import('jspdf');
 
     toast({ title: "Preparing PDF", description: "Generating high-fidelity card faces..." });
@@ -257,22 +257,18 @@ const Enroll = () => {
       await new Promise(r => setTimeout(r, 800));
 
       // Capture front
-      const frontCanvas = await html2canvas(captureFront, {
-        scale: 3,
-        useCORS: true,
-        logging: true,
-        backgroundColor: null,
+      const frontDataUrl = await htmlToImage.toPng(captureFront, {
+        pixelRatio: 3,
+        backgroundColor: 'transparent',
       });
 
       // Capture back
-      const backCanvas = await html2canvas(captureBack, {
-        scale: 3,
-        useCORS: true,
-        logging: true,
-        backgroundColor: null,
+      const backDataUrl = await htmlToImage.toPng(captureBack, {
+        pixelRatio: 3,
+        backgroundColor: 'transparent',
       });
 
-      console.log("Canvas captured, generating PDF...");
+      console.log("Image captured, generating PDF...");
 
       const pdf = new jsPDF({
         orientation: 'landscape',
@@ -281,11 +277,11 @@ const Enroll = () => {
       });
 
       // Add Front
-      pdf.addImage(frontCanvas.toDataURL('image/png'), 'PNG', 0, 0, W, H);
+      pdf.addImage(frontDataUrl, 'PNG', 0, 0, W, H);
 
       // Add Back
       pdf.addPage([W, H], 'landscape');
-      pdf.addImage(backCanvas.toDataURL('image/png'), 'PNG', 0, 0, W, H);
+      pdf.addImage(backDataUrl, 'PNG', 0, 0, W, H);
 
       pdf.save(`Luxe-Royalty-${tempMemberData.member_id}.pdf`);
       

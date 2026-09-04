@@ -439,29 +439,40 @@ const ConsumerDashboard = () => {
                      const backElement = document.getElementById('card-back');
                      if (!frontElement || !backElement) return;
                      try {
-                       const html2canvas = (await import('html2canvas')).default;
-                       const opts = { backgroundColor: null, scale: 3, useCORS: true, allowTaint: true };
-                       const frontCanvas = await html2canvas(frontElement, opts);
-                       const backCanvas = await html2canvas(backElement, opts);
-                       
-                       const combinedCanvas = document.createElement('canvas');
-                       combinedCanvas.width = frontCanvas.width;
-                       combinedCanvas.height = frontCanvas.height + backCanvas.height + 40;
-                       const ctx = combinedCanvas.getContext('2d');
-                       if (ctx) {
-                         ctx.fillStyle = 'transparent';
-                         ctx.fillRect(0, 0, combinedCanvas.width, combinedCanvas.height);
-                         ctx.drawImage(frontCanvas, 0, 0);
-                         ctx.drawImage(backCanvas, 0, frontCanvas.height + 40);
-                         
-                         const link = document.createElement('a');
-                         link.download = `Bolton_Luxe_Card_${profile?.memberId || 'member'}.png`;
-                         link.href = combinedCanvas.toDataURL('image/png', 1.0);
-                         link.click();
-                       }
-                     } catch (error) {
-                       console.error('Error generating card image:', error);
-                     }
+                        const htmlToImage = await import('html-to-image');
+                        const opts = { pixelRatio: 3, backgroundColor: 'transparent' };
+                        
+                        const frontDataUrl = await htmlToImage.toPng(frontElement, opts);
+                        const backDataUrl = await htmlToImage.toPng(backElement, opts);
+                        
+                        const frontImg = new Image();
+                        const backImg = new Image();
+                        frontImg.src = frontDataUrl;
+                        backImg.src = backDataUrl;
+                        
+                        await Promise.all([
+                          new Promise((res) => (frontImg.onload = res)),
+                          new Promise((res) => (backImg.onload = res)),
+                        ]);
+                        
+                        const combinedCanvas = document.createElement('canvas');
+                        combinedCanvas.width = frontImg.width;
+                        combinedCanvas.height = frontImg.height + backImg.height + 120; // 40px gap in scaled coordinates
+                        const ctx = combinedCanvas.getContext('2d');
+                        if (ctx) {
+                          ctx.fillStyle = 'transparent';
+                          ctx.fillRect(0, 0, combinedCanvas.width, combinedCanvas.height);
+                          ctx.drawImage(frontImg, 0, 0);
+                          ctx.drawImage(backImg, 0, frontImg.height + 120);
+                          
+                          const link = document.createElement('a');
+                          link.download = `Bolton_Luxe_Card_${profile?.memberId || 'member'}.png`;
+                          link.href = combinedCanvas.toDataURL('image/png', 1.0);
+                          link.click();
+                        }
+                      } catch (error) {
+                        console.error('Error generating card image:', error);
+                      }
                    }}
                    className="w-full sm:flex-1 bg-gray-900 text-white px-5 py-2.5 rounded-full text-sm font-medium hover:bg-gray-800 transition-colors shadow-sm text-center"
                  >
