@@ -51,60 +51,67 @@ const ConsumerSignUp = () => {
 
     const redirectUrl = 'https://loyalty.boltonwhitegroup.com/login';
 
-    const { data: authData, error: authError } = await supabase.auth.signUp({
-      email: data.email,
-      password: data.password,
-      options: {
-        data: {
-          full_name: data.fullName,
-          phone_number: data.phoneNumber,
-        },
-        emailRedirectTo: redirectUrl
-      }
-    });
+    try {
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email: data.email,
+        password: data.password,
+        options: {
+          data: {
+            full_name: data.fullName,
+            phone_number: data.phoneNumber,
+          },
+          emailRedirectTo: redirectUrl
+        }
+      });
 
-    if (authError) {
-      setError(authError.message);
-      setLoading(false);
-    } else {
-      if (authData?.user?.email) {
-        const memberId = 'BWG LX' + Math.floor(100 + Math.random() * 900) + ' ' + Math.floor(1000 + Math.random() * 9000);
-        
-        await supabase.from('loyalty_members').insert([
-          {
-            name: data.fullName,
-            email: authData.user.email,
-            member_id: memberId,
-            tier: 'Standard',
-            points: 500,
-            stays: 0,
-            status: 'Active',
-            join_date: new Date().toISOString().split('T')[0]
+      if (authError) {
+        setError(authError.message);
+        setLoading(false);
+      } else {
+        if (authData?.user?.email) {
+          const memberId = 'BWG LX' + Math.floor(100 + Math.random() * 900) + ' ' + Math.floor(1000 + Math.random() * 9000);
+          
+          try {
+            await supabase.from('loyalty_members').insert([
+              {
+                name: data.fullName,
+                email: authData.user.email,
+                member_id: memberId,
+                tier: 'Standard',
+                points: 500,
+                stays: 0,
+                status: 'Active',
+                join_date: new Date().toISOString().split('T')[0]
+              }
+            ]);
+          } catch (dbError) {
+            console.error('Failed to create loyalty member record:', dbError);
           }
-        ]);
-
-        try {
+          
+          // Fire and forget emails
           fetch('/api/send-welcome-email', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email: authData.user.email, fullName: data.fullName, memberId, tier: 'Standard', points: 500 }),
-          });
-        } catch (emailError) {}
+          }).catch(e => console.error(e));
 
-        try {
           fetch('/api/send-admin-notification', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email: authData.user.email, fullName: data.fullName, memberId, tier: 'Standard' }),
-          });
-        } catch (adminEmailError) {}
+          }).catch(e => console.error(e));
 
-        setRegisteredEmail(authData.user.email);
-        setIsSuccess(true);
-        setLoading(false);
-      } else {
-        navigate('/dashboard');
+          setRegisteredEmail(authData.user.email);
+          setIsUnconfirmedEmail(true);
+          setIsSuccess(true);
+          setLoading(false);
+        } else {
+          navigate('/dashboard');
+        }
       }
+    } catch (e: any) {
+      setError(e.message || "An unexpected error occurred during sign up.");
+      setLoading(false);
     }
   };
 

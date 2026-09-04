@@ -53,21 +53,26 @@ const ConsumerLogin = () => {
     setLoading(true);
     setError(null);
 
-    const { error } = await login(email, password);
+    try {
+      const { error } = await login(email, password);
 
-    if (error) {
-      if (error.message.toLowerCase().includes('email not confirmed')) {
-        setIsUnconfirmedEmail(true);
-        setLoading(false);
-      } else if (error.message.toLowerCase().includes('invalid login credentials')) {
-        setError('Invalid email or password.');
-        setLoading(false);
+      if (error) {
+        if (error.message.toLowerCase().includes('email not confirmed')) {
+          setIsUnconfirmedEmail(true);
+          setLoading(false);
+        } else if (error.message.toLowerCase().includes('invalid login credentials')) {
+          setError('Invalid email or password.');
+          setLoading(false);
+        } else {
+          setError(error.message);
+          setLoading(false);
+        }
       } else {
-        setError(error.message);
-        setLoading(false);
+        navigate('/dashboard');
       }
-    } else {
-      navigate('/dashboard');
+    } catch (e: any) {
+      setError(e.message || "An unexpected error occurred during login.");
+      setLoading(false);
     }
   };
 
@@ -82,59 +87,64 @@ const ConsumerLogin = () => {
 
     const redirectUrl = 'https://loyalty.boltonwhitegroup.com/login';
 
-    const { data: authData, error: authError } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          full_name: fullName,
-          phone_number: phoneNumber,
-        },
-        emailRedirectTo: redirectUrl
-      }
-    });
+    try {
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            full_name: fullName,
+            phone_number: phoneNumber,
+          },
+          emailRedirectTo: redirectUrl
+        }
+      });
 
-    if (authError) {
-      setError(authError.message);
-      setLoading(false);
-    } else {
-      if (authData?.user?.email) {
-        const memberId = 'BWG LX' + Math.floor(100 + Math.random() * 900) + ' ' + Math.floor(1000 + Math.random() * 9000);
-        
-        await supabase.from('loyalty_members').insert([
-          {
-            name: fullName,
-            email: authData.user.email,
-            member_id: memberId,
-            tier: 'Standard',
-            points: 500,
-            stays: 0,
-            status: 'Active',
-            join_date: new Date().toISOString().split('T')[0]
+      if (authError) {
+        setError(authError.message);
+        setLoading(false);
+      } else {
+        if (authData?.user?.email) {
+          const memberId = 'BWG LX' + Math.floor(100 + Math.random() * 900) + ' ' + Math.floor(1000 + Math.random() * 9000);
+          
+          try {
+            await supabase.from('loyalty_members').insert([
+              {
+                name: fullName,
+                email: authData.user.email,
+                member_id: memberId,
+                tier: 'Standard',
+                points: 500,
+                stays: 0,
+                status: 'Active',
+                join_date: new Date().toISOString().split('T')[0]
+              }
+            ]);
+          } catch (dbError) {
+            console.error('Failed to create loyalty member record:', dbError);
           }
-        ]);
-        
-        try {
+          
           fetch('/api/send-welcome-email', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email: authData.user.email, fullName, memberId, tier: 'Standard', points: 500 }),
-          });
-        } catch (emailError) {}
+          }).catch(e => console.error(e));
 
-        try {
           fetch('/api/send-admin-notification', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email: authData.user.email, fullName, memberId, tier: 'Standard' }),
-          });
-        } catch (adminEmailError) {}
+          }).catch(e => console.error(e));
 
-        setIsUnconfirmedEmail(true);
-        setLoading(false);
-      } else {
-        navigate('/dashboard');
+          setIsUnconfirmedEmail(true);
+          setLoading(false);
+        } else {
+          navigate('/dashboard');
+        }
       }
+    } catch (e: any) {
+      setError(e.message || "An unexpected error occurred during sign up.");
+      setLoading(false);
     }
   };
 

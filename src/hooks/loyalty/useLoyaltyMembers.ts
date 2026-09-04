@@ -176,12 +176,18 @@ export const useLoyaltyMembers = () => {
     setError(null);
 
     try {
-      const { error } = await supabase
+      const { error, data } = await supabase
         .from('loyalty_members')
         .delete()
-        .eq('id', id);
+        .eq('id', id)
+        .select();
 
-      if (error) throw error;
+      if (error || !data || data.length === 0) {
+        // Fallback to RPC if direct deletion fails due to RLS
+        const { error: rpcError, data: rpcData } = await supabase.rpc('delete_loyalty_member', { p_member_id: id });
+        if (rpcError) throw rpcError;
+        if (!rpcData) throw new Error("Could not delete member.");
+      }
       
       toast({
         title: 'Member deleted',

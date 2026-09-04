@@ -45,7 +45,11 @@ const ConsumerDashboard = () => {
         
         let data = null;
         if (allMembers && allMembers.length > 0) {
-          data = allMembers.find((m: any) => m.email === user.email);
+          const sortedMembers = [...allMembers].sort((a: any, b: any) => {
+            if ((b.stays || 0) !== (a.stays || 0)) return (b.stays || 0) - (a.stays || 0);
+            return (b.points || 0) - (a.points || 0);
+          });
+          data = sortedMembers.find((m: any) => m.email === user.email);
         }
         
         if (data) {
