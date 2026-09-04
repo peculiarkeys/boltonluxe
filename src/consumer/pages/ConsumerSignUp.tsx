@@ -5,6 +5,7 @@ import { Eye, EyeOff, Star, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
+import TermsModal from '@/components/TermsModal';
 
 const bgImages = [
   '/hotels/bolton_white_hotel/BC3I7813.webp',
@@ -33,6 +34,8 @@ const ConsumerSignUp = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isSuccess, setIsSuccess] = useState(false);
   const [registeredEmail, setRegisteredEmail] = useState("");
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
+  const [showTerms, setShowTerms] = useState(false);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -46,6 +49,11 @@ const ConsumerSignUp = () => {
   });
 
   const handleSignUp = async (data: SignUpFormValues) => {
+    if (!agreedToTerms) {
+      setError("Please agree to the Terms & Conditions to create an account.");
+      return;
+    }
+    
     setLoading(true);
     setError(null);
 
@@ -103,7 +111,6 @@ const ConsumerSignUp = () => {
           }).catch(e => console.error(e));
 
           setRegisteredEmail(authData.user.email);
-          setIsUnconfirmedEmail(true);
           setIsSuccess(true);
           setLoading(false);
         } else {
@@ -118,6 +125,7 @@ const ConsumerSignUp = () => {
   };
 
   return (
+    <>
     <div className="consumer-app h-screen w-full flex flex-row-reverse font-normal bg-white">
         
         {/* Right Side (Now Left): Form */}
@@ -205,10 +213,23 @@ const ConsumerSignUp = () => {
                     {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>}
                   </div>
 
+                  <div className="flex items-center gap-2 mt-4">
+                    <input 
+                      type="checkbox" 
+                      id="terms" 
+                      checked={agreedToTerms}
+                      onChange={(e) => setAgreedToTerms(e.target.checked)}
+                      className="w-4 h-4 rounded border-gray-300 text-gray-800 focus:ring-gray-800"
+                    />
+                    <label htmlFor="terms" className="text-sm text-gray-600">
+                      I agree to the <button type="button" onClick={() => setShowTerms(true)} className="text-gray-800 font-medium hover:underline">Terms & Conditions</button>
+                    </label>
+                  </div>
+
                   <div className="pt-2 space-y-4">
                     <button 
                       type="submit" 
-                      disabled={loading}
+                      disabled={loading || !agreedToTerms}
                       className="w-full py-3.5 bg-gray-800 text-white rounded-xl font-medium hover:bg-gray-700 transition-colors shadow-sm disabled:opacity-50"
                     >
                       {loading ? 'Creating account...' : 'Create Account'}
@@ -267,6 +288,8 @@ const ConsumerSignUp = () => {
           </div>
         </div>
     </div>
+    <TermsModal isOpen={showTerms} onClose={() => setShowTerms(false)} />
+    </>
   );
 };
 
