@@ -71,7 +71,8 @@ const ConsumerLogin = () => {
         navigate('/dashboard');
       }
     } catch (e: any) {
-      setError(e.message || "An unexpected error occurred during login.");
+      const errMsg = e?.message || (typeof e === 'string' ? e : JSON.stringify(e));
+      setError(errMsg === '{}' ? "An unexpected error occurred during login." : errMsg);
       setLoading(false);
     }
   };
@@ -101,7 +102,8 @@ const ConsumerLogin = () => {
       });
 
       if (authError) {
-        setError(authError.message);
+        const errMsg = authError.message || JSON.stringify(authError);
+        setError(errMsg === '{}' ? 'An unexpected error occurred during sign up.' : errMsg);
         setLoading(false);
       } else {
         if (authData?.user?.email) {
@@ -143,7 +145,8 @@ const ConsumerLogin = () => {
         }
       }
     } catch (e: any) {
-      setError(e.message || "An unexpected error occurred during sign up.");
+      const errMsg = e?.message || (typeof e === 'string' ? e : JSON.stringify(e));
+      setError(errMsg === '{}' ? "An unexpected error occurred during sign up." : errMsg);
       setLoading(false);
     }
   };
